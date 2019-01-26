@@ -3,7 +3,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 const expressValidator = require('express-validator');
-const routes = require('./routes/index');
 
 // Creates the Express app
 const app = express();
@@ -29,8 +28,16 @@ app.use((req, res, next) => {
   next();
 });
 
+// Import models
+require('./models/User');
+require('./models/Transaction');
+require('./models/Tags');
+
+// Import configs
+require('./config/passport');
+
 // After the middleware, we handle our own routes
-app.use('/', routes);
+app.use('/', require('./routes/index'));
 
 // done!
 module.exports = app;
