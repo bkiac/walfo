@@ -5,10 +5,11 @@ const { catchErrors } = require('../utils/errorHandlers');
 
 const router = express.Router();
 
-router.post('/register',
+router.post(
+  '/register',
   userController.validateRegister,
   catchErrors(userController.register),
-  authController.login
+  authController.login,
 );
 
 module.exports = router;
