@@ -33,7 +33,7 @@ exports.validateRegister = async (req, res, next) => {
   }
 
   if (errorsResponse.length > 0) {
-    res.status(400).send(errorsResponse);
+    res.status(422).send(errorsResponse);
     return;
   }
 
