@@ -4,6 +4,8 @@ const bodyParser = require('body-parser');
 const passport = require('passport');
 const expressValidator = require('express-validator');
 
+const customValidators = require('./utils/customValidators');
+
 // Creates the Express app
 const app = express();
 
@@ -12,7 +14,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Exposes methods used for data validation.
-app.use(expressValidator());
+app.use(expressValidator({ customValidators }));
 
 // Populate `req.cookies` with any cookies that came along with the request
 // app.use(cookieParser());
@@ -37,7 +39,7 @@ require('./models/Tags');
 require('./config/passport');
 
 // After the middleware, we handle our own routes
-app.use('/', require('./routes/index'));
+app.use('/api', require('./routes/index'));
 
 // done!
 module.exports = app;
