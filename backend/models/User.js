@@ -20,11 +20,11 @@ const userSchema = new Schema({
   },
 });
 
-userSchema.methods.validatePassword = function (password) {
+userSchema.methods.validatePassword = function(password) {
   return bcrypt.compareSync(password, this.passwordHash);
 };
 
-userSchema.virtual('password').set(function (value) {
+userSchema.virtual('password').set(function(value) {
   this.passwordHash = bcrypt.hashSync(value, 12);
 });
 

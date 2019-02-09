@@ -12,7 +12,7 @@ exports.validateRegister = async (req, res, next) => {
 
   req.checkBody('password', 'empty password').notEmpty();
   req.checkBody('password-confirm', 'empty confirmed password').notEmpty();
-  req.checkBody('password-confirm', 'passwords don\'t match').equals(req.body.password);
+  req.checkBody('password-confirm', "passwords don't match").equals(req.body.password);
 
   let errorsResponse = [];
 
