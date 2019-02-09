@@ -1,40 +1,48 @@
 const mongoose = require('mongoose');
 const mongodbErrorHandler = require('mongoose-mongodb-errors');
 
-const { Schema } = mongoose;
+const {
+  Schema,
+  Schema: { ObjectId },
+} = mongoose;
 mongoose.Promise = global.Promise;
 
 const transactionSchema = new Schema({
   user: {
-    type: mongoose.Schema.ObjectId,
+    type: ObjectId,
     ref: 'User',
-    required: 'You must supply a user!',
+    required: true,
   },
   portfolioName: {
     type: String,
-    required: 'Portfolio is required!',
+    required: true,
   },
   symbol: {
     type: String,
-    required: 'Symbol is required!',
+    required: true,
   },
   date: {
     type: Date,
-    required: 'Date is required!',
+    required: true,
   },
   amount: {
     type: Number,
-    required: 'Amount is required!',
+    required: true,
   },
   pricePerAmount: {
     type: Number,
-    required: 'Price is required!',
+    required: true,
+  },
+  type: {
+    type: String,
+    enum: ['BUY', 'SELL'],
+    required: true,
   },
   exchange: {
     type: String,
   },
   tags: {
-    type: mongoose.Schema.ObjectId,
+    type: ObjectId,
     ref: 'Tags',
   },
 });

@@ -5,7 +5,7 @@ const { Schema } = mongoose;
 mongoose.Promise = global.Promise;
 
 const tagsSchema = new Schema({
-  tags: [String],
+  array: [String],
 });
 
 tagsSchema.plugin(mongodbErrorHandler);
