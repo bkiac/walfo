@@ -55,8 +55,24 @@ exports.createTransaction = async (req, res) => {
   res.status(201).send('New transaction added!');
 };
 
-exports.getPositionsByUserAndPortfolio = async (req, res) => {
+exports.getPortfolioData = async (req, res) => {
   const { user, portfolio } = req.body;
-  const txs = await Transaction.getPositionsByUserAndPortfolio(user, portfolio);
-  res.status(200).send(txs);
+  const positions = await Transaction.getPositionsByUserAndPortfolio(user, portfolio);
+  // @todo: Get current price data from API for the present symbols
+  // Set position.value.current = ...
+
+  const portfolioBaseValue = positions
+    .map((p) => p.value.base)
+    .reduce((total, baseValue) => total + baseValue);
+  // @todo: Collect current value after API call
+  // const portfolioCurrentValue = positions.reduce((p) => p.value.current);
+
+  const portfolioData = {
+    value: {
+      base: portfolioBaseValue,
+      current: 'TODO',
+    },
+    positions,
+  };
+  res.status(200).send(portfolioData);
 };

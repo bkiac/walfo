@@ -73,7 +73,6 @@ transactionSchema.statics.getPositionsByUserAndPortfolio = function(user, portfo
         },
         price: '$price',
         type: '$type',
-        exchange: '$exchange',
         tags: '$tags',
       },
     },
@@ -93,6 +92,19 @@ transactionSchema.statics.getPositionsByUserAndPortfolio = function(user, portfo
     {
       $project: {
         transactions: { symbol: 0, tags: 0 },
+      },
+    },
+    // Restructure `baseValue` field into a nested property
+    {
+      $project: {
+        _id: 0,
+        symbol: '$_id',
+        totalHoldings: '$totalHoldings',
+        value: {
+          base: '$baseValue',
+        },
+        tags: '$tags',
+        transactions: '$transactions',
       },
     },
   ]);
