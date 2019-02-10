@@ -11,6 +11,4 @@ router.post(
   transactionController.createTransaction,
 );
 
-router.get('', transactionController.getPortfolioData);
-
 module.exports = router;

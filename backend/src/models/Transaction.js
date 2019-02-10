@@ -44,8 +44,20 @@ const transactionSchema = new Schema({
   },
 });
 
+transactionSchema.statics.getPortfolioNamesByUser = function(user) {
+  return this.aggregate([
+    {
+      $match: { user: Types.ObjectId(user) },
+    },
+    {
+      $group: {
+        _id: '$portfolio',
+      },
+    },
+  ]);
+};
+
 transactionSchema.statics.getPositionsByUserAndPortfolio = function(user, portfolio) {
-  // return this.find({ user, portfolio }).select('-user -portfolio');
   return this.aggregate([
     // Find txs with `user` and `portfolio`
     {
