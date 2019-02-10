@@ -11,4 +11,6 @@ router.post(
   transactionController.createTransaction,
 );
 
+router.get('', transactionController.getPositionsByUserAndPortfolio);
+
 module.exports = router;

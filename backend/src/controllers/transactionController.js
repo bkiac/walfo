@@ -54,3 +54,9 @@ exports.createTransaction = async (req, res) => {
 
   res.status(201).send('New transaction added!');
 };
+
+exports.getPositionsByUserAndPortfolio = async (req, res) => {
+  const { user, portfolio } = req.body;
+  const txs = await Transaction.getPositionsByUserAndPortfolio(user, portfolio);
+  res.status(200).send(txs);
+};

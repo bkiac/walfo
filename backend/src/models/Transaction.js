@@ -1,15 +1,12 @@
 const mongoose = require('mongoose');
 const mongodbErrorHandler = require('mongoose-mongodb-errors');
 
-const {
-  Schema,
-  Schema: { ObjectId },
-} = mongoose;
+const { Schema, Types } = mongoose;
 mongoose.Promise = global.Promise;
 
 const transactionSchema = new Schema({
   user: {
-    type: ObjectId,
+    type: Schema.ObjectId,
     ref: 'User',
     required: true,
   },
@@ -42,10 +39,64 @@ const transactionSchema = new Schema({
     type: String,
   },
   tags: {
-    type: ObjectId,
+    type: Schema.ObjectId,
     ref: 'Tags',
   },
 });
+
+transactionSchema.statics.getPositionsByUserAndPortfolio = function(user, portfolio) {
+  // return this.find({ user, portfolio }).select('-user -portfolio');
+  return this.aggregate([
+    // Find txs with `user` and `portfolio`
+    {
+      $match: { portfolio, user: Types.ObjectId(user) },
+    },
+    // Populate `tags`
+    {
+      $lookup: { from: 'tags', localField: 'tags', foreignField: '_id', as: 'tags' },
+    },
+    // Unwind `tags` array
+    {
+      $unwind: { path: '$tags' },
+    },
+    // Map `SELL` tx types to negative `amount` and manually include fields to help `$group` aggregation
+    {
+      $project: {
+        symbol: '$symbol',
+        date: '$date',
+        amount: {
+          $cond: {
+            if: { $eq: ['BUY', '$type'] },
+            then: '$amount',
+            else: { $subtract: [0, '$amount'] },
+          },
+        },
+        pricePerAmount: '$pricePerAmount',
+        type: '$type',
+        exchange: '$exchange',
+        tags: '$tags',
+      },
+    },
+    // Group by `symbol` and sum holdings and value
+    {
+      $group: {
+        _id: '$symbol',
+        totalHoldings: {
+          $sum: '$amount',
+        },
+        baseValue: { $sum: { $multiply: ['$amount', '$pricePerAmount'] } },
+        tags: { $first: '$tags.array' },
+        transactions: { $push: '$$ROOT' },
+      },
+    },
+    // Remove unnecessary properties from the tx objects
+    {
+      $project: {
+        transactions: { symbol: 0, tags: 0 },
+      },
+    },
+  ]);
+};
 
 function autopopulate(next) {
   this.populate('tags');
