@@ -5,11 +5,6 @@
     "node": true
   },
   "rules": {
-    "prettier/prettier": "error",
-    "space-before-function-paren": ["error", {
-      "anonymous": "always",
-      "named": "never",
-      "asyncArrow": "always"
-    }]
+    "prettier/prettier": "error"
   }
 }
