@@ -26,7 +26,7 @@ const transactionSchema = new Schema({
     type: Number,
     required: true,
   },
-  pricePerAmount: {
+  price: {
     type: Number,
     required: true,
   },
@@ -71,7 +71,7 @@ transactionSchema.statics.getPositionsByUserAndPortfolio = function(user, portfo
             else: { $subtract: [0, '$amount'] },
           },
         },
-        pricePerAmount: '$pricePerAmount',
+        price: '$price',
         type: '$type',
         exchange: '$exchange',
         tags: '$tags',
@@ -84,7 +84,7 @@ transactionSchema.statics.getPositionsByUserAndPortfolio = function(user, portfo
         totalHoldings: {
           $sum: '$amount',
         },
-        baseValue: { $sum: { $multiply: ['$amount', '$pricePerAmount'] } },
+        baseValue: { $sum: { $multiply: ['$amount', '$price'] } },
         tags: { $first: '$tags.array' },
         transactions: { $push: '$$ROOT' },
       },

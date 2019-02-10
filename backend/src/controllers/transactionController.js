@@ -21,7 +21,7 @@ exports.validateTransaction = (req, res, next) => {
     .notEmpty()
     .isNumeric();
   req
-    .checkBody('pricePerAmount', 'No price')
+    .checkBody('price', 'No price')
     .notEmpty()
     .isNumeric();
   req
@@ -39,14 +39,14 @@ exports.validateTransaction = (req, res, next) => {
 };
 
 exports.createTransaction = async (req, res) => {
-  const { user, portfolio, symbol, date, amount, pricePerAmount, type, exchange, tags } = req.body;
+  const { user, portfolio, symbol, date, amount, price, type, exchange, tags } = req.body;
   await Transaction.create({
     user,
     portfolio,
     symbol,
     date,
     amount,
-    pricePerAmount,
+    price,
     type,
     exchange,
     tags,
