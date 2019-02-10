@@ -8,7 +8,7 @@ exports.validateTransaction = (req, res, next) => {
     .notEmpty()
     .isMongoId();
   req
-    .checkBody('portfolioName', 'No portfolio')
+    .checkBody('portfolio', 'No portfolio')
     .notEmpty()
     .isString();
   req.checkBody('symbol', 'No symbol').notEmpty(); // @todo: Check valid symbols
@@ -39,20 +39,10 @@ exports.validateTransaction = (req, res, next) => {
 };
 
 exports.createTransaction = async (req, res) => {
-  const {
-    user,
-    portfolioName,
-    symbol,
-    date,
-    amount,
-    pricePerAmount,
-    type,
-    exchange,
-    tags,
-  } = req.body;
+  const { user, portfolio, symbol, date, amount, pricePerAmount, type, exchange, tags } = req.body;
   await Transaction.create({
     user,
-    portfolioName,
+    portfolio,
     symbol,
     date,
     amount,

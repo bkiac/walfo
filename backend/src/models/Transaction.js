@@ -13,7 +13,7 @@ const transactionSchema = new Schema({
     ref: 'User',
     required: true,
   },
-  portfolioName: {
+  portfolio: {
     type: String,
     required: true,
   },

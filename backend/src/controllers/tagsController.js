@@ -4,11 +4,11 @@ const Transaction = mongoose.model('Transaction');
 const Tags = mongoose.model('Tags');
 
 exports.handleTags = async (req, res, next) => {
-  const { user, symbol, portfolioName, tags } = req.body;
+  const { user, symbol, portfolio, tags } = req.body;
 
   let tagsDoc;
-  // Query a tx with the same `user`, `symbol` and `portfolioName` attributes.
-  const txWithSamePosition = await Transaction.findOne({ user, symbol, portfolioName });
+  // Query a tx with the same `user`, `symbol` and `portfolio` attributes.
+  const txWithSamePosition = await Transaction.findOne({ user, symbol, portfolio });
   if (txWithSamePosition) {
     // If a position already exists - a corresponding `Tags` document must also exist -,
     // append the input tags to the existing array.
