@@ -52,7 +52,10 @@ transactionSchema.statics.getPortfolioNamesByUser = function getPortfolioNamesBy
   return this.distinct('portfolio', { user: Types.ObjectId(user) });
 };
 
-transactionSchema.statics.getPositionsByUserAndPortfolio = function(user, portfolio) {
+transactionSchema.statics.getPositionsByUserAndPortfolio = function getPositionsByUserAndPortfolio(
+  user,
+  portfolio,
+) {
   return this.aggregate([
     // Find txs with `user` and `portfolio`
     {
@@ -66,39 +69,60 @@ transactionSchema.statics.getPositionsByUserAndPortfolio = function(user, portfo
     {
       $unwind: { path: '$tags' },
     },
-    // Map `SELL` tx types to negative `amount` and manually include fields to help `$group` aggregation
-    {
-      $project: {
-        symbol: '$symbol',
-        date: '$date',
-        amount: {
-          $cond: {
-            if: { $eq: ['BUY', '$type'] },
-            then: '$amount',
-            else: { $subtract: [0, '$amount'] },
-          },
-        },
-        price: '$price',
-        type: '$type',
-        tags: '$tags',
-      },
-    },
-    // Group by `symbol` and sum holdings and value
+    // Group by `symbol` and calculate cost and number of bought coins
     {
       $group: {
         _id: '$symbol',
-        totalHoldings: {
-          $sum: '$amount',
-        },
-        baseValue: { $sum: { $multiply: ['$amount', '$price'] } },
         tags: { $first: '$tags.array' },
+        totalHoldings: {
+          $sum: {
+            $cond: {
+              if: { $eq: ['BUY', '$type'] },
+              then: '$amount',
+              else: { $subtract: [0, '$amount'] },
+            },
+          },
+        },
+        costOfBoughtCoins: {
+          $sum: {
+            $cond: {
+              if: { $eq: ['BUY', '$type'] },
+              then: { $multiply: ['$amount', '$price'] },
+              else: 0,
+            },
+          },
+        },
+        numOfBoughtCoins: {
+          $sum: {
+            $cond: {
+              if: { $eq: ['BUY', '$type'] },
+              then: '$amount',
+              else: 0,
+            },
+          },
+        },
         transactions: { $push: '$$ROOT' },
       },
     },
-    // Remove unnecessary properties from the tx objects
+    // Calculate average cost of a coin
     {
       $project: {
-        transactions: { symbol: 0, tags: 0 },
+        tags: '$tags',
+        totalHoldings: '$totalHoldings',
+        avgCost: { $divide: ['$costOfBoughtCoins', '$numOfBoughtCoins'] },
+        transactions: '$transactions',
+      },
+    },
+    // Remove obsolete tx fields
+    {
+      $project: {
+        transactions: {
+          user: 0,
+          symbol: 0,
+          portfolio: 0,
+          tags: 0,
+          __v: 0,
+        },
       },
     },
   ]);

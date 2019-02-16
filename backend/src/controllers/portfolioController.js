@@ -13,13 +13,15 @@ exports.getPortfolioData = async (req, res) => {
   const { portfolio } = req.params;
   const positions = await Transaction.getPositionsByUserAndPortfolio(user, portfolio);
 
-  const portfolioBaseValue = positions
-    .map((p) => p.baseValue)
-    .reduce((total, baseValue) => total + baseValue);
+  let portfolioValue = 0;
+  let positionsBySymbol = {};
+  positions.forEach((p, i) => {
+    portfolioValue += p.avgCost * p.totalHoldings;
+    positionsBySymbol = {
+      ...positionsBySymbol,
+      [positions[i]._id]: positions[i],
+    };
+  });
 
-  const portfolioData = {
-    baseValue: portfolioBaseValue,
-    positions,
-  };
-  res.status(200).send(portfolioData);
+  res.status(200).send({ value: portfolioValue, positions: positionsBySymbol });
 };
