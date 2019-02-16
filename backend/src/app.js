@@ -23,13 +23,6 @@ app.use(expressValidator({ customValidators }));
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Pass variables all requests
-app.use((req, res, next) => {
-  res.locals.user = req.user || null;
-  res.locals.currentPath = req.path;
-  next();
-});
-
 // Import models
 require('./models/User');
 require('./models/Transaction');
@@ -40,6 +33,24 @@ require('./config/passport');
 
 // After the middleware, we handle our own routes
 app.use('/api', require('./routes'));
+
+// Handle invalid routes
+app.use((req, res, next) => {
+  const err = new Error('Not found');
+  res.status(404);
+  next(err);
+});
+
+// Catch errors
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+  res.locals.mesage = err.message;
+  res.locals.error = process.env.NODE_ENV === 'development' ? err : {};
+
+  console.log(err.toString());
+
+  res.status(res.statusCode || 500).send(err.toString());
+});
 
 // done!
 module.exports = app;

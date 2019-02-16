@@ -3,7 +3,6 @@ const dotenv = require('dotenv');
 
 dotenv.config({ path: 'variables.env' });
 
-
 mongoose.connect(process.env.DATABASE, {
   useNewUrlParser: true,
   useCreateIndex: true,
