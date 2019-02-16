@@ -48,17 +48,8 @@ transactionSchema.statics.getAllSymbolsByUser = function getAllSymbolsByUser(use
   return this.distinct('symbol', { user: Types.ObjectId(user) });
 };
 
-transactionSchema.statics.getPortfolioNamesByUser = function(user) {
-  return this.aggregate([
-    {
-      $match: { user: Types.ObjectId(user) },
-    },
-    {
-      $group: {
-        _id: '$portfolio',
-      },
-    },
-  ]);
+transactionSchema.statics.getPortfolioNamesByUser = function getPortfolioNamesByUser(user) {
+  return this.distinct('portfolio', { user: Types.ObjectId(user) });
 };
 
 transactionSchema.statics.getPositionsByUserAndPortfolio = function(user, portfolio) {
