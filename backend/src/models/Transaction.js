@@ -44,6 +44,10 @@ const transactionSchema = new Schema({
   },
 });
 
+transactionSchema.statics.getAllSymbolsByUser = function getAllSymbolsByUser(user) {
+  return this.distinct('symbol', { user: Types.ObjectId(user) });
+};
+
 transactionSchema.statics.getPortfolioNamesByUser = function(user) {
   return this.aggregate([
     {

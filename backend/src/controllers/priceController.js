@@ -1,8 +1,44 @@
-const cryptocompare = require('cryptocompare');
+const mongoose = require('mongoose');
+const cryptocompare = require('../api/cryptocompare');
+const helpers = require('../utils/helpers');
 
-cryptocompare.setApiKey(process.env.API_KEY);
+const Transaction = mongoose.model('Transaction');
 
-exports.listCoins = async (req, res) => {
-  const list = await cryptocompare.coinList();
-  return res.status(200).send(list);
+exports.getCurrentPrices = async (req, res) => {
+  const { user } = req.body;
+
+  const symbolChunks = helpers.chunk(await Transaction.getAllSymbolsByUser(user));
+  const priceChunks = await Promise.all(
+    symbolChunks.map((ch) => cryptocompare.priceMulti(ch, 'USD')),
+  );
+  const prices = priceChunks.reduce((accumulator, ch) => ({
+    ...accumulator,
+    ...ch,
+  }));
+
+  return res.status(200).send(prices);
+};
+
+exports.getPricesForLastDays = async (req, res) => {
+  const { numOfDays } = req.params; // Should be <=2000
+  const { user } = req.body;
+
+  const symbols = await Transaction.getAllSymbolsByUser(user);
+  const dailyPriceData = await Promise.all(
+    symbols.map((s) =>
+      cryptocompare.histoDay(s, 'USD', {
+        limit: numOfDays,
+      }),
+    ),
+  );
+
+  const prices = {};
+  for (let i = 0; i < dailyPriceData.length; i += 1) {
+    prices[symbols[i]] = dailyPriceData[i].map((dpd) => ({
+      time: new Date(dpd.time * 1000),
+      price: (dpd.open + dpd.close) / 2,
+    }));
+  }
+
+  res.status(200).send(prices);
 };
