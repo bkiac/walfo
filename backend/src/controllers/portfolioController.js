@@ -14,7 +14,7 @@ exports.getPortfolioData = async (req, res) => {
   const positions = await Transaction.getPositionsByUserAndPortfolio(user, portfolio);
 
   const portfolioBaseValue = positions
-    .map((p) => p.value.base)
+    .map((p) => p.baseValue)
     .reduce((total, baseValue) => total + baseValue);
 
   const portfolioData = {
