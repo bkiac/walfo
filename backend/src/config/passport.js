@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 const passport = require('passport');
+const passportJWT = require('passport-jwt');
 const LocalStrategy = require('passport-local');
+
+const JWTStrategy = passportJWT.Strategy;
+const ExtractJWT = passportJWT.ExtractJwt;
 
 const User = mongoose.model('User');
 
@@ -18,15 +22,35 @@ passport.use(
       usernameField: 'email',
       passwordField: 'password',
     },
-    (email, password, done) => {
+    (email, password, cb) => {
       User.findOne({ email })
         .then((user) => {
           if (!user || !user.validatePassword(password)) {
-            return done(null, false, { errors: { 'email or password': 'is invalid' } });
+            return cb(null, false);
           }
-          return done(null, user);
+          return cb(null, user);
         })
-        .catch(done);
+        .catch((err) => {
+          return cb(err);
+        });
+    },
+  ),
+);
+
+passport.use(
+  new JWTStrategy(
+    {
+      jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+      secretOrKey: process.env.JWT_SECRET,
+    },
+    (JWTPayload, cb) => {
+      User.findOne({ _id: JWTPayload.id })
+        .then((user) => {
+          return cb(null, user._id);
+        })
+        .catch((err) => {
+          return cb(err);
+        });
     },
   ),
 );

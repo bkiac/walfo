@@ -10,6 +10,7 @@ const router = express.Router();
 
 router.use('/auth', authRoutes);
 router.use('/users', userRoutes);
+
 router.use('/transactions', transactionRoutes);
 router.use('/portfolios', portfolioRoutes);
 router.use('/prices', priceRoutes);

@@ -20,15 +20,16 @@ const userSchema = new Schema({
   },
 });
 
-userSchema.methods.validatePassword = function(password) {
-  return bcrypt.compareSync(password, this.passwordHash);
-};
-
-userSchema.virtual('password').set(function(value) {
+userSchema.virtual('password').set(function setPasswordHash(value) {
   this.passwordHash = bcrypt.hashSync(value, 12);
 });
 
+userSchema.methods.validatePassword = function validatePassword(password) {
+  return bcrypt.compareSync(password, this.passwordHash);
+};
+
 userSchema.plugin(passportLocalMongoose, { usernameField: 'email' });
+
 userSchema.plugin(mongodbErrorHandler);
 
 module.exports = mongoose.model('User', userSchema);

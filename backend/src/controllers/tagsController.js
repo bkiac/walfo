@@ -4,7 +4,8 @@ const Transaction = mongoose.model('Transaction');
 const Tags = mongoose.model('Tags');
 
 exports.handleTags = async (req, res, next) => {
-  const { user, symbol, portfolio, tags } = req.body;
+  const { user } = req;
+  const { symbol, portfolio, tags } = req.body;
 
   let tagsDoc;
   // Query a tx with the same `user`, `symbol` and `portfolio` attributes.

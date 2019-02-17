@@ -4,10 +4,6 @@ const Transaction = mongoose.model('Transaction');
 
 exports.validateTransaction = (req, res, next) => {
   req
-    .checkBody('user', 'No user')
-    .notEmpty()
-    .isMongoId();
-  req
     .checkBody('portfolio', 'No portfolio')
     .notEmpty()
     .isString();
@@ -31,15 +27,16 @@ exports.validateTransaction = (req, res, next) => {
 
   const errors = req.validationErrors();
   if (errors) {
-    res.status(422).send(errors);
-    return;
+    return res.status(422).send(errors);
   }
 
-  next();
+  return next();
 };
 
 exports.createTransaction = async (req, res) => {
-  const { user, portfolio, symbol, date, amount, price, type, exchange, tags } = req.body;
+  const { user } = req;
+  const { portfolio, symbol, date, amount, price, type, exchange, tags } = req.body;
+
   await Transaction.create({
     user,
     portfolio,

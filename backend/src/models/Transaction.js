@@ -44,22 +44,22 @@ const transactionSchema = new Schema({
   },
 });
 
-transactionSchema.statics.getAllSymbolsByUser = function getAllSymbolsByUser(user) {
-  return this.distinct('symbol', { user: Types.ObjectId(user) });
+transactionSchema.statics.getAllSymbolsByUserId = function getAllSymbolsByUserId(userId) {
+  return this.distinct('symbol', { user: Types.ObjectId(userId) });
 };
 
-transactionSchema.statics.getPortfolioNamesByUser = function getPortfolioNamesByUser(user) {
-  return this.distinct('portfolio', { user: Types.ObjectId(user) });
+transactionSchema.statics.getPortfoliosByUserId = function getPortfoliosByUserId(userId) {
+  return this.distinct('portfolio', { user: Types.ObjectId(userId) });
 };
 
-transactionSchema.statics.getPositionsByUserAndPortfolio = function getPositionsByUserAndPortfolio(
-  user,
+transactionSchema.statics.getPositionsByUserIdAndPortfolio = function getPositionsByUserIdAndPortfolio(
+  userId,
   portfolio,
 ) {
   return this.aggregate([
-    // Find txs with `user` and `portfolio`
+    // Find txs with `userId` and `portfolio`
     {
-      $match: { portfolio, user: Types.ObjectId(user) },
+      $match: { portfolio, user: Types.ObjectId(userId) },
     },
     // Populate `tags`
     {

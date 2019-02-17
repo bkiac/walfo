@@ -5,9 +5,9 @@ const helpers = require('../utils/helpers');
 const Transaction = mongoose.model('Transaction');
 
 exports.getCurrentPrices = async (req, res) => {
-  const { user } = req.body;
+  const { user } = req;
 
-  const symbolChunks = helpers.chunk(await Transaction.getAllSymbolsByUser(user));
+  const symbolChunks = helpers.chunk(await Transaction.getAllSymbolsByUserId(user));
   const priceChunks = await Promise.all(
     symbolChunks.map((ch) => cryptocompare.priceMulti(ch, 'USD')),
   );
@@ -20,10 +20,10 @@ exports.getCurrentPrices = async (req, res) => {
 };
 
 exports.getPricesForLastDays = async (req, res) => {
+  const { user } = req;
   const { numOfDays } = req.params; // Should be <=2000
-  const { user } = req.body;
 
-  const symbols = await Transaction.getAllSymbolsByUser(user);
+  const symbols = await Transaction.getAllSymbolsByUserId(user);
   const dailyPriceData = await Promise.all(
     symbols.map((s) =>
       cryptocompare.histoDay(s, 'USD', {

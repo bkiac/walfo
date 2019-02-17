@@ -49,7 +49,7 @@ app.use((err, req, res, next) => {
 
   console.log(err.toString());
 
-  res.status(res.statusCode || 500).send(err.toString());
+  return res.status(res.statusCode || 500).send(err.toString());
 });
 
 // done!
