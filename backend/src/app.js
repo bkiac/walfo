@@ -4,8 +4,6 @@ const bodyParser = require('body-parser');
 const passport = require('passport');
 const expressValidator = require('express-validator');
 
-const customValidators = require('./utils/customValidators');
-
 // Creates the Express app
 const app = express();
 
@@ -14,7 +12,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Exposes methods used for data validation.
-app.use(expressValidator({ customValidators }));
+app.use(expressValidator());
 
 // Populate `req.cookies` with any cookies that came along with the request
 // app.use(cookieParser());
@@ -43,7 +41,7 @@ app.use((req, res, next) => {
 
 // Catch errors
 // eslint-disable-next-line no-unused-vars
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
   res.locals.mesage = err.message;
   res.locals.error = process.env.NODE_ENV === 'development' ? err : {};
 

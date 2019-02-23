@@ -21,7 +21,7 @@ exports.getCurrentPrices = async (req, res) => {
 
 exports.getPricesForLastDays = async (req, res) => {
   const { user } = req;
-  const { numOfDays } = req.params; // Should be <=2000
+  const { numOfDays } = req.params;
 
   const symbols = await Transaction.getAllSymbolsByUserId(user);
   const dailyPriceData = await Promise.all(

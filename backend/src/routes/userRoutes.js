@@ -1,14 +1,15 @@
 const express = require('express');
 const userController = require('../controllers/userController');
 const authController = require('../controllers/authController');
-const { catchErrors } = require('../utils/errorHandlers');
+const validationController = require('../controllers/validationController');
 
 const router = express.Router();
 
 router.post(
   '/register',
-  userController.validateRegister,
-  catchErrors(userController.register),
+  validationController.registerValidators,
+  validationController.validate,
+  userController.register,
   authController.login,
 );
 
