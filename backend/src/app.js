@@ -50,5 +50,9 @@ app.use((err, req, res) => {
   return res.status(res.statusCode || 500).send(err.toString());
 });
 
+app.on('unhandledRejection', err => {
+  console.log(err.toString());
+});
+
 // done!
 module.exports = app;
