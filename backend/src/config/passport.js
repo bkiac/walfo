@@ -24,13 +24,13 @@ passport.use(
     },
     (email, password, cb) => {
       User.findOne({ email })
-        .then((user) => {
+        .then(user => {
           if (!user || !user.validatePassword(password)) {
             return cb(null, false);
           }
           return cb(null, user);
         })
-        .catch((err) => {
+        .catch(err => {
           return cb(err);
         });
     },
@@ -45,10 +45,10 @@ passport.use(
     },
     (JWTPayload, cb) => {
       User.findOne({ _id: JWTPayload.id })
-        .then((user) => {
+        .then(user => {
           return cb(null, user._id);
         })
-        .catch((err) => {
+        .catch(err => {
           return cb(err);
         });
     },

@@ -128,14 +128,6 @@ transactionSchema.statics.getPositionsByUserIdAndPortfolio = function getPositio
   ]);
 };
 
-function autopopulate(next) {
-  this.populate('tags');
-  next();
-}
-
-transactionSchema.pre('find', autopopulate);
-transactionSchema.pre('findOne', autopopulate);
-
 transactionSchema.plugin(mongodbErrorHandler);
 
 module.exports = mongoose.model('Transaction', transactionSchema);

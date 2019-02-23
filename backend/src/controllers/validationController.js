@@ -5,15 +5,55 @@ const cryptocompare = require('../api/cryptocompare');
 const User = mongoose.model('User');
 const Transaction = mongoose.model('Transaction');
 
-exports.addTransactionValidators = [
+exports.createTransactionValidators = [
   body('portfolio')
     .isString()
     .trim(),
-  body('symbol').custom(async value => cryptocompare.price(value, 'USD')),
+  body('symbol')
+    .isString()
+    .custom(async value => cryptocompare.price(value, 'USD')),
   body('date').isISO8601(),
   body('amount').isNumeric(),
   body('price').isNumeric(),
   body('type').custom(value => value === 'BUY' || value === 'SELL'),
+  body('exchange')
+    .optional()
+    .isString(),
+  body('tags').isArray(),
+  body('tags.*').isString(),
+];
+
+exports.updateTransactionsValidators = [
+  param('id')
+    .isMongoId()
+    .custom(async (id, { req }) => {
+      const tx = await Transaction.findOne({ _id: id });
+      return tx && tx.user.equals(req.user);
+    }),
+  body('portfolio')
+    .not()
+    .exists(),
+  body('symbol')
+    .not()
+    .exists(),
+  body('date').isISO8601(),
+  body('amount').isNumeric(),
+  body('price').isNumeric(),
+  body('type').custom(value => value === 'BUY' || value === 'SELL'),
+  body('exchange')
+    .optional()
+    .isString(),
+  body('tags').isArray(),
+  body('tags.*').isString(),
+];
+
+exports.deleteTransactionValidators = [
+  param('id')
+    .isMongoId()
+    .custom(async (id, { req }) => {
+      const tx = await Transaction.findOne({ _id: id });
+      return tx && tx.user.equals(req.user);
+    }),
 ];
 
 exports.getPortfolioDataValidators = [

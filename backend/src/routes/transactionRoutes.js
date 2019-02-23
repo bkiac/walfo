@@ -9,10 +9,28 @@ const router = express.Router();
 router.post(
   '',
   authController.protect,
-  validationController.addTransactionValidators,
+  validationController.createTransactionValidators,
   validationController.validate,
-  tagsController.handleTags,
+  tagsController.createTags,
   transactionController.createTransaction,
+);
+
+router.put(
+  '/:id',
+  authController.protect,
+  validationController.updateTransactionsValidators,
+  validationController.validate,
+  tagsController.updateTags,
+  transactionController.updateTransaction,
+);
+
+router.delete(
+  '/:id',
+  authController.protect,
+  validationController.deleteTransactionValidators,
+  validationController.validate,
+  tagsController.deleteTags,
+  transactionController.deleteTransaction,
 );
 
 module.exports = router;
