@@ -8,11 +8,19 @@ const router = express.Router();
 router.get('/', authController.protect, portfolioController.getPortfolioNames);
 
 router.get(
-  '/:portfolio',
+  '/base/:portfolio',
   authController.protect,
   validationController.getPortfolioDataValidators,
   validationController.validate,
-  portfolioController.getPortfolioData,
+  portfolioController.getBasePortfolioData,
+);
+
+router.get(
+  '/current/:portfolio',
+  authController.protect,
+  validationController.getPortfolioDataValidators,
+  validationController.validate,
+  portfolioController.getPortfolioDataWithPrices,
 );
 
 module.exports = router;

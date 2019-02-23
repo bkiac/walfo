@@ -1,4 +1,4 @@
-exports.chunk = (array, size = 300) => {
+exports.chunk = (array, size) => {
   const chunkedArray = [];
   let i = 0;
   while (i < array.length) {
