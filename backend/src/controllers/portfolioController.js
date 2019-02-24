@@ -59,7 +59,8 @@ exports.getPortfolioDataWithPrices = async (req, res) => {
 
 exports.getHistoricalPortfolioValues = async (req, res) => {
   const { user } = req;
-  const { portfolio, date } = req.params;
+  const { portfolio } = req.params;
+  const { date } = req.query;
 
   // The start of the day specified
   const startDate = moment(date)
@@ -73,7 +74,11 @@ exports.getHistoricalPortfolioValues = async (req, res) => {
   const numOfDays = Math.floor(moment.duration(endDate.diff(startDate)).asDays());
 
   // Get all symbols for this duration
-  const symbols = await Transaction.getAllSymbolsByUserIdAndPortfolioAndDate(user, portfolio, date);
+  const symbols = await Transaction.getAllSymbolsByUserIdAndPortfolioAndDate(
+    user,
+    portfolio,
+    startDate,
+  );
 
   // Query cryptocompare for price data between yesterday and yesterday - N days
   const histoDayBatches = await cryptocompare.histoDayBatch(symbols, 'USD', {

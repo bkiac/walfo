@@ -8,7 +8,7 @@ const router = express.Router();
 router.get('/', authController.protect, portfolioController.getPortfolioNames);
 
 router.get(
-  '/base/:portfolio',
+  '/:portfolio/base',
   authController.protect,
   validationController.getPortfolioDataValidators,
   validationController.validate,
@@ -16,7 +16,7 @@ router.get(
 );
 
 router.get(
-  '/current/:portfolio',
+  '/:portfolio/current',
   authController.protect,
   validationController.getPortfolioDataValidators,
   validationController.validate,
@@ -24,7 +24,7 @@ router.get(
 );
 
 router.get(
-  '/histo/:portfolio/:date',
+  '/:portfolio/historical',
   authController.protect,
   validationController.getHistoricalPortfolioValidators,
   validationController.validate,

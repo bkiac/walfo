@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { body, param, validationResult } = require('express-validator/check');
+const { body, param, query, validationResult } = require('express-validator/check');
 const cryptocompare = require('../api/cryptocompare');
 
 const User = mongoose.model('User');
@@ -44,7 +44,7 @@ exports.updateTransactionsValidators = [
     .optional()
     .isString(),
   body('tags').isArray(),
-  body('tags.').isString(),
+  body('tags.*').isString(),
 ];
 
 exports.deleteTransactionValidators = [
@@ -60,11 +60,17 @@ exports.getPortfolioDataValidators = [
   param('portfolio').custom(async (portfolio, { req }) =>
     Transaction.findOne({ user: req.user, portfolio }),
   ),
+  query('tags')
+    .optional()
+    .isArray(),
+  query('tags.*')
+    .optional()
+    .isString(),
 ];
 
 exports.getHistoricalPortfolioValidators = [
   ...exports.getPortfolioDataValidators,
-  param('date')
+  query('date')
     .isISO8601()
     .custom(async (date, { req }) => {
       const symbols = await Transaction.getAllSymbolsByUserIdAndPortfolioAndDate(
