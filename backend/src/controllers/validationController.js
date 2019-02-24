@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { body, param, query, validationResult } = require('express-validator/check');
+const { sanitizeQuery } = require('express-validator/filter');
 const cryptocompare = require('../api/cryptocompare');
 
 const User = mongoose.model('User');
@@ -62,10 +63,8 @@ exports.getPortfolioDataValidators = [
   ),
   query('tags')
     .optional()
-    .isArray(),
-  query('tags.*')
-    .optional()
     .isString(),
+  sanitizeQuery('tags').customSanitizer(tags => tags.split(',')),
 ];
 
 exports.getHistoricalPortfolioValidators = [
