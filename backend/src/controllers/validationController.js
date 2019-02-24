@@ -44,7 +44,7 @@ exports.updateTransactionsValidators = [
     .optional()
     .isString(),
   body('tags').isArray(),
-  body('tags.*').isString(),
+  body('tags.').isString(),
 ];
 
 exports.deleteTransactionValidators = [
@@ -60,6 +60,20 @@ exports.getPortfolioDataValidators = [
   param('portfolio').custom(async (portfolio, { req }) =>
     Transaction.findOne({ user: req.user, portfolio }),
   ),
+];
+
+exports.getHistoricalPortfolioValidators = [
+  ...exports.getPortfolioDataValidators,
+  param('date')
+    .isISO8601()
+    .custom(async (date, { req }) => {
+      const symbols = await Transaction.getAllSymbolsByUserIdAndPortfolioAndDate(
+        req.user,
+        req.params.portfolio,
+        date,
+      );
+      return symbols.length > 0;
+    }),
 ];
 
 exports.registerValidators = [

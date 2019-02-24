@@ -48,18 +48,38 @@ transactionSchema.statics.getAllSymbolsByUserId = function getAllSymbolsByUserId
   return this.distinct('symbol', { user: Types.ObjectId(userId) });
 };
 
+transactionSchema.statics.getAllSymbolsByUserIdAndPortfolio = function getAllSymbolsByUserIdAndPortfolio(
+  userId,
+  portfolio,
+) {
+  return this.distinct('symbol', { user: Types.ObjectId(userId), portfolio });
+};
+
+transactionSchema.statics.getAllSymbolsByUserIdAndPortfolioAndDate = function getAllSymbolsByUserIdAndPortfolioAndDate(
+  userId,
+  portfolio,
+  date,
+) {
+  return this.distinct('symbol', {
+    user: Types.ObjectId(userId),
+    portfolio,
+    date: { $lte: new Date(date) },
+  });
+};
+
 transactionSchema.statics.getPortfoliosByUserId = function getPortfoliosByUserId(userId) {
   return this.distinct('portfolio', { user: Types.ObjectId(userId) });
 };
 
-transactionSchema.statics.getPositionsByUserIdAndPortfolio = function getPositionsByUserIdAndPortfolio(
+transactionSchema.statics.getPositionsByUserIdAndPortfolioAndDate = function getPositionsByUserIdAndPortfolioAndDate(
   userId,
   portfolio,
+  date,
 ) {
   return this.aggregate([
     // Find txs with `userId` and `portfolio`
     {
-      $match: { portfolio, user: Types.ObjectId(userId) },
+      $match: { portfolio, user: Types.ObjectId(userId), date: { $lte: new Date(date) } },
     },
     // Populate `tags`
     {
@@ -126,6 +146,13 @@ transactionSchema.statics.getPositionsByUserIdAndPortfolio = function getPositio
       },
     },
   ]);
+};
+
+transactionSchema.statics.getPositionsByUserIdAndPortfolio = function getPositionsByUserIdAndPortfolio(
+  userId,
+  portfolio,
+) {
+  return this.getPositionsByUserIdAndPortfolioAndDate(userId, portfolio, new Date());
 };
 
 transactionSchema.plugin(mongodbErrorHandler);

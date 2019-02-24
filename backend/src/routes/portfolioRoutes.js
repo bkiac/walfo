@@ -23,4 +23,12 @@ router.get(
   portfolioController.getPortfolioDataWithPrices,
 );
 
+router.get(
+  '/histo/:portfolio/:date',
+  authController.protect,
+  validationController.getHistoricalPortfolioValidators,
+  validationController.validate,
+  portfolioController.getHistoricalPortfolioValues,
+);
+
 module.exports = router;
