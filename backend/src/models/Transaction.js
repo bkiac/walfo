@@ -1,10 +1,11 @@
 const mongoose = require('mongoose');
 const mongodbErrorHandler = require('mongoose-mongodb-errors');
+const moment = require('moment');
 
 const { Schema, Types } = mongoose;
 mongoose.Promise = global.Promise;
 
-const transactionSchema = new Schema({
+const schema = new Schema({
   user: {
     type: Schema.ObjectId,
     ref: 'User',
@@ -44,43 +45,8 @@ const transactionSchema = new Schema({
   },
 });
 
-transactionSchema.statics.getAllSymbolsByUserId = function getAllSymbolsByUserId(userId) {
-  return this.distinct('symbol', { user: Types.ObjectId(userId) });
-};
-
-transactionSchema.statics.getAllSymbolsByUserIdAndPortfolio = function getAllSymbolsByUserIdAndPortfolio(
-  userId,
-  portfolio,
-) {
-  return this.distinct('symbol', { user: Types.ObjectId(userId), portfolio });
-};
-
-transactionSchema.statics.getAllSymbolsByUserIdAndPortfolioAndDate = function getAllSymbolsByUserIdAndPortfolioAndDate(
-  userId,
-  portfolio,
-  date,
-) {
-  return this.distinct('symbol', {
-    user: Types.ObjectId(userId),
-    portfolio,
-    date: { $lte: new Date(date) },
-  });
-};
-
-transactionSchema.statics.getPortfoliosByUserId = function getPortfoliosByUserId(userId) {
-  return this.distinct('portfolio', { user: Types.ObjectId(userId) });
-};
-
-transactionSchema.statics.getPositionsByUserIdAndPortfolioAndDate = function getPositionsByUserIdAndPortfolioAndDate(
-  userId,
-  portfolio,
-  date,
-) {
-  return this.aggregate([
-    // Find txs with `userId` and `portfolio`
-    {
-      $match: { portfolio, user: Types.ObjectId(userId), date: { $lte: new Date(date) } },
-    },
+const pipelines = {
+  populateTags: [
     // Populate `tags`
     {
       $lookup: { from: 'tags', localField: 'tags', foreignField: '_id', as: 'tags' },
@@ -89,6 +55,9 @@ transactionSchema.statics.getPositionsByUserIdAndPortfolioAndDate = function get
     {
       $unwind: { path: '$tags' },
     },
+  ],
+
+  groupByPosition: [
     // Group by `symbol` and calculate cost and number of bought coins
     {
       $group: {
@@ -127,6 +96,8 @@ transactionSchema.statics.getPositionsByUserIdAndPortfolioAndDate = function get
     // Calculate average cost of a coin
     {
       $project: {
+        _id: 0,
+        id: '$_id',
         tags: '$tags',
         totalHoldings: '$totalHoldings',
         avgCost: { $divide: ['$costOfBoughtCoins', '$numOfBoughtCoins'] },
@@ -145,16 +116,68 @@ transactionSchema.statics.getPositionsByUserIdAndPortfolioAndDate = function get
         },
       },
     },
-  ]);
+  ],
 };
 
-transactionSchema.statics.getPositionsByUserIdAndPortfolio = function getPositionsByUserIdAndPortfolio(
+schema.statics.getPortfolios = function getPortfolios(userId) {
+  return this.distinct('portfolio', { user: Types.ObjectId(userId) });
+};
+
+schema.statics.getSymbols = function getSymbols(userId, portfolio, startDate) {
+  const distinct = { user: Types.ObjectId(userId) };
+
+  if (portfolio) {
+    distinct.portfolio = portfolio;
+  }
+
+  if (startDate) {
+    distinct.date = { $lte: new Date(startDate) };
+  }
+
+  return this.distinct('symbol', distinct);
+};
+
+schema.statics.getPositions = function getPositions(userId, portfolio, startDate, tags) {
+  const match = { user: Types.ObjectId(userId), portfolio };
+
+  if (startDate) {
+    match.date = { $lte: new Date(startDate) };
+  }
+
+  const pipeline = [{ $match: match }];
+
+  pipeline.push(...pipelines.populateTags);
+
+  if (tags && tags.length > 0) {
+    pipeline.push({
+      $match: { $expr: { $setIsSubset: [tags, '$tags.array'] } },
+    });
+  }
+
+  pipeline.push(...pipelines.groupByPosition);
+
+  return this.aggregate(pipeline);
+};
+
+schema.statics.getPositionsForEachDayBetweenDates = function getPositionsForEachDayBetweenDates(
   userId,
   portfolio,
+  startDate,
+  endDate,
+  tags,
 ) {
-  return this.getPositionsByUserIdAndPortfolioAndDate(userId, portfolio, new Date());
+  const startMoment = moment(startDate);
+  const numOfDays = Math.floor(moment.duration(moment(endDate).diff(startMoment)).asDays());
+
+  const positionsForEachDay = [];
+  for (let i = 1; i <= numOfDays; i += 1) {
+    positionsForEachDay.push(this.getPositions(userId, portfolio, startMoment, tags));
+    startMoment.add(1, 'day');
+  }
+
+  return Promise.all(positionsForEachDay);
 };
 
-transactionSchema.plugin(mongodbErrorHandler);
+schema.plugin(mongodbErrorHandler);
 
-module.exports = mongoose.model('Transaction', transactionSchema);
+module.exports = mongoose.model('Transaction', schema);

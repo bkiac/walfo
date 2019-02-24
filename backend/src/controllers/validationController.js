@@ -73,11 +73,7 @@ exports.getHistoricalPortfolioValidators = [
   query('date')
     .isISO8601()
     .custom(async (date, { req }) => {
-      const symbols = await Transaction.getAllSymbolsByUserIdAndPortfolioAndDate(
-        req.user,
-        req.params.portfolio,
-        date,
-      );
+      const symbols = await Transaction.getSymbols(req.user, req.params.portfolio, date);
       return symbols.length > 0;
     }),
 ];
