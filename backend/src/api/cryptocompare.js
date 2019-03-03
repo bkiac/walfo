@@ -81,9 +81,16 @@ function priceMulti(fsyms, tsyms, options = {}) {
 }
 
 function priceMultiBatch(fsyms, tsyms, options) {
-  const symbolChunks = helpers.chunk(fsyms, 300);
+  const symbolChunks = helpers.chunk(fsyms, 50);
   const prices = symbolChunks.map(sch => priceMulti(sch, tsyms, options));
   return Promise.all(prices);
+}
+
+function collectPriceMultiBatch(priceMultiBatchResult) {
+  return priceMultiBatchResult.reduce((p, pb) => ({
+    ...p,
+    ...pb,
+  }));
 }
 
 function priceFull(fsyms, tsyms, options = {}) {
@@ -146,6 +153,16 @@ function histoDayBatch(fsyms, tsym, options) {
   return Promise.all(histos);
 }
 
+function collectHistoDayBatch(symbols, fsym, histoDayBatchResult) {
+  return histoDayBatchResult.reduce(
+    (p, hdb, i) => ({
+      ...p,
+      [symbols[i]]: hdb.map(hd => ({ [fsym]: (hd.open + hd.close + hd.high + hd.low) / 4 })),
+    }),
+    {},
+  );
+}
+
 function histoHour(fsym, tsym, options = {}) {
   let url = `${baseUrl}histohour?fsym=${fsym}&tsym=${tsym}`;
   if (options.exchange) url += `&e=${options.exchange}`;
@@ -200,6 +217,7 @@ module.exports = {
   price,
   priceMulti,
   priceMultiBatch,
+  collectPriceMultiBatch,
   priceFull,
   priceHistorical,
   generateAvg,
@@ -208,6 +226,7 @@ module.exports = {
   topExchangesFull,
   histoDay,
   histoDayBatch,
+  collectHistoDayBatch,
   histoHour,
   histoMinute,
   latestSocial,

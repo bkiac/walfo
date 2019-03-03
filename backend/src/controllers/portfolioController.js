@@ -51,19 +51,14 @@ exports.getHistoricalPortfolioValues = async (req, res) => {
   );
 
   // Query cryptocompare for price data between yesterday and yesterday - N days
-  const histoDayBatches = await cryptocompare.histoDayBatch(symbols, 'USD', {
-    limit: numOfDays - 1,
-    timestamp: endDate.toDate(),
-  });
-
-  // Collect individual historical price data into a single prices object, and calculate default USD
-  // from the average of open and close prices
-  const prices = histoDayBatches.reduce(
-    (p, hdb, i) => ({
-      ...p,
-      [symbols[i]]: hdb.map(hd => ({ USD: (hd.open + hd.close) / 2 })),
+  // and collect results into a single prices object
+  const prices = cryptocompare.collectHistoDayBatch(
+    symbols,
+    'USD',
+    await cryptocompare.histoDayBatch(symbols, 'USD', {
+      limit: numOfDays - 1,
+      timestamp: endDate.toDate(),
     }),
-    {},
   );
 
   // Calculate portfolio values per each day
