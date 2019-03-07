@@ -18,6 +18,10 @@ afterAll(async () => {
 });
 
 describe('Tags', () => {
+  afterAll(async () => {
+    await Tags.deleteMany({});
+  });
+
   describe('addToSet', () => {
     it('should add new element', async () => {
       const tags = ['brand', 'new', 'tags'];
