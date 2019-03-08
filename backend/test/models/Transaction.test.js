@@ -23,6 +23,9 @@ afterAll(async () => {
 
 describe('Transaction', () => {
   let user;
+  let BTC;
+  let ETH;
+  let LTC;
 
   beforeAll(async () => {
     user = await new User({
@@ -36,7 +39,7 @@ describe('Transaction', () => {
     });
     await tags.save();
 
-    const BTC = [
+    BTC = [
       {
         user,
         portfolio: 'Main',
@@ -68,7 +71,7 @@ describe('Transaction', () => {
         tags,
       },
     ];
-    const ETH = [
+    ETH = [
       {
         user,
         portfolio: 'Main',
@@ -90,7 +93,7 @@ describe('Transaction', () => {
         tags,
       },
     ];
-    const LTC = [
+    LTC = [
       {
         user,
         portfolio: 'Main',
@@ -150,6 +153,41 @@ describe('Transaction', () => {
 
       symbols = await Transaction.getSymbols(user._id, 'Tertiary', '2018-06-12');
       expect(symbols.sort()).toEqual([].sort());
+    });
+  });
+
+  describe('getPositions', () => {
+    it('should return correct positions', async () => {
+      // const positions = await Transaction.getPositions(user._id, 'Main');
+      // expect(positions.sort()).toEqual([
+      //   [
+      //     {
+      //       id: 'LTC',
+      //       tags: ['hodl', 'pump', 'dump'],
+      //       totalHoldings: 1,
+      //       avgCost: 3500,
+      //       transactions: [{
+      //         _id: LTC[0]._id,
+      //         amount: LTC[0].amount,
+      //         date: LTC[0].
+      //       }],
+      //     },
+      //     {
+      //       id: 'ETH',
+      //       tags: ['hodl', 'pump', 'dump'],
+      //       totalHoldings: 1,
+      //       avgCost: 250,
+      //       transactions: [{ ...ETH[0], date: undefined, _id: undefined }],
+      //     },
+      //     {
+      //       id: 'BTC',
+      //       tags: ['hodl', 'pump', 'dump'],
+      //       totalHoldings: 1,
+      //       avgCost: 3500,
+      //       transactions: [{ ...BTC[0], date: undefined, _id: undefined }],
+      //     },
+      //   ],
+      // ]);
     });
   });
 });
