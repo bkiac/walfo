@@ -42,9 +42,7 @@ describe('Tags', () => {
       const newTags = ['brand', 'new'];
       tagsDoc = await Tags.addToSet(tagsDoc._id, newTags);
 
-      expect(JSON.stringify(tagsDoc.array.sort())).toEqual(
-        JSON.stringify([...tags, ...newTags].sort()),
-      );
+      expect([...tagsDoc.array].sort()).toEqual([...tags, ...newTags].sort());
     });
 
     it('should only add new elements', async () => {
@@ -54,9 +52,7 @@ describe('Tags', () => {
       const overlappingTags = ['overlapping', 'tags'];
       tagsDoc = await Tags.addToSet(tagsDoc._id, overlappingTags);
 
-      expect(JSON.stringify(tagsDoc.array.sort())).toEqual(
-        JSON.stringify([...tags, 'overlapping'].sort()),
-      );
+      expect([...tagsDoc.array].sort()).toEqual([...tags, 'overlapping'].sort());
     });
 
     it('should not add any elements', async () => {
@@ -66,7 +62,7 @@ describe('Tags', () => {
       const sameTags = ['brand', 'new', 'tags'];
       tagsDoc = await Tags.addToSet(tagsDoc._id, sameTags);
 
-      expect(JSON.stringify(tagsDoc.array.sort())).toEqual(JSON.stringify(tags.sort()));
+      expect([...tagsDoc.array].sort()).toEqual(tags.sort());
     });
   });
 });
