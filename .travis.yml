@@ -4,4 +4,4 @@ jobs:
       language: node_js
       node_js:
         - lts/*
-      script: "./backend/yarn test"
+      script: "sh -c 'cd ./backend && yarn test'"
