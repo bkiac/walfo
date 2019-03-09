@@ -2,6 +2,9 @@ jobs:
   include:
     - stage: Backend tests
       language: node_js
+      services: mongodb
       node_js:
         - lts/*
+      before_script:
+        - "yarn install"
       script: "sh -c 'cd ./backend && yarn test'"
