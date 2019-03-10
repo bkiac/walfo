@@ -14,12 +14,12 @@ exports.login = (req, res, next) => {
       return res.status(401).send({ message: 'Authentication failure' });
     }
 
-    return req.login(user, { session: false }, async (loginErr) => {
+    return req.login(user, { session: false }, async loginErr => {
       if (loginErr) {
         return next(loginErr);
       }
 
-      const portfolios = await Transaction.getPortfoliosByUserId(user._id);
+      const portfolios = await Transaction.getPortfolios(user._id);
       const userObject = {
         id: user._id,
         email: user.email,
