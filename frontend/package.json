@@ -18,9 +18,9 @@
     "prettier": "^1.16.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "watch": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --no-watch",
     "eject": "react-scripts eject"
   },
   "browserslist": [
