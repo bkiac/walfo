@@ -3,6 +3,10 @@ node_js:
   - lts/*
 jobs:
   include:
+    - stage: Backend tests
+      before_script:
+        - sh -c 'cd ./backend && yarn install'
+      script: sh -c 'cd ./backend && yarn test'
     - stage: Frontend tests
       before_script:
         - sh -c 'cd ./frontend && yarn install'
