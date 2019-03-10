@@ -3,9 +3,12 @@
 
 node_modules/
 
-/coverage
+coverage/
 
-/build
+build/
+
+backend/public/*
+!backend/public/.gitkeep
 
 .DS_Store
 *.env

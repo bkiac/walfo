@@ -1,8 +1,9 @@
 const express = require('express');
-// const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 const expressValidator = require('express-validator');
+const path = require('path');
+const cors = require('cors');
 
 // Creates the Express app
 const app = express();
@@ -14,12 +15,15 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Exposes methods used for data validation.
 app.use(expressValidator());
 
-// Populate `req.cookies` with any cookies that came along with the request
-// app.use(cookieParser());
-
 // Passport for login
 app.use(passport.initialize());
 app.use(passport.session());
+
+// CORS
+app.use(cors({ credentials: true, origin: true }));
+
+// Serve public files
+app.use(express.static('public'));
 
 // Import models
 require('./models/User');
@@ -29,8 +33,12 @@ require('./models/Tags');
 // Import configs
 require('./config/passport');
 
-// After the middleware, we handle our own routes
+// Routes
 app.use('/api', require('./routes'));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve('public', 'index.html'));
+});
 
 // Handle invalid routes
 app.use((req, res, next) => {
@@ -40,7 +48,6 @@ app.use((req, res, next) => {
 });
 
 // Catch errors
-// eslint-disable-next-line no-unused-vars
 app.use((err, req, res) => {
   res.locals.mesage = err.message;
   res.locals.error = process.env.NODE_ENV === 'development' ? err : {};
