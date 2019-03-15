@@ -2,7 +2,14 @@ const mongoose = require('mongoose');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 
-const Transaction = mongoose.model('Transaction');
+const User = mongoose.model('User');
+
+exports.register = async (req, res, next) => {
+  const { email, password } = req.body;
+  await User.create({ email, password });
+
+  next(); // pass to authController.login
+};
 
 exports.login = (req, res, next) => {
   passport.authenticate('local', { session: false }, (err, user) => {
@@ -19,15 +26,8 @@ exports.login = (req, res, next) => {
         return next(loginErr);
       }
 
-      const portfolios = await Transaction.getPortfolios(user._id);
-      const userObject = {
-        id: user._id,
-        email: user.email,
-        portfolios,
-      };
-
-      const token = jwt.sign(userObject, process.env.JWT_SECRET);
-      return res.status(200).send({ user: userObject, token });
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+      return res.status(200).send({ email: user.email, token });
     });
   })(req, res);
 };

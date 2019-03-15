@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import TextField from '@material-ui/core/TextField';
 import { Field, Form, Formik } from 'formik';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
-import { register } from '../../api';
+import { register } from '../../services/authService';
+import { UserContext } from '../../contexts';
 
 function RegisterForm() {
+  const userContext = useContext(UserContext);
   return (
     <Formik
       initialValues={{
@@ -14,14 +16,12 @@ function RegisterForm() {
         confirmPassword: '',
       }}
       onSubmit={async values => {
-        const res = await register(values);
-        console.log(res);
+        const { success } = await register(values);
+        userContext.setUser(success);
       }}
     >
       {formik => (
         <Form onSubmit={formik.handleSubmit}>
-          <pre>{JSON.stringify(formik.values, null, 2)}</pre>
-
           <Grid container direction="column" alignItems="center">
             <Grid item>
               <Field name="email">
