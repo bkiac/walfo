@@ -15,8 +15,8 @@ function RegisterForm() {
         password: '',
         confirmPassword: '',
       }}
-      onSubmit={values => {
-        const { success } = register(values);
+      onSubmit={async values => {
+        const { success } = await register(values);
         userContext.setUser(success);
       }}
     >
