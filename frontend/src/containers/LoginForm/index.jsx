@@ -1,17 +1,12 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import TextField from '@material-ui/core/TextField';
 import { Field, Form, Formik } from 'formik';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
-import { UserContext } from '../../contexts';
-import { useApi } from '../../hooks';
-import { authApi } from '../../api';
+import { useLogin } from '../../hooks';
 
 function LoginForm() {
-  const userContext = useContext(UserContext);
-  const [response, fetch] = useApi(authApi.login, {}, false);
-
-  console.log(response);
+  const [, login] = useLogin();
 
   return (
     <Formik
@@ -20,7 +15,7 @@ function LoginForm() {
         password: '',
       }}
       onSubmit={values => {
-        fetch(values);
+        login(values);
       }}
     >
       {formik => (
