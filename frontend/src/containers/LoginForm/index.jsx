@@ -1,13 +1,12 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import TextField from '@material-ui/core/TextField';
 import { Field, Form, Formik } from 'formik';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
-import { login } from '../../services/authService';
-import { UserContext } from '../../contexts';
+import { useLogin } from '../../hooks';
 
 function LoginForm() {
-  const userContext = useContext(UserContext);
+  const [, login] = useLogin();
 
   return (
     <Formik
@@ -15,10 +14,8 @@ function LoginForm() {
         email: '',
         password: '',
       }}
-      onSubmit={async values => {
-        const { success } = await login(values);
-        if (success) userContext.setUser(success);
-        // TODO: if (failure) ...
+      onSubmit={values => {
+        login(values);
       }}
     >
       {formik => (
