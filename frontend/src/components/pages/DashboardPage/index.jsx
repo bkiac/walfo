@@ -1,17 +1,12 @@
 import React from 'react';
-import Button from '@material-ui/core/Button';
-import { useLogout } from '../../../hooks';
+import { Grid } from '@material-ui/core';
+import { Dashboard } from '../../containers';
 
 function DashboardPage() {
-  const logout = useLogout();
   return (
-    <>
-      <p>Dashboard</p>
-
-      <Button variant="contained" color="primary" onClick={logout}>
-        Logout
-      </Button>
-    </>
+    <Grid container direction="column" justify="flex-start" alignItems="center">
+      <Dashboard />
+    </Grid>
   );
 }
 
