@@ -5,12 +5,24 @@ import ColorHash from 'color-hash';
 
 const colorHash = new ColorHash();
 
-function Tag({ tag }) {
-  return <Chip label={tag} color="primary" style={{ backgroundColor: colorHash.hex(tag) }} />;
+function Tag({ tag, className }) {
+  return (
+    <Chip
+      className={className}
+      label={tag}
+      color="primary"
+      style={{ backgroundColor: colorHash.hex(tag) }}
+    />
+  );
 }
 
 Tag.propTypes = {
   tag: PropTypes.string.isRequired,
+  className: PropTypes.string,
+};
+
+Tag.defaultProps = {
+  className: '',
 };
 
 export default Tag;

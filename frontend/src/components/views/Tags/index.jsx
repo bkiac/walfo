@@ -2,12 +2,13 @@ import React from 'react';
 import * as PropTypes from 'prop-types';
 import { Paper } from '@material-ui/core';
 import Tag from '../Tag';
+import style from './style.module.scss';
 
 function Tags({ tags }) {
   return (
-    <Paper>
+    <Paper className={style.padding}>
       {tags.map(t => (
-        <Tag key={t} tag={t} />
+        <Tag className={style.margin} key={t} tag={t} />
       ))}
     </Paper>
   );
