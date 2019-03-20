@@ -38,7 +38,7 @@ function useApi(apiMethod, initialData, shouldFetchOnInit = true) {
   const isInitialMount = useRef(true);
   const [data, setData] = useState(initialData);
   const [fetchState, dispatch] = useReducer(fetchReducer, {
-    isLoading: false,
+    isLoading: shouldFetchOnInit,
     hasError: false,
     data: initialData,
   });

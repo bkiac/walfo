@@ -11,6 +11,10 @@ function UserProvider({ children }) {
   const userFromLocalStorage = JSON.parse(localStorage.getItem('user'));
   const [user, setUser] = useState(userFromLocalStorage);
 
+  if (userFromLocalStorage) {
+    axios.setBearerToken(user.token);
+  }
+
   function storeUser(newUser) {
     axios.setBearerToken(newUser.token);
     localStorage.setItem('user', JSON.stringify(newUser));
