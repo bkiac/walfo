@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { useApi } from './index';
+import useApi from './useApi';
 import { authApi } from '../api';
 import { UserContext } from '../contexts';
 
