@@ -1,10 +1,10 @@
 import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { isEmpty } from 'lodash';
-import { LoginForm, RegisterForm } from './containers';
-import { UserProvider } from './providers';
+import { LoginForm, RegisterForm } from './components/containers';
+import { UserProvider } from './components/providers';
 import { UserContext } from './contexts';
-import { DashboardPage } from './pages';
+import { DashboardPage } from './components/pages';
 
 function App() {
   return (

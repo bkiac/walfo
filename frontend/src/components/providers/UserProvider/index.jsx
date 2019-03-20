@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { UserContext } from '../../contexts';
-import axios from '../../utils/axios';
+import { UserContext } from '../../../contexts';
+import axios from '../../../utils/axios';
 
 /**
  * @todo: Fix unnecessary additional rerender due to new object creation in each render
