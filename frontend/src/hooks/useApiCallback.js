@@ -34,13 +34,13 @@ function fetchReducer(state, action) {
   }
 }
 
-function useApi(apiMethod, initialData, shouldFetchOnInit = true) {
+function useApiCallback(apiMethod) {
   const isInitialMount = useRef(true);
-  const [data, setData] = useState(initialData);
+  const [data, setData] = useState();
   const [fetchState, dispatch] = useReducer(fetchReducer, {
-    isLoading: shouldFetchOnInit,
+    isLoading: false,
     hasError: false,
-    data: initialData,
+    data: undefined,
   });
 
   useEffect(() => {
@@ -58,12 +58,8 @@ function useApi(apiMethod, initialData, shouldFetchOnInit = true) {
 
     // Send request if component is not currently unmounting
     // console.log({ isCancelled, isInitialMount: isInitialMount.current, shouldFetchOnInit });
-    if (!isCancelled) {
-      // Send request on every update, and skip request of on initial mount if the related flag is set
-      if (!(isInitialMount.current && !shouldFetchOnInit)) {
-        // console.log('Sending request');
-        sendRequest();
-      }
+    if (!isCancelled && !isInitialMount.current) {
+      sendRequest();
     }
 
     if (isInitialMount.current) {
@@ -79,4 +75,4 @@ function useApi(apiMethod, initialData, shouldFetchOnInit = true) {
   return [fetchState, setData];
 }
 
-export default useApi;
+export default useApiCallback;

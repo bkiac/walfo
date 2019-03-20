@@ -1,16 +1,16 @@
 import { useContext, useEffect, useState } from 'react';
-import useApi from './useApi';
 import { authApi } from '../api';
 import { UserContext } from '../contexts';
+import useApiCallback from './useApiCallback';
 
 function useRegister() {
   const userContext = useContext(UserContext);
   const [credentials, setCredentials] = useState();
-  const [response, fetch] = useApi(authApi.register, undefined, false);
+  const [response, register] = useApiCallback(authApi.register);
 
   useEffect(() => {
     if (credentials) {
-      fetch(credentials);
+      register(credentials);
     }
   }, [credentials]);
 
