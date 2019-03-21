@@ -5,12 +5,13 @@ import ColorHash from 'color-hash';
 
 const colorHash = new ColorHash();
 
-function Tag({ tag, className }) {
+function Tag({ tag, className, onDelete }) {
   return (
     <Chip
       className={className}
       label={tag}
       color="primary"
+      onDelete={onDelete}
       style={{ backgroundColor: colorHash.hex(tag) }}
     />
   );
@@ -18,10 +19,12 @@ function Tag({ tag, className }) {
 
 Tag.propTypes = {
   tag: PropTypes.string.isRequired,
+  onDelete: PropTypes.func,
   className: PropTypes.string,
 };
 
 Tag.defaultProps = {
+  onDelete: undefined,
   className: '',
 };
 

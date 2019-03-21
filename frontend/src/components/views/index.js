@@ -5,3 +5,6 @@ export { default as PositionValue } from './PositionValue';
 export { default as ProfitRatio } from './ProfitRatio';
 export { default as Transactions } from './Transactions';
 export { default as Transaction } from './Transaction';
+export { default as Debug } from './Debug';
+export { default as Tags } from './Tags';
+export { default as Tag } from './Tag';
