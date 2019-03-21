@@ -97,7 +97,7 @@ const pipelines = {
     {
       $project: {
         _id: 0,
-        id: '$_id',
+        symbol: '$_id',
         tags: '$tags',
         totalHoldings: '$totalHoldings',
         avgCost: { $divide: ['$costOfBoughtCoins', '$numOfBoughtCoins'] },

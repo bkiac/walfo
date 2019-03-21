@@ -9,7 +9,7 @@ export const transaction = PropTypes.shape({
 });
 
 export const position = PropTypes.shape({
-  id: PropTypes.string.isRequired,
+  symbol: PropTypes.string.isRequired,
   tags: PropTypes.arrayOf(PropTypes.string).isRequired,
   totalHoldings: PropTypes.number.isRequired,
   avgCost: PropTypes.number.isRequired,

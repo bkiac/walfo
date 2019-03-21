@@ -5,7 +5,7 @@ import Position from '../Position';
 
 function Positions({ positions, currentPrices }) {
   return positions.map(p => (
-    <Position key={p.id} position={p} currentPrice={currentPrices[p.id].USD} />
+    <Position key={p.symbol} position={p} currentPrice={currentPrices[p.symbol].USD} />
   ));
 }
 

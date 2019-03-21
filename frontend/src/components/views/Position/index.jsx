@@ -29,7 +29,7 @@ function Position({ position, currentPrice }) {
             className="margin-bottom-8"
           >
             <div>
-              {position.id} x{position.totalHoldings}
+              {position.symbol} x{position.totalHoldings}
             </div>
 
             <PositionValue value={position.totalHoldings * currentPrice} hasProfit={hasProfit} />
