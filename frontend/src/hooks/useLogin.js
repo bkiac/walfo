@@ -1,16 +1,16 @@
 import { useContext, useEffect, useState } from 'react';
-import useApi from './useApi';
 import { authApi } from '../api';
 import { UserContext } from '../contexts';
+import useApiCallback from './useApiCallback';
 
 function useLogin() {
   const userContext = useContext(UserContext);
   const [credentials, setCredentials] = useState();
-  const [response, fetch] = useApi(authApi.login, undefined, false);
+  const [response, login] = useApiCallback(authApi.login);
 
   useEffect(() => {
     if (credentials) {
-      fetch(credentials);
+      login(credentials);
     }
   }, [credentials]);
 

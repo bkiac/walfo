@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { Button, Drawer, List, ListItem, ListItemText } from '@material-ui/core';
-import { useApi, useLogout } from '../../../hooks';
+import { useApiOnMount, useLogout } from '../../../hooks';
 import { portfolioApi } from '../../../api';
 import { Spinner } from '../../views';
+import Portfolio from '../Portfolio';
 
 function Dashboard() {
   const logout = useLogout();
   const [isDrawOpen, setIsDrawOpen] = useState(false);
-  const [portfolios] = useApi(portfolioApi.getPortfolioNames);
+  const portfolios = useApiOnMount(portfolioApi.getPortfolioNames);
   const [selectedPortfolioIndex, setSelectedPortfolioIndex] = useState(0);
 
   function openDrawer() {
@@ -44,6 +45,8 @@ function Dashboard() {
       <Button variant="contained" color="primary" onClick={openDrawer}>
         open fiók
       </Button>
+
+      <Portfolio name={portfolios.data[selectedPortfolioIndex]} />
     </>
   );
 }
