@@ -9,6 +9,8 @@ const Transaction = mongoose.model('Transaction');
 exports.createTransactionValidators = [
   body('portfolio')
     .isString()
+    .not()
+    .isEmpty()
     .trim(),
   body('symbol')
     .isString()
