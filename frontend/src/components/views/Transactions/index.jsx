@@ -9,7 +9,7 @@ function Transactions({ transactions }) {
   return (
     <List className={style.width}>
       {transactions.map(t => (
-        <ListItem key={t._id} divider>
+        <ListItem key={t.id} divider>
           <Transaction transaction={t} />
         </ListItem>
       ))}

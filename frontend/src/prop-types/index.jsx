@@ -1,7 +1,7 @@
 import * as PropTypes from 'prop-types';
 
 export const transaction = PropTypes.shape({
-  _id: PropTypes.string.isRequired,
+  id: PropTypes.string.isRequired,
   date: PropTypes.string.isRequired,
   amount: PropTypes.number.isRequired,
   price: PropTypes.number.isRequired,

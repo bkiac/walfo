@@ -19,7 +19,7 @@ exports.getBasePortfolioData = async (req, res) => {
 
   const cost = positions.reduce((c, p) => c + p.avgCost * p.totalHoldings, 0);
 
-  res.status(200).send({ cost, positions });
+  res.status(200).send({ name: portfolio, cost, positions });
 };
 
 exports.getHistoricalPortfolioValues = async (req, res) => {

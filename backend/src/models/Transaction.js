@@ -55,6 +55,22 @@ const pipelines = {
     {
       $unwind: { path: '$tags' },
     },
+    // Add `id` field
+    {
+      $project: {
+        _id: 0,
+        id: '$_id',
+        user: '$user',
+        portfolio: '$portfolio',
+        symbol: '$symbol',
+        date: '$date',
+        amount: '$amount',
+        price: '$price',
+        type: '$type',
+        exchange: '$exchange',
+        tags: '$tags',
+      },
+    },
   ],
 
   groupByPosition: [
