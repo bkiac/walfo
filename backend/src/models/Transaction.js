@@ -79,7 +79,7 @@ const pipelines = {
       $group: {
         _id: '$symbol',
         tags: { $first: '$tags.array' },
-        totalHoldings: {
+        holdings: {
           $sum: {
             $cond: {
               if: { $eq: ['BUY', '$type'] },
@@ -88,7 +88,7 @@ const pipelines = {
             },
           },
         },
-        costOfBoughtCoins: {
+        cost: {
           $sum: {
             $cond: {
               if: { $eq: ['BUY', '$type'] },
@@ -97,26 +97,17 @@ const pipelines = {
             },
           },
         },
-        numOfBoughtCoins: {
-          $sum: {
-            $cond: {
-              if: { $eq: ['BUY', '$type'] },
-              then: '$amount',
-              else: 0,
-            },
-          },
-        },
         transactions: { $push: '$$ROOT' },
       },
     },
-    // Calculate average cost of a coin
+    // Set `id` field to symbol
     {
       $project: {
         _id: 0,
         symbol: '$_id',
         tags: '$tags',
-        totalHoldings: '$totalHoldings',
-        avgCost: { $divide: ['$costOfBoughtCoins', '$numOfBoughtCoins'] },
+        cost: '$cost',
+        holdings: '$holdings',
         transactions: '$transactions',
       },
     },

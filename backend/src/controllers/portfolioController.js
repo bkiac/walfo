@@ -16,10 +16,27 @@ exports.getBasePortfolioData = async (req, res) => {
   const { tags } = req.query;
 
   const positions = await Transaction.getPositions(user, portfolio, tags);
+  const portfolioCost = positions.reduce((c, p) => c + p.cost, 0);
 
-  const cost = positions.reduce((c, p) => c + p.avgCost * p.totalHoldings, 0);
+  const symbols = await Transaction.getSymbols(user);
+  const prices = cryptocompare.collectPriceMultiBatch(
+    await cryptocompare.priceMultiBatch(symbols, 'USD'),
+    'USD',
+  );
 
-  res.status(200).send({ name: portfolio, cost, positions });
+  const positionsWithPriceData = positions.map(p => {
+    const currentPrice = prices[p.symbol];
+    const value = p.holdings * currentPrice;
+    const avgProfitRatio = -(1 - value / p.cost);
+    return {
+      ...p,
+      currentPrice,
+      value,
+      avgProfitRatio,
+    };
+  });
+
+  res.status(200).send({ name: portfolio, cost: portfolioCost, positions: positionsWithPriceData });
 };
 
 exports.getHistoricalPortfolioValues = async (req, res) => {
@@ -67,33 +84,4 @@ exports.getHistoricalPortfolioValues = async (req, res) => {
   );
 
   return res.status(200).send(portfolioValuePerDay);
-};
-
-exports.getPortfolioDataWithPrices = async (req, res) => {
-  const { user } = req;
-  const { portfolio } = req.params;
-
-  const symbols = await Transaction.getAllSymbolsByUserIdAndPortfolio(user, portfolio);
-  const positions = await Transaction.getPositions(user, portfolio);
-  const prices = (await cryptocompare.priceMultiBatch(symbols, 'USD')).reduce((acc, pb) => ({
-    ...acc,
-    ...pb,
-  }));
-
-  let baseValue = 0;
-  let currentValue = 0;
-  let positionsBySymbol = {};
-  positions.forEach((p, i) => {
-    baseValue += p.avgCost * p.totalHoldings;
-    currentValue += prices[p._id].USD * p.totalHoldings;
-    positionsBySymbol = {
-      ...positionsBySymbol,
-      [positions[i]._id]: {
-        ...positions[i],
-        currentPrice: prices[p._id].USD,
-      },
-    };
-  });
-
-  res.status(200).send({ baseValue, currentValue, positions: positionsBySymbol });
 };
