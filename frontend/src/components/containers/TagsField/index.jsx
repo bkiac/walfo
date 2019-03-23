@@ -40,6 +40,8 @@ function TagsField({ initialTags, onChange }) {
         margin="normal"
         value={input}
         onChange={e => setInput(e.target.value)}
+        label="New tag"
+        placeholder="tag"
         onKeyDown={e => {
           const key = e.which || e.keyCode;
           if (key === 9) {

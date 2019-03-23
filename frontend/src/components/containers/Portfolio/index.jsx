@@ -1,26 +1,22 @@
-import React from 'react';
-import * as PropTypes from 'prop-types';
-import { portfolioApi, pricesApi } from '../../../api';
-import { useApiOnMount } from '../../../hooks';
+import React, { useContext } from 'react';
 import { Spinner, Positions } from '../../views';
+import { PortfolioContext } from '../../../contexts';
 
-function Portfolio({ name }) {
-  const portfolio = useApiOnMount(portfolioApi.getPortfolio, name);
-  const currentPrices = useApiOnMount(pricesApi.getCurrentPrices);
+function Portfolio() {
+  const { getPositionsList, prices, isLoading, getTransactionsForPosition } = useContext(
+    PortfolioContext,
+  );
 
-  if (
-    portfolio.isLoading ||
-    currentPrices.isLoading ||
-    portfolio.hasError ||
-    currentPrices.hasError
-  ) {
+  if (isLoading) {
     return <Spinner />;
   }
-  return <Positions positions={portfolio.data.positions} currentPrices={currentPrices.data} />;
+  return (
+    <Positions
+      positions={getPositionsList()}
+      getTransactionsForPosition={getTransactionsForPosition}
+      currentPrices={prices}
+    />
+  );
 }
-
-Portfolio.propTypes = {
-  name: PropTypes.string.isRequired,
-};
 
 export default Portfolio;

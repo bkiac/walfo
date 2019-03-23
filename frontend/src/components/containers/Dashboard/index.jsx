@@ -15,7 +15,7 @@ import { coinsApi, portfolioApi } from '../../../api';
 import { Spinner } from '../../views';
 import Portfolio from '../Portfolio';
 import TransactionForm from '../TransactionForm';
-import { CoinsProvider } from '../../providers';
+import { CoinsProvider, PortfolioProvider } from '../../providers';
 
 function Dashboard() {
   const logout = useLogout();
@@ -36,56 +36,58 @@ function Dashboard() {
     setIsDialogOpen(false);
   }
 
-  const portfolios = useApiOnMount(portfolioApi.getPortfolioNames);
+  const [portfolios] = useApiOnMount(portfolioApi.getPortfolioNames);
   const [selectedPortfolioIndex, setSelectedPortfolioIndex] = useState(0);
 
-  const coinList = useApiOnMount(coinsApi.getCoinList);
+  const [coinList] = useApiOnMount(coinsApi.getCoinList);
 
   if (portfolios.isLoading || portfolios.hasError || coinList.isLoading) {
     return <Spinner />;
   }
   return (
     <CoinsProvider initialCoins={coinList.data}>
-      <>
-        <Drawer open={isDrawOpen} onClose={closeDrawer}>
-          <List>
-            {portfolios.data.map((p, i) => (
-              <ListItem
-                key={p}
-                selected={i === selectedPortfolioIndex}
-                onClick={() => setSelectedPortfolioIndex(i)}
-              >
-                <ListItemText primary={p} />
-              </ListItem>
-            ))}
-          </List>
-        </Drawer>
+      <PortfolioProvider portfolioName={portfolios.data[selectedPortfolioIndex]}>
+        <>
+          <Drawer open={isDrawOpen} onClose={closeDrawer}>
+            <List>
+              {portfolios.data.map((p, i) => (
+                <ListItem
+                  key={p}
+                  selected={i === selectedPortfolioIndex}
+                  onClick={() => setSelectedPortfolioIndex(i)}
+                >
+                  <ListItemText primary={p} />
+                </ListItem>
+              ))}
+            </List>
+          </Drawer>
 
-        <Dialog open={isDialogOpen} onClose={closeDialog} fullWidth maxWidth="sm">
-          <DialogTitle>New Transaction</DialogTitle>
-          <DialogContent>
-            <TransactionForm portfolio={portfolios.data[selectedPortfolioIndex]} />
-          </DialogContent>
-        </Dialog>
+          <Dialog open={isDialogOpen} onClose={closeDialog} fullWidth maxWidth="md">
+            <DialogTitle>New Transaction</DialogTitle>
+            <DialogContent>
+              <TransactionForm portfolio={portfolios.data[selectedPortfolioIndex]} />
+            </DialogContent>
+          </Dialog>
 
-        <Grid item>
-          <Grid container direction="row" justify="center" alignItems="flex-start">
-            <Button variant="contained" color="primary" onClick={logout}>
-              Logout
-            </Button>
+          <Grid item>
+            <Grid container direction="row" justify="center" alignItems="flex-start">
+              <Button variant="contained" color="primary" onClick={logout}>
+                Logout
+              </Button>
 
-            <Button variant="contained" color="primary" onClick={openDrawer}>
-              open fiók
-            </Button>
+              <Button variant="contained" color="primary" onClick={openDrawer}>
+                open fiók
+              </Button>
 
-            <Button variant="contained" color="primary" onClick={openDialog}>
-              new tx
-            </Button>
+              <Button variant="contained" color="primary" onClick={openDialog}>
+                new tx
+              </Button>
+            </Grid>
           </Grid>
-        </Grid>
 
-        <Portfolio name={portfolios.data[selectedPortfolioIndex]} />
-      </>
+          <Portfolio />
+        </>
+      </PortfolioProvider>
     </CoinsProvider>
   );
 }

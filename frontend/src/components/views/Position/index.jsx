@@ -14,7 +14,7 @@ import ProfitRatio from '../ProfitRatio';
 import Transactions from '../Transactions';
 import style from './style.module.scss';
 
-function Position({ position, currentPrice }) {
+function Position({ position, transactions, currentPrice }) {
   const hasProfit = currentPrice > position.avgCost;
   const profitRatio = -(1 - currentPrice / position.avgCost);
   return (
@@ -42,7 +42,7 @@ function Position({ position, currentPrice }) {
       </ExpansionPanelSummary>
 
       <ExpansionPanelDetails>
-        <Transactions transactions={position.transactions} />
+        <Transactions transactions={transactions} />
       </ExpansionPanelDetails>
     </ExpansionPanel>
   );
@@ -51,6 +51,7 @@ function Position({ position, currentPrice }) {
 Position.propTypes = {
   position: OwnTypes.position.isRequired,
   currentPrice: PropTypes.number.isRequired,
+  transactions: PropTypes.arrayOf(OwnTypes.transaction).isRequired,
 };
 
 export default Position;

@@ -13,5 +13,5 @@ export const position = PropTypes.shape({
   tags: PropTypes.arrayOf(PropTypes.string).isRequired,
   totalHoldings: PropTypes.number.isRequired,
   avgCost: PropTypes.number.isRequired,
-  transactions: PropTypes.arrayOf(transaction).isRequired,
+  transactions: PropTypes.arrayOf(PropTypes.string).isRequired,
 });
