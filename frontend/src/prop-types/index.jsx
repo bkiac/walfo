@@ -10,8 +10,11 @@ export const transaction = PropTypes.shape({
 
 export const position = PropTypes.shape({
   symbol: PropTypes.string.isRequired,
+  cost: PropTypes.number.isRequired,
+  value: PropTypes.number.isRequired,
+  currentPrice: PropTypes.number.isRequired,
+  avgProfitRatio: PropTypes.number.isRequired,
   tags: PropTypes.arrayOf(PropTypes.string).isRequired,
-  totalHoldings: PropTypes.number.isRequired,
-  avgCost: PropTypes.number.isRequired,
+  holdings: PropTypes.number.isRequired,
   transactions: PropTypes.arrayOf(PropTypes.string).isRequired,
 });

@@ -5,5 +5,5 @@ export function getPortfolioNames() {
 }
 
 export function getPortfolio(portfolio) {
-  return axios.get(`/portfolios/${portfolio}/base`);
+  return axios.get(`/portfolios/${portfolio}`);
 }
