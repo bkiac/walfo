@@ -3,7 +3,7 @@ import * as PropTypes from 'prop-types';
 import { normalize, schema } from 'normalizr';
 import { PortfolioContext } from '../../../contexts';
 import { useApiOnMount, useIsLoading } from '../../../hooks';
-import { portfolioApi, pricesApi } from '../../../api';
+import { portfolioApi } from '../../../api';
 
 const transactionSchema = new schema.Entity('transactions');
 const positionSchema = new schema.Entity(
@@ -26,9 +26,13 @@ function PortfolioProvider({ portfolioName, children }) {
     portfolioApi.getPortfolio,
     portfolioName,
   );
-  const [pricesResponse] = useApiOnMount(pricesApi.getCurrentPrices);
-  const isLoading = useIsLoading([portfolioResponse, pricesResponse]);
+  const isLoading = useIsLoading([portfolioResponse]);
 
+  console.log(portfolioResponse);
+
+  /**
+   * Normalize response data and
+   */
   let portfolio;
   let transactions;
   let positions;
@@ -55,7 +59,6 @@ function PortfolioProvider({ portfolioName, children }) {
         getTransactionsForPosition,
         positions,
         getPositionsList,
-        prices: pricesResponse.data,
       }}
     >
       {children}

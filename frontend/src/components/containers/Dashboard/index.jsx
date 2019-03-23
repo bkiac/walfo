@@ -65,7 +65,7 @@ function Dashboard() {
           <Dialog open={isDialogOpen} onClose={closeDialog} fullWidth maxWidth="md">
             <DialogTitle>New Transaction</DialogTitle>
             <DialogContent>
-              <TransactionForm portfolio={portfolios.data[selectedPortfolioIndex]} />
+              <TransactionForm onSuccess={closeDialog} />
             </DialogContent>
           </Dialog>
 

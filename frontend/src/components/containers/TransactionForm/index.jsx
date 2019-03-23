@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import { TextField, Grid, Fab, MenuItem } from '@material-ui/core';
 import { Add as AddIcon } from '@material-ui/icons';
 import { Field, Form, Formik } from 'formik';
@@ -8,10 +8,23 @@ import TagsField from '../TagsField';
 import CoinField from '../CoinField';
 import { useApiCallback } from '../../../hooks';
 import { transactionApi } from '../../../api';
+import { PortfolioContext } from '../../../contexts';
+import Debug from '../../views/Debug';
 
-function TransactionForm({ portfolio }) {
-  const [, createTx] = useApiCallback(transactionApi.createTransaction);
+function TransactionForm({ onSuccess }) {
+  const [response, createTx] = useApiCallback(transactionApi.createTransaction);
+  const { isLoading, portfolioName, positions, refreshPortfolio } = useContext(PortfolioContext);
 
+  useEffect(() => {
+    if (response.hasSuccess) {
+      onSuccess();
+      refreshPortfolio();
+    }
+  }, [response.hasSuccess]);
+
+  if (isLoading) {
+    return null;
+  }
   return (
     <Formik
       initialValues={{
@@ -20,12 +33,12 @@ function TransactionForm({ portfolio }) {
         price: '',
         type: 'BUY',
         date: dayjs().format('YYYY-MM-DD'),
-        portfolio,
-        tags: ['todo', 'query', 'position', 'tags'],
+        portfolio: portfolioName,
+        tags: [],
       }}
       onSubmit={tx => createTx(tx)}
     >
-      {({ handleSubmit, initialValues, setFieldValue, isValid }) => (
+      {({ handleSubmit, values, setFieldValue, isValid }) => (
         <Form onSubmit={handleSubmit}>
           <Grid container direction="column" justify="flex-start" alignItems="center">
             <Grid item className="width-100p">
@@ -94,7 +107,7 @@ function TransactionForm({ portfolio }) {
                   <TagsField
                     {...field}
                     onChange={tags => setFieldValue('tags', tags)}
-                    initialTags={initialValues.tags}
+                    initialTags={positions[values.symbol] ? positions[values.symbol].tags : []}
                   />
                 )}
               </Field>
@@ -105,6 +118,8 @@ function TransactionForm({ portfolio }) {
             <AddIcon />
             Create new transaction
           </Fab>
+
+          <Debug any={values} />
         </Form>
       )}
     </Formik>
@@ -112,7 +127,7 @@ function TransactionForm({ portfolio }) {
 }
 
 TransactionForm.propTypes = {
-  portfolio: PropTypes.string.isRequired,
+  onSuccess: PropTypes.func.isRequired,
 };
 
 export default TransactionForm;
