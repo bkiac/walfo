@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 
 const FetchActionType = Object.freeze({
   REQUEST: 'REQUEST',
@@ -38,8 +38,13 @@ function useApiOnMount(apiMethod, data) {
   const [fetchState, dispatch] = useReducer(fetchReducer, {
     isLoading: true,
     hasError: false,
-    data,
+    data: undefined,
   });
+  const [numOfCalls, setNumOfCalls] = useState(1);
+
+  function repeatCall() {
+    setNumOfCalls(numOfCalls + 1);
+  }
 
   useEffect(() => {
     let isCancelled = false;
@@ -62,9 +67,9 @@ function useApiOnMount(apiMethod, data) {
     return () => {
       isCancelled = true;
     };
-  }, [data]);
+  }, [data, numOfCalls]);
 
-  return fetchState;
+  return [fetchState, repeatCall];
 }
 
 export default useApiOnMount;
