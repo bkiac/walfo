@@ -28,8 +28,6 @@ function PortfolioProvider({ portfolioName, children }) {
   );
   const isLoading = useIsLoading([portfolioResponse]);
 
-  console.log(portfolioResponse);
-
   /**
    * Normalize response data and
    */

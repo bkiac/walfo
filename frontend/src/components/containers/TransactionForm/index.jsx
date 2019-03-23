@@ -9,7 +9,6 @@ import CoinField from '../CoinField';
 import { useApiCallback } from '../../../hooks';
 import { transactionApi } from '../../../api';
 import { PortfolioContext } from '../../../contexts';
-import Debug from '../../views/Debug';
 
 function TransactionForm({ onSuccess }) {
   const [response, createTx] = useApiCallback(transactionApi.createTransaction);
@@ -118,8 +117,6 @@ function TransactionForm({ onSuccess }) {
             <AddIcon />
             Create new transaction
           </Fab>
-
-          <Debug any={values} />
         </Form>
       )}
     </Formik>
