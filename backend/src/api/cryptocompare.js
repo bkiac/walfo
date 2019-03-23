@@ -86,11 +86,14 @@ function priceMultiBatch(fsyms, tsyms, options) {
   return Promise.all(prices);
 }
 
-function collectPriceMultiBatch(priceMultiBatchResult) {
-  return priceMultiBatchResult.reduce((p, pb) => ({
-    ...p,
-    ...pb,
-  }));
+function collectPriceMultiBatch(priceMultiBatchResult, tsym) {
+  return priceMultiBatchResult.reduce((prices, batch) => {
+    const pricesCollectedByTsym = Object.keys(batch).reduce(
+      (p, fsym) => ({ ...p, [fsym]: batch[fsym][tsym] }),
+      {},
+    );
+    return { ...prices, ...pricesCollectedByTsym };
+  }, {});
 }
 
 function priceFull(fsyms, tsyms, options = {}) {

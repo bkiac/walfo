@@ -9,6 +9,7 @@ exports.getCurrentPrices = async (req, res) => {
   const symbols = await Transaction.getSymbols(user);
   const prices = cryptocompare.collectPriceMultiBatch(
     await cryptocompare.priceMultiBatch(symbols, 'USD'),
+    'USD',
   );
 
   return res.status(200).send(prices);
