@@ -5,37 +5,20 @@ import {
   ExpansionPanelDetails,
   Grid,
 } from '@material-ui/core';
-import { ExpandMore } from '@material-ui/icons';
+import { ExpandMore as ExpandMoreIcon } from '@material-ui/icons';
 import * as PropTypes from 'prop-types';
 import * as OwnTypes from '../../../prop-types';
 import Tags from '../Tags';
-import PositionValue from '../PositionValue';
-import ProfitRatio from '../ProfitRatio';
 import Transactions from '../Transactions';
 import style from './style.module.scss';
+import PositionSummary from '../PositionSummary';
 
-function Position({ position, transactions, currentPrice }) {
-  const hasProfit = currentPrice > position.avgCost;
-  const profitRatio = -(1 - currentPrice / position.avgCost);
+function Position({ position, transactions }) {
   return (
     <ExpansionPanel className={style.width}>
-      <ExpansionPanelSummary expandIcon={<ExpandMore />}>
+      <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
         <Grid container direction="column" justify="flex-start" alignItems="flex-start" spacing={8}>
-          <Grid
-            container
-            direction="row"
-            justify="space-between"
-            alignItems="center"
-            className="margin-bottom-8"
-          >
-            <div>
-              {position.symbol} x{position.totalHoldings}
-            </div>
-
-            <PositionValue value={position.totalHoldings * currentPrice} hasProfit={hasProfit} />
-
-            <ProfitRatio profitRatio={profitRatio} />
-          </Grid>
+          <PositionSummary position={position} />
 
           <Tags tags={position.tags} />
         </Grid>
@@ -50,7 +33,6 @@ function Position({ position, transactions, currentPrice }) {
 
 Position.propTypes = {
   position: OwnTypes.position.isRequired,
-  currentPrice: PropTypes.number.isRequired,
   transactions: PropTypes.arrayOf(OwnTypes.transaction).isRequired,
 };
 

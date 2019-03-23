@@ -3,14 +3,9 @@ import * as PropTypes from 'prop-types';
 import * as OwnTypes from '../../../prop-types';
 import Position from '../Position';
 
-function Positions({ positions, getTransactionsForPosition, currentPrices }) {
+function Positions({ positions, getTransactionsForPosition }) {
   return positions.map(p => (
-    <Position
-      key={p.symbol}
-      position={p}
-      transactions={getTransactionsForPosition(p.symbol)}
-      currentPrice={currentPrices[p.symbol]}
-    />
+    <Position key={p.symbol} position={p} transactions={getTransactionsForPosition(p.symbol)} />
   ));
 }
 
