@@ -5,12 +5,12 @@ import * as OwnTypes from '../../../prop-types';
 import Transaction from '../Transaction';
 import style from './style.module.scss';
 
-function Transactions({ transactions }) {
+function Transactions({ transactions, editTransaction }) {
   return (
     <List className={style.width}>
       {transactions.map(t => (
         <ListItem key={t.id} divider>
-          <Transaction transaction={t} />
+          <Transaction transaction={t} edit={editTransaction} />
         </ListItem>
       ))}
     </List>
@@ -19,6 +19,7 @@ function Transactions({ transactions }) {
 
 Transactions.propTypes = {
   transactions: PropTypes.arrayOf(OwnTypes.transaction).isRequired,
+  editTransaction: PropTypes.func.isRequired,
 };
 
 export default Transactions;

@@ -13,7 +13,7 @@ import Transactions from '../Transactions';
 import style from './style.module.scss';
 import PositionSummary from '../PositionSummary';
 
-function Position({ position, transactions }) {
+function Position({ position, transactions, editTransaction }) {
   return (
     <ExpansionPanel className={style.width}>
       <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
@@ -25,7 +25,7 @@ function Position({ position, transactions }) {
       </ExpansionPanelSummary>
 
       <ExpansionPanelDetails>
-        <Transactions transactions={transactions} />
+        <Transactions transactions={transactions} editTransaction={editTransaction} />
       </ExpansionPanelDetails>
     </ExpansionPanel>
   );
@@ -34,6 +34,7 @@ function Position({ position, transactions }) {
 Position.propTypes = {
   position: OwnTypes.position.isRequired,
   transactions: PropTypes.arrayOf(OwnTypes.transaction).isRequired,
+  editTransaction: PropTypes.func.isRequired,
 };
 
 export default Position;

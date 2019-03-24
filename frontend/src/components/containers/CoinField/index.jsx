@@ -1,9 +1,9 @@
-/* eslint-disable react/prop-types */
 import React, { useContext } from 'react';
 import deburr from 'lodash/deburr';
 import Downshift from 'downshift';
 import { TextField, Paper, MenuItem } from '@material-ui/core';
 import { CoinsContext } from '../../../contexts';
+import * as PropTypes from 'prop-types';
 
 function renderInput(inputProps) {
   const { InputProps, ref, ...other } = inputProps;
@@ -56,10 +56,16 @@ function getSuggestions(data, value) {
       });
 }
 
-function CoinField({ onChange }) {
-  const { coinListForInput } = useContext(CoinsContext);
+function CoinField({ onChange, value: initialSymbol, disabled }) {
+  const { coins, coinListForInput } = useContext(CoinsContext);
+  const initialCoin = coins[initialSymbol];
+  const initialSelectedItem = initialCoin
+    ? { label: initialCoin.FullName, value: initialSymbol }
+    : undefined;
+
   return (
     <Downshift
+      initialSelectedItem={initialSelectedItem}
       onChange={selection => onChange(selection.value)}
       itemToString={item => (item ? item.label : '')}
     >
@@ -77,10 +83,10 @@ function CoinField({ onChange }) {
             label: 'Coin',
             margin: 'normal',
             variant: 'outlined',
-            helperText: 'Please select your coin',
             fullWidth: true,
             InputProps: getInputProps({
               placeholder: 'Bitcoin (BTC)',
+              disabled,
             }),
           })}
           <div {...getMenuProps()}>
@@ -103,5 +109,16 @@ function CoinField({ onChange }) {
     </Downshift>
   );
 }
+
+CoinField.propTypes = {
+  onChange: PropTypes.func.isRequired,
+  value: PropTypes.string,
+  disabled: PropTypes.bool,
+};
+
+CoinField.defaultProps = {
+  value: '',
+  disabled: false,
+};
 
 export default CoinField;

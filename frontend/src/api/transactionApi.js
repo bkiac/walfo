@@ -4,10 +4,10 @@ export function createTransaction(transaction) {
   return axios.post('/transactions', transaction);
 }
 
-export function updateTransaction(transaction) {
-  return axios.put(`/transactions/${transaction._id}`, transaction);
+export function updateTransaction({ id, amount, price, tags, date }) {
+  return axios.put(`/transactions/${id}`, { amount, price, tags, date });
 }
 
 export function deleteTransaction(transaction) {
-  return axios.delete(`/transactions/${transaction._id}`, transaction);
+  return axios.delete(`/transactions/${transaction.id}`, transaction);
 }

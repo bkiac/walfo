@@ -1,12 +1,13 @@
 import React from 'react';
 import { Fab, Grid } from '@material-ui/core';
 import { Edit as EditIcon, Remove as RemoveIcon } from '@material-ui/icons';
+import * as PropTypes from 'prop-types';
 import * as OwnTypes from '../../../prop-types';
 import style from './style.module.scss';
 import { formatDate } from '../../../formats';
 import PriceAndAmount from '../PriceAndAmount';
 
-function Transaction({ transaction: tx }) {
+function Transaction({ transaction: tx, edit }) {
   const formattedDate = formatDate(tx.date);
   return (
     <Grid
@@ -30,7 +31,7 @@ function Transaction({ transaction: tx }) {
 
       <Grid item xs={2}>
         <Grid container direction="row" justify="space-between" alignItems="center">
-          <Fab color="primary" size="small" aria-label="Edit">
+          <Fab color="primary" size="small" aria-label="Edit" onClick={() => edit(tx.id)}>
             <EditIcon />
           </Fab>
 
@@ -45,6 +46,7 @@ function Transaction({ transaction: tx }) {
 
 Transaction.propTypes = {
   transaction: OwnTypes.transaction.isRequired,
+  edit: PropTypes.func.isRequired,
 };
 
 export default Transaction;

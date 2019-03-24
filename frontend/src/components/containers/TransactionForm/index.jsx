@@ -1,59 +1,55 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { TextField, Grid, Fab, MenuItem } from '@material-ui/core';
-import { Add as AddIcon } from '@material-ui/icons';
+import { Add as AddIcon, Edit as EditIcon } from '@material-ui/icons';
 import { Field, Form, Formik } from 'formik';
 import dayjs from 'dayjs';
 import * as PropTypes from 'prop-types';
 import TagsField from '../TagsField';
 import CoinField from '../CoinField';
-import { PortfolioContext } from '../../../contexts';
+import { useApiCallback } from '../../../hooks';
+import * as OwnTypes from '../../../prop-types';
 
-function TransactionForm({ onSuccess, transactionId, isInitial }) {
-  const {
-    isLoading,
-    portfolioName,
-    positions,
-    transactions,
-    transactionApi: { create, update },
-  } = useContext(PortfolioContext);
-
-  const [createResponse, createRequest] = create;
-  const [updateResponse, updateRequest] = update;
-
+function TransactionForm({
+  onSubmit,
+  onSuccess,
+  initialValues,
+  shouldCreateNewPortfolio,
+  portfolioName,
+  positions,
+}) {
+  const [response, request] = useApiCallback(onSubmit);
   useEffect(() => {
-    if ((createResponse.hasSuccess || updateResponse.hasSuccess) && onSuccess) {
-      onSuccess();
+    if (response.hasSuccess && onSuccess) {
+      onSuccess(response.data);
     }
-  }, [createResponse.hasSuccess, updateResponse.hasSuccess]);
-
-  // Don't render the form if portfolio context is still loading
-  if (isLoading) {
-    return null;
-  }
-
-  const tx = transactions[transactionId];
-  const initialValues = tx
-    ? { ...tx, date: dayjs(tx.date).format('YYYY-MM-DD'), portfolio: portfolioName }
-    : {
-        symbol: '',
-        amount: '',
-        price: '',
-        type: 'BUY',
-        date: dayjs().format('YYYY-MM-DD'),
-        portfolio: portfolioName,
-        tags: [],
-      };
+  }, [response.hasSuccess]);
 
   return (
     <Formik
-      initialValues={initialValues}
-      onSubmit={inputTx => (tx ? updateRequest(inputTx) : createRequest(inputTx))}
+      initialValues={
+        initialValues
+          ? {
+              ...initialValues,
+              date: dayjs(initialValues.date).format('YYYY-MM-DD'),
+              portfolio: portfolioName,
+            }
+          : {
+              symbol: '',
+              amount: '',
+              price: '',
+              type: 'BUY',
+              date: dayjs().format('YYYY-MM-DD'),
+              portfolio: portfolioName,
+              tags: [],
+            }
+      }
+      onSubmit={inputTx => request(inputTx)}
     >
-      {({ handleSubmit, values, setFieldValue, isValid }) => (
+      {({ handleSubmit, setFieldValue, isValid, values }) => (
         <Form onSubmit={handleSubmit}>
           <Grid container direction="column" justify="flex-start" alignItems="center">
-            {isInitial && (
-              <Field name="portfolioName">
+            {shouldCreateNewPortfolio && (
+              <Field name="portfolio">
                 {({ field }) => (
                   <TextField
                     {...field}
@@ -69,7 +65,11 @@ function TransactionForm({ onSuccess, transactionId, isInitial }) {
             <Grid item className="width-100p">
               <Field name="symbol">
                 {({ field }) => (
-                  <CoinField {...field} onChange={symbol => setFieldValue('symbol', symbol)} />
+                  <CoinField
+                    {...field}
+                    onChange={symbol => setFieldValue('symbol', symbol)}
+                    disabled={initialValues !== undefined}
+                  />
                 )}
               </Field>
             </Grid>
@@ -78,9 +78,16 @@ function TransactionForm({ onSuccess, transactionId, isInitial }) {
               <Grid container direction="row" justify="space-between" alignItems="flex-start">
                 <Field name="type">
                   {({ field }) => (
-                    <TextField {...field} select label="Type" margin="normal" variant="outlined">
+                    <TextField
+                      {...field}
+                      select
+                      label="Type"
+                      margin="normal"
+                      variant="outlined"
+                      disabled={initialValues !== undefined}
+                    >
                       <MenuItem value="BUY">Buy</MenuItem>
-                      <MenuItem value="SELL">Sell</MenuItem>
+                      {shouldCreateNewPortfolio ? null : <MenuItem value="SELL">Sell</MenuItem>}
                     </TextField>
                   )}
                 </Field>
@@ -131,8 +138,10 @@ function TransactionForm({ onSuccess, transactionId, isInitial }) {
                 {({ field }) => (
                   <TagsField
                     {...field}
+                    initialTags={
+                      positions && positions[values.symbol] ? positions[values.symbol].tags : []
+                    }
                     onChange={tags => setFieldValue('tags', tags)}
-                    initialTags={positions[values.symbol] ? positions[values.symbol].tags : []}
                   />
                 )}
               </Field>
@@ -140,8 +149,8 @@ function TransactionForm({ onSuccess, transactionId, isInitial }) {
           </Grid>
 
           <Fab type="submit" variant="extended" color="primary" disabled={!isValid}>
-            <AddIcon />
-            Create new transaction
+            {initialValues ? <EditIcon /> : <AddIcon />}
+            {initialValues ? 'Update transaction' : 'Create transaction'}
           </Fab>
         </Form>
       )}
@@ -150,15 +159,24 @@ function TransactionForm({ onSuccess, transactionId, isInitial }) {
 }
 
 TransactionForm.propTypes = {
+  onSubmit: PropTypes.func.isRequired,
   onSuccess: PropTypes.func,
-  transactionId: PropTypes.string,
-  isInitial: PropTypes.bool,
+
+  portfolioName: PropTypes.string,
+
+  // @todo: Conditional prop type: !shouldCreateNewPortfolio -> positions.isRequired
+  shouldCreateNewPortfolio: PropTypes.bool,
+  positions: PropTypes.objectOf(OwnTypes.position),
+
+  initialValues: OwnTypes.transaction,
 };
 
 TransactionForm.defaultProps = {
   onSuccess: undefined,
-  transactionId: undefined,
-  isInitial: false,
+  shouldCreateNewPortfolio: false,
+  initialValues: undefined,
+  portfolioName: '',
+  positions: undefined,
 };
 
 export default TransactionForm;

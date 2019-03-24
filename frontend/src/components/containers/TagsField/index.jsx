@@ -54,8 +54,12 @@ function TagsField({ initialTags, onChange }) {
 }
 
 TagsField.propTypes = {
-  initialTags: PropTypes.arrayOf(PropTypes.string).isRequired,
+  initialTags: PropTypes.arrayOf(PropTypes.string),
   onChange: PropTypes.func.isRequired,
+};
+
+TagsField.defaultProps = {
+  initialTags: [],
 };
 
 export default TagsField;

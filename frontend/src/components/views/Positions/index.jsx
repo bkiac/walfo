@@ -3,14 +3,21 @@ import * as PropTypes from 'prop-types';
 import * as OwnTypes from '../../../prop-types';
 import Position from '../Position';
 
-function Positions({ positions, getTransactionsForPosition }) {
+function Positions({ positions, getTransactionsForPosition, editTransaction }) {
   return positions.map(p => (
-    <Position key={p.symbol} position={p} transactions={getTransactionsForPosition(p.symbol)} />
+    <Position
+      key={p.symbol}
+      position={p}
+      transactions={getTransactionsForPosition(p.symbol)}
+      editTransaction={editTransaction}
+    />
   ));
 }
 
 Positions.propTypes = {
   positions: PropTypes.arrayOf(OwnTypes.position).isRequired,
+  getTransactionsForPosition: PropTypes.func.isRequired,
+  editTransaction: PropTypes.func.isRequired,
 };
 
 export default Positions;
