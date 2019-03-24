@@ -21,11 +21,17 @@ exports.getBasePortfolioData = async (req, res) => {
   const symbols = await Transaction.getSymbols(user);
   const prices = cryptocompare.collectPriceMultiBatch(
     await cryptocompare.priceMultiBatch(symbols, 'USD'),
-    'USD',
+  );
+  const simplifiedPrices = Object.entries(prices).reduce(
+    (sp, [symbol, { USD }]) => ({
+      ...sp,
+      [symbol]: USD,
+    }),
+    {},
   );
 
   const positionsWithPriceData = positions.map(p => {
-    const currentPrice = prices[p.symbol];
+    const currentPrice = simplifiedPrices[p.symbol];
     const value = p.holdings * currentPrice;
     const avgProfitMargin = -(1 - value / p.cost);
     return {
