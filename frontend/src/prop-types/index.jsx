@@ -13,7 +13,7 @@ export const position = PropTypes.shape({
   cost: PropTypes.number.isRequired,
   value: PropTypes.number.isRequired,
   currentPrice: PropTypes.number.isRequired,
-  avgProfitRatio: PropTypes.number.isRequired,
+  avgProfitMargin: PropTypes.number.isRequired,
   tags: PropTypes.arrayOf(PropTypes.string).isRequired,
   holdings: PropTypes.number.isRequired,
   transactions: PropTypes.arrayOf(PropTypes.string).isRequired,

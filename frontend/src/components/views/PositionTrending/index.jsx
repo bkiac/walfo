@@ -5,8 +5,8 @@ import * as PropTypes from 'prop-types';
 import { formatPercentage } from '../../../formats';
 import style from './style.module.scss';
 
-function PositionTrending({ profitRatio }) {
-  const hasProfit = profitRatio > 0;
+function PositionTrending({ profitMargin }) {
+  const hasProfit = profitMargin > 0;
   return (
     <Grid
       container
@@ -16,13 +16,13 @@ function PositionTrending({ profitRatio }) {
       className={hasProfit ? style.profit : style.loss}
     >
       {hasProfit ? <TrendingUpIcon /> : <TrendingDownIcon />}
-      <Typography variant="caption">{formatPercentage(profitRatio)}</Typography>
+      <Typography variant="caption">{formatPercentage(profitMargin)}</Typography>
     </Grid>
   );
 }
 
 PositionTrending.propTypes = {
-  profitRatio: PropTypes.number.isRequired,
+  profitMargin: PropTypes.number.isRequired,
 };
 
 export default PositionTrending;

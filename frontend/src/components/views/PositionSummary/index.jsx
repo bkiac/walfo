@@ -33,7 +33,7 @@ function PositionSummary({ position }) {
       </Grid>
 
       <Grid item>
-        <PositionTrending profitRatio={position.avgProfitRatio} />
+        <PositionTrending profitMargin={position.avgProfitMargin} />
       </Grid>
 
       {/* Current value */}

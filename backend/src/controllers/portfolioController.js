@@ -27,12 +27,12 @@ exports.getBasePortfolioData = async (req, res) => {
   const positionsWithPriceData = positions.map(p => {
     const currentPrice = prices[p.symbol];
     const value = p.holdings * currentPrice;
-    const avgProfitRatio = -(1 - value / p.cost);
+    const avgProfitMargin = -(1 - value / p.cost);
     return {
       ...p,
       currentPrice,
       value,
-      avgProfitRatio,
+      avgProfitMargin,
     };
   });
 
