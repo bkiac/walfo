@@ -16,21 +16,29 @@ function Transaction({ transaction: tx }) {
       alignItems="center"
       className={tx.type === 'SELL' ? style.sell : ''}
     >
-      <Grid item>{tx.type}</Grid>
+      <Grid item xs={1}>
+        {tx.type}
+      </Grid>
 
-      <Grid item>
+      <Grid item xs={5}>
         <PriceAndAmount price={tx.price} amount={tx.amount} />
       </Grid>
 
-      <Grid item>{formattedDate}</Grid>
+      <Grid item xs={4}>
+        {formattedDate}
+      </Grid>
 
-      <Fab color="primary" size="small" aria-label="Edit">
-        <EditIcon />
-      </Fab>
+      <Grid item xs={2}>
+        <Grid container direction="row" justify="space-between" alignItems="center">
+          <Fab color="primary" size="small" aria-label="Edit">
+            <EditIcon />
+          </Fab>
 
-      <Fab color="secondary" size="small" aria-label="Remove">
-        <RemoveIcon />
-      </Fab>
+          <Fab color="secondary" size="small" aria-label="Remove">
+            <RemoveIcon />
+          </Fab>
+        </Grid>
+      </Grid>
     </Grid>
   );
 }
