@@ -6,27 +6,35 @@ import dayjs from 'dayjs';
 import * as PropTypes from 'prop-types';
 import TagsField from '../TagsField';
 import CoinField from '../CoinField';
-import { useApiCallback } from '../../../hooks';
-import { transactionApi } from '../../../api';
 import { PortfolioContext } from '../../../contexts';
 
-function TransactionForm({ onSuccess }) {
-  const [response, createTx] = useApiCallback(transactionApi.createTransaction);
-  const { isLoading, portfolioName, positions, refreshPortfolio } = useContext(PortfolioContext);
+function TransactionForm({ onSuccess, transactionId, isInitial }) {
+  const {
+    isLoading,
+    portfolioName,
+    positions,
+    transactions,
+    transactionApi: { create, update },
+  } = useContext(PortfolioContext);
+
+  const [createResponse, createRequest] = create;
+  const [updateResponse, updateRequest] = update;
 
   useEffect(() => {
-    if (response.hasSuccess) {
+    if ((createResponse.hasSuccess || updateResponse.hasSuccess) && onSuccess) {
       onSuccess();
-      refreshPortfolio();
     }
-  }, [response.hasSuccess]);
+  }, [createResponse.hasSuccess, updateResponse.hasSuccess]);
 
+  // Don't render the form if portfolio context is still loading
   if (isLoading) {
     return null;
   }
-  return (
-    <Formik
-      initialValues={{
+
+  const tx = transactions[transactionId];
+  const initialValues = tx
+    ? { ...tx, date: dayjs(tx.date).format('YYYY-MM-DD'), portfolio: portfolioName }
+    : {
         symbol: '',
         amount: '',
         price: '',
@@ -34,12 +42,30 @@ function TransactionForm({ onSuccess }) {
         date: dayjs().format('YYYY-MM-DD'),
         portfolio: portfolioName,
         tags: [],
-      }}
-      onSubmit={tx => createTx(tx)}
+      };
+
+  return (
+    <Formik
+      initialValues={initialValues}
+      onSubmit={inputTx => (tx ? updateRequest(inputTx) : createRequest(inputTx))}
     >
       {({ handleSubmit, values, setFieldValue, isValid }) => (
         <Form onSubmit={handleSubmit}>
           <Grid container direction="column" justify="flex-start" alignItems="center">
+            {isInitial && (
+              <Field name="portfolioName">
+                {({ field }) => (
+                  <TextField
+                    {...field}
+                    label="Portfolio"
+                    margin="normal"
+                    variant="outlined"
+                    fullWidth
+                  />
+                )}
+              </Field>
+            )}
+
             <Grid item className="width-100p">
               <Field name="symbol">
                 {({ field }) => (
@@ -124,7 +150,15 @@ function TransactionForm({ onSuccess }) {
 }
 
 TransactionForm.propTypes = {
-  onSuccess: PropTypes.func.isRequired,
+  onSuccess: PropTypes.func,
+  transactionId: PropTypes.string,
+  isInitial: PropTypes.bool,
+};
+
+TransactionForm.defaultProps = {
+  onSuccess: undefined,
+  transactionId: undefined,
+  isInitial: false,
 };
 
 export default TransactionForm;
