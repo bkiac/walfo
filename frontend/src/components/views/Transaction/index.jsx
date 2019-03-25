@@ -7,7 +7,7 @@ import style from './style.module.scss';
 import { formatDate } from '../../../formats';
 import PriceAndAmount from '../PriceAndAmount';
 
-function Transaction({ transaction: tx, edit }) {
+function Transaction({ transaction: tx, edit, remove }) {
   const formattedDate = formatDate(tx.date);
   return (
     <Grid
@@ -35,7 +35,7 @@ function Transaction({ transaction: tx, edit }) {
             <EditIcon />
           </Fab>
 
-          <Fab color="secondary" size="small" aria-label="Remove">
+          <Fab color="secondary" size="small" aria-label="Remove" onClick={() => remove(tx.id)}>
             <RemoveIcon />
           </Fab>
         </Grid>
@@ -47,6 +47,7 @@ function Transaction({ transaction: tx, edit }) {
 Transaction.propTypes = {
   transaction: OwnTypes.transaction.isRequired,
   edit: PropTypes.func.isRequired,
+  remove: PropTypes.func.isRequired,
 };
 
 export default Transaction;

@@ -1,7 +1,7 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useContext } from 'react';
 import * as PropTypes from 'prop-types';
 import { normalize, schema } from 'normalizr';
-import { PortfolioContext } from '../../../contexts';
+import { DashboardContext, PortfolioContext } from '../../../contexts';
 import { useApiOnMount, useIsLoading } from '../../../hooks';
 import { portfolioApi } from '../../../api';
 import Spinner from '../../views/Spinner';
@@ -22,7 +22,14 @@ const portfolioSchema = new schema.Entity(
   { idAttribute: 'name' },
 );
 
-function PortfolioProvider({ portfolioName, children }) {
+function PortfolioProvider({ children }) {
+  const {
+    selectedPortfolio: portfolioName,
+    selectTransaction,
+    openFormDialog,
+    openConfirmationDialog,
+  } = useContext(DashboardContext);
+
   // Query portfolio
   const [portfolioResponse, refreshPortfolio] = useApiOnMount(
     portfolioApi.getPortfolio,
@@ -40,7 +47,7 @@ function PortfolioProvider({ portfolioName, children }) {
     ({ transactions, positions } = normalizedPortfolio.entities);
   }
 
-  // Memoize position and transaction lists
+  // Memoize getters
   const getPositionsList = useCallback(() => Object.values(positions), [portfolio]);
   const getTransactionsForPosition = useCallback(
     positionId => positions[positionId].transactions.map(txId => transactions[txId]),
@@ -50,6 +57,20 @@ function PortfolioProvider({ portfolioName, children }) {
     txId => getPositionsList().find(p => p.transactions.includes(txId)),
     [portfolio],
   );
+  const hasOnlyOneTransaction = useCallback(() => Object.values(transactions).length === 1, [
+    portfolio,
+  ]);
+
+  // API method dashboard action wrappers
+  function editTransaction(tx) {
+    selectTransaction(tx);
+    openFormDialog();
+  }
+
+  function removeTransaction(tx) {
+    selectTransaction(tx);
+    openConfirmationDialog();
+  }
 
   if (isLoading) {
     return <Spinner />;
@@ -59,9 +80,11 @@ function PortfolioProvider({ portfolioName, children }) {
       value={{
         isLoading,
         portfolioName,
-        portfolio,
+        hasOnlyOneTransaction,
         refreshPortfolio,
         transactions,
+        editTransaction,
+        removeTransaction,
         getTransactionsForPosition,
         getPositionByTransactionId,
         positions,
@@ -75,7 +98,6 @@ function PortfolioProvider({ portfolioName, children }) {
 
 PortfolioProvider.propTypes = {
   children: PropTypes.element.isRequired,
-  portfolioName: PropTypes.string.isRequired,
 };
 
 export default PortfolioProvider;

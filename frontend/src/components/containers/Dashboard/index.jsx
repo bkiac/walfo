@@ -4,12 +4,9 @@ import { coinsApi } from '../../../api';
 import { Spinner } from '../../views';
 import Portfolio from '../Portfolio';
 import { CoinsProvider, DashboardProvider, PortfolioProvider } from '../../providers';
-import DashboardNav from '../DashboardNav';
-import PortfoliosDrawer from '../PortfoliosDrawer';
-import TransactionDialog from '../TransactionDialog';
 import { DashboardContext } from '../../../contexts';
-import InitialTransactionForm from '../InitialTransactionForm';
 import style from './style.module.scss';
+import { PortfolioDialogs, DashboardNav, PortfoliosDrawer, InitialTransactionForm } from '../index';
 
 function Dashboard() {
   const [coinList] = useApiOnMount(coinsApi.getCoinList);
@@ -35,7 +32,7 @@ function Dashboard() {
                   <PortfolioProvider portfolioName={selectedPortfolio}>
                     <>
                       <Portfolio />
-                      <TransactionDialog />
+                      <PortfolioDialogs />
                     </>
                   </PortfolioProvider>
                 )

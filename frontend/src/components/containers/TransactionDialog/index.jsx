@@ -4,9 +4,9 @@ import AddTransactionToPortfolioForm from '../AddTransactionToPortfolioForm';
 import { DashboardContext } from '../../../contexts';
 
 function TransactionDialog() {
-  const { isDialogOpen, closeDialog } = useContext(DashboardContext);
+  const { isFormDialogOpen, closeDialog } = useContext(DashboardContext);
   return (
-    <Dialog open={isDialogOpen} onClose={closeDialog} fullWidth maxWidth="md">
+    <Dialog open={isFormDialogOpen} onClose={closeDialog} fullWidth maxWidth="md">
       <DialogTitle>New Transaction</DialogTitle>
       <DialogContent>
         <AddTransactionToPortfolioForm onSuccess={closeDialog} />

@@ -18,7 +18,8 @@ function DashboardProvider({ children }) {
   const [selectedTransaction, selectTransaction] = useState('');
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isFormDialogOpen, setIsFormDialogOpen] = useState(false);
+  const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] = useState(false);
 
   function openDrawer() {
     setIsDrawerOpen(true);
@@ -27,17 +28,16 @@ function DashboardProvider({ children }) {
     setIsDrawerOpen(false);
   }
 
-  function openDialog() {
-    setIsDialogOpen(true);
+  function openFormDialog() {
+    setIsFormDialogOpen(true);
+  }
+  function openConfirmationDialog() {
+    setIsConfirmationDialogOpen(true);
   }
   function closeDialog() {
     selectTransaction('');
-    setIsDialogOpen(false);
-  }
-
-  function editTransaction(tx) {
-    selectTransaction(tx);
-    openDialog();
+    setIsFormDialogOpen(false);
+    setIsConfirmationDialogOpen(false);
   }
 
   function selectPortfolio(portfolio) {
@@ -55,8 +55,10 @@ function DashboardProvider({ children }) {
         isDrawerOpen,
         openDrawer,
         closeDrawer,
-        isDialogOpen,
-        openDialog,
+        isFormDialogOpen,
+        isConfirmationDialogOpen,
+        openFormDialog,
+        openConfirmationDialog,
         closeDialog,
         NEW_PORTFOLIO,
         portfolios: portfolios.data,
@@ -64,7 +66,7 @@ function DashboardProvider({ children }) {
         selectedPortfolio: selectedPortfolio || defaultPortfolio,
         selectPortfolio,
         selectedTransaction,
-        editTransaction,
+        selectTransaction,
       }}
     >
       {children}

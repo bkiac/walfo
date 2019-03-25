@@ -8,6 +8,6 @@ export function updateTransaction({ id, amount, price, tags, date }) {
   return axios.put(`/transactions/${id}`, { amount, price, tags, date });
 }
 
-export function deleteTransaction(transaction) {
+export function removeTransaction(transaction) {
   return axios.delete(`/transactions/${transaction.id}`, transaction);
 }
