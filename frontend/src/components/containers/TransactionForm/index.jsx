@@ -1,37 +1,75 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { TextField, Grid, Fab, MenuItem } from '@material-ui/core';
-import { Add as AddIcon } from '@material-ui/icons';
+import { Add as AddIcon, Edit as EditIcon } from '@material-ui/icons';
 import { Field, Form, Formik } from 'formik';
 import dayjs from 'dayjs';
 import * as PropTypes from 'prop-types';
 import TagsField from '../TagsField';
 import CoinField from '../CoinField';
 import { useApiCallback } from '../../../hooks';
-import { transactionApi } from '../../../api';
+import * as OwnTypes from '../../../prop-types';
 
-function TransactionForm({ portfolio }) {
-  const [, createTx] = useApiCallback(transactionApi.createTransaction);
+function TransactionForm({
+  onSubmit,
+  onSuccess,
+  initialValues,
+  shouldCreateNewPortfolio,
+  portfolioName,
+  positions,
+}) {
+  const [response, request] = useApiCallback(onSubmit);
+  useEffect(() => {
+    if (response.hasSuccess && onSuccess) {
+      onSuccess(response.data);
+    }
+  }, [response.hasSuccess]);
 
   return (
     <Formik
-      initialValues={{
-        symbol: '',
-        amount: '',
-        price: '',
-        type: 'BUY',
-        date: dayjs().format('YYYY-MM-DD'),
-        portfolio,
-        tags: ['todo', 'query', 'position', 'tags'],
-      }}
-      onSubmit={tx => createTx(tx)}
+      initialValues={
+        initialValues
+          ? {
+              ...initialValues,
+              date: dayjs(initialValues.date).format('YYYY-MM-DD'),
+              portfolio: portfolioName,
+            }
+          : {
+              symbol: '',
+              amount: '',
+              price: '',
+              type: 'BUY',
+              date: dayjs().format('YYYY-MM-DD'),
+              portfolio: portfolioName,
+              tags: [],
+            }
+      }
+      onSubmit={inputTx => request(inputTx)}
     >
-      {({ handleSubmit, initialValues, setFieldValue, isValid }) => (
+      {({ handleSubmit, setFieldValue, isValid, values }) => (
         <Form onSubmit={handleSubmit}>
           <Grid container direction="column" justify="flex-start" alignItems="center">
+            {shouldCreateNewPortfolio && (
+              <Field name="portfolio">
+                {({ field }) => (
+                  <TextField
+                    {...field}
+                    label="Portfolio"
+                    margin="normal"
+                    variant="outlined"
+                    fullWidth
+                  />
+                )}
+              </Field>
+            )}
+
             <Grid item className="width-100p">
               <Field name="symbol">
                 {({ field }) => (
-                  <CoinField {...field} onChange={symbol => setFieldValue('symbol', symbol)} />
+                  <CoinField
+                    {...field}
+                    onChange={symbol => setFieldValue('symbol', symbol)}
+                    disabled={initialValues !== undefined}
+                  />
                 )}
               </Field>
             </Grid>
@@ -40,9 +78,16 @@ function TransactionForm({ portfolio }) {
               <Grid container direction="row" justify="space-between" alignItems="flex-start">
                 <Field name="type">
                   {({ field }) => (
-                    <TextField {...field} select label="Type" margin="normal" variant="outlined">
+                    <TextField
+                      {...field}
+                      select
+                      label="Type"
+                      margin="normal"
+                      variant="outlined"
+                      disabled={initialValues !== undefined}
+                    >
                       <MenuItem value="BUY">Buy</MenuItem>
-                      <MenuItem value="SELL">Sell</MenuItem>
+                      {shouldCreateNewPortfolio ? null : <MenuItem value="SELL">Sell</MenuItem>}
                     </TextField>
                   )}
                 </Field>
@@ -93,8 +138,10 @@ function TransactionForm({ portfolio }) {
                 {({ field }) => (
                   <TagsField
                     {...field}
+                    initialTags={
+                      positions && positions[values.symbol] ? positions[values.symbol].tags : []
+                    }
                     onChange={tags => setFieldValue('tags', tags)}
-                    initialTags={initialValues.tags}
                   />
                 )}
               </Field>
@@ -102,8 +149,8 @@ function TransactionForm({ portfolio }) {
           </Grid>
 
           <Fab type="submit" variant="extended" color="primary" disabled={!isValid}>
-            <AddIcon />
-            Create new transaction
+            {initialValues ? <EditIcon /> : <AddIcon />}
+            {initialValues ? 'Update transaction' : 'Create transaction'}
           </Fab>
         </Form>
       )}
@@ -112,7 +159,24 @@ function TransactionForm({ portfolio }) {
 }
 
 TransactionForm.propTypes = {
-  portfolio: PropTypes.string.isRequired,
+  onSubmit: PropTypes.func.isRequired,
+  onSuccess: PropTypes.func,
+
+  portfolioName: PropTypes.string,
+
+  // @todo: Conditional prop type: !shouldCreateNewPortfolio -> positions.isRequired
+  shouldCreateNewPortfolio: PropTypes.bool,
+  positions: PropTypes.objectOf(OwnTypes.position),
+
+  initialValues: OwnTypes.transaction,
+};
+
+TransactionForm.defaultProps = {
+  onSuccess: undefined,
+  shouldCreateNewPortfolio: false,
+  initialValues: undefined,
+  portfolioName: '',
+  positions: undefined,
 };
 
 export default TransactionForm;

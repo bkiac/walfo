@@ -1,7 +1,7 @@
 import * as PropTypes from 'prop-types';
 
 export const transaction = PropTypes.shape({
-  _id: PropTypes.string.isRequired,
+  id: PropTypes.string.isRequired,
   date: PropTypes.string.isRequired,
   amount: PropTypes.number.isRequired,
   price: PropTypes.number.isRequired,
@@ -10,8 +10,11 @@ export const transaction = PropTypes.shape({
 
 export const position = PropTypes.shape({
   symbol: PropTypes.string.isRequired,
+  cost: PropTypes.number.isRequired,
+  value: PropTypes.number.isRequired,
+  currentPrice: PropTypes.number.isRequired,
+  avgProfitMargin: PropTypes.number.isRequired,
   tags: PropTypes.arrayOf(PropTypes.string).isRequired,
-  totalHoldings: PropTypes.number.isRequired,
-  avgCost: PropTypes.number.isRequired,
-  transactions: PropTypes.arrayOf(transaction).isRequired,
+  holdings: PropTypes.number.isRequired,
+  transactions: PropTypes.arrayOf(PropTypes.string).isRequired,
 });

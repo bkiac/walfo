@@ -5,23 +5,23 @@ const Transaction = mongoose.model('Transaction');
 exports.createTransaction = async (req, res) => {
   const { user } = req;
 
-  await Transaction.create({ user, ...req.body });
+  const tx = await Transaction.create({ user, ...req.body });
 
-  res.status(201).send('New transaction created!');
+  res.status(201).send(tx);
 };
 
 exports.updateTransaction = async (req, res) => {
   const { id } = req.params;
 
-  await Transaction.findOneAndUpdate({ _id: id }, req.body);
+  const tx = await Transaction.findOneAndUpdate({ _id: id }, req.body, { new: true });
 
-  res.status(200).send('Transaction updated!');
+  res.status(200).send(tx);
 };
 
 exports.deleteTransaction = async (req, res) => {
   const { id } = req.params;
 
-  await Transaction.deleteOne({ _id: id });
+  const tx = await Transaction.findOneAndDelete({ _id: id });
 
-  res.status(200).send('Transaction deleted!');
+  res.status(200).send(tx);
 };

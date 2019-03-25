@@ -12,13 +12,14 @@ function fetchReducer(state, action) {
       return {
         ...state,
         isLoading: true,
+        hasSuccess: false,
         hasError: false,
       };
     case FetchActionType.SUCCESS:
       return {
         ...state,
         isLoading: false,
-        hasError: false,
+        hasSuccess: true,
         data: action.payload,
       };
     case FetchActionType.FAILURE:
@@ -40,6 +41,7 @@ function useApiCallback(apiMethod) {
   const [fetchState, dispatch] = useReducer(fetchReducer, {
     isLoading: false,
     hasError: false,
+    hasSuccess: false,
     data: undefined,
   });
 

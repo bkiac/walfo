@@ -42,7 +42,9 @@ exports.updateTransactionsValidators = [
   body('date').isISO8601(),
   body('amount').isNumeric(),
   body('price').isNumeric(),
-  body('type').custom(value => value === 'BUY' || value === 'SELL'),
+  body('type')
+    .not()
+    .exists(),
   body('exchange')
     .optional()
     .isString(),

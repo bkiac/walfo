@@ -6,7 +6,7 @@ import style from './style.module.scss';
 
 function Tags({ tags }) {
   return (
-    <Paper className={style.padding}>
+    <Paper className={style.tagsContainer}>
       {tags.map(t => (
         <Tag className={style.margin} key={t} tag={t} />
       ))}

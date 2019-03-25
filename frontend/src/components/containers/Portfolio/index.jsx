@@ -1,26 +1,36 @@
-import React from 'react';
-import * as PropTypes from 'prop-types';
-import { portfolioApi, pricesApi } from '../../../api';
-import { useApiOnMount } from '../../../hooks';
-import { Spinner, Positions } from '../../views';
+import React, { useContext } from 'react';
+import { Grid, Fab } from '@material-ui/core';
+import { Add as AddIcon } from '@material-ui/icons';
+import { Positions } from '../../views';
+import { DashboardContext, PortfolioContext } from '../../../contexts';
+import style from './style.module.scss';
 
-function Portfolio({ name }) {
-  const portfolio = useApiOnMount(portfolioApi.getPortfolio, name);
-  const currentPrices = useApiOnMount(pricesApi.getCurrentPrices);
+function Portfolio() {
+  const { openFormDialog } = useContext(DashboardContext);
+  const {
+    getPositionsList,
+    getTransactionsForPosition,
+    editTransaction,
+    removeTransaction,
+  } = useContext(PortfolioContext);
 
-  if (
-    portfolio.isLoading ||
-    currentPrices.isLoading ||
-    portfolio.hasError ||
-    currentPrices.hasError
-  ) {
-    return <Spinner />;
-  }
-  return <Positions positions={portfolio.data.positions} currentPrices={currentPrices.data} />;
+  return (
+    <Grid container direction="column" justify="flex-start" alignItems="center">
+      <Grid item>TODO: Graph</Grid>
+
+      <Fab variant="extended" onClick={openFormDialog} color="inherit" className={style.addButton}>
+        <AddIcon />
+        Transaction
+      </Fab>
+
+      <Positions
+        positions={getPositionsList()}
+        getTransactionsForPosition={getTransactionsForPosition}
+        editTransaction={editTransaction}
+        removeTransaction={removeTransaction}
+      />
+    </Grid>
+  );
 }
-
-Portfolio.propTypes = {
-  name: PropTypes.string.isRequired,
-};
 
 export default Portfolio;
