@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import * as PropTypes from 'prop-types';
 import { DashboardContext } from '../../../contexts';
 import { useApiOnMount, useIsLoading } from '../../../hooks';
-import { portfolioApi } from '../../../api';
+import * as portfolioApi from '../../../api/portfolioApi';
 import { Spinner } from '../../views';
 
 const NEW_PORTFOLIO = 'NEW_PORTFOLIO';
@@ -10,9 +10,10 @@ const NEW_PORTFOLIO = 'NEW_PORTFOLIO';
 function DashboardProvider({ children }) {
   const [portfolios, refreshPortfolios] = useApiOnMount(portfolioApi.getPortfolioNames);
   const isLoading = useIsLoading([portfolios]);
-  const [selectedPortfolio, setSelectedPortfolio] = useState(
-    portfolios.data && portfolios.data.length > 0 ? portfolios.data[0] : NEW_PORTFOLIO,
-  );
+
+  const defaultPortfolio =
+    portfolios.data && portfolios.data.length > 0 ? portfolios.data[0] : NEW_PORTFOLIO;
+  const [selectedPortfolio, setSelectedPortfolio] = useState();
 
   const [selectedTransaction, selectTransaction] = useState('');
 
@@ -60,7 +61,7 @@ function DashboardProvider({ children }) {
         NEW_PORTFOLIO,
         portfolios: portfolios.data,
         refreshPortfolios,
-        selectedPortfolio,
+        selectedPortfolio: selectedPortfolio || defaultPortfolio,
         selectPortfolio,
         selectedTransaction,
         editTransaction,
