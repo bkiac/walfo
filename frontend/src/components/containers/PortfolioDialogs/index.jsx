@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { Dialog, DialogContent, DialogTitle } from '@material-ui/core';
 import AddTransactionToPortfolioForm from '../AddTransactionToPortfolioForm';
 import { DashboardContext, PortfolioContext } from '../../../contexts';
-import { DeleteTransactionConfirmation } from '../index';
+import DeleteTransactionConfirmation from '../DeleteTransactionConfirmation';
 
 function PortfolioDialogs() {
   const {

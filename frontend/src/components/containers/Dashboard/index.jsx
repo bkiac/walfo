@@ -6,7 +6,10 @@ import Portfolio from '../Portfolio';
 import { CoinsProvider, DashboardProvider, PortfolioProvider } from '../../providers';
 import { DashboardContext } from '../../../contexts';
 import style from './style.module.scss';
-import { PortfolioDialogs, DashboardNav, PortfoliosDrawer, InitialTransactionForm } from '../index';
+import PortfoliosDrawer from '../PortfoliosDrawer';
+import DashboardNav from '../DashboardNav';
+import InitialTransactionForm from '../InitialTransactionForm';
+import PortfolioDialogs from '../PortfolioDialogs';
 
 function Dashboard() {
   const [coinList] = useApiOnMount(coinsApi.getCoinList);
