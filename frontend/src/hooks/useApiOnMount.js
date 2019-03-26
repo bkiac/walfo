@@ -34,7 +34,7 @@ function fetchReducer(state, action) {
   }
 }
 
-function useApiOnMount(apiMethod, data) {
+function useApiOnMount(apiMethod, ...data) {
   const [fetchState, dispatch] = useReducer(fetchReducer, {
     isLoading: true,
     hasError: false,
@@ -52,7 +52,7 @@ function useApiOnMount(apiMethod, data) {
     async function sendRequest() {
       dispatch({ type: FetchActionType.REQUEST });
       try {
-        const res = await apiMethod(data);
+        const res = await apiMethod(...data);
         dispatch({ type: FetchActionType.SUCCESS, payload: res.data });
       } catch (err) {
         dispatch({ type: FetchActionType.FAILURE, payload: err.response.data });
@@ -67,7 +67,7 @@ function useApiOnMount(apiMethod, data) {
     return () => {
       isCancelled = true;
     };
-  }, [data, numOfCalls]);
+  }, [...data, numOfCalls]);
 
   return [fetchState, repeatCall];
 }
