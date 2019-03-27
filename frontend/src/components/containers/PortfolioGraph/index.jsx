@@ -5,7 +5,6 @@ import { Line } from 'react-chartjs-2';
 import { useApiOnMount } from '../../../hooks';
 import { Spinner } from '../../views';
 import { portfolioApi } from '../../../api';
-import Debug from '../../views/Debug';
 
 function createData(historicalData) {
   const values = Object.values(historicalData);
@@ -75,7 +74,6 @@ function PortfolioGraph({ portfolioName }) {
         }}
         data={data || cacheData.current}
       />
-      <Debug any={data} />
     </div>
   );
 }
