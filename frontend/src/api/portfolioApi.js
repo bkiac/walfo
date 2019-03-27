@@ -8,6 +8,6 @@ export function getPortfolio(portfolio) {
   return axios.get(`/portfolios/${portfolio}`);
 }
 
-export function getHistoricalPortfolio(portfolio, date) {
-  return axios.get(`portfolios/${portfolio}/historical?date=${date}`);
+export function getHistoricalPortfolio(portfolio, date, tags) {
+  return axios.get(`portfolios/${portfolio}/historical`, { params: { date, tags } });
 }
