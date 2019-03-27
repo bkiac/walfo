@@ -18,29 +18,31 @@ function PositionSummary({ position }) {
       alignItems="center"
       className="margin-bottom-8"
     >
-      <Grid item>{position.symbol}</Grid>
+      <Grid item xs={1}>
+        {position.symbol}
+      </Grid>
 
       {/* Base value */}
-      <Grid item>
+      <Grid item xs>
         <PriceAndAmount
           price={position.cost / position.holdings}
           amount={position.holdings}
           isAverage
         />
       </Grid>
-      <Grid item>
+      <Grid item xs>
         <PositionValue value={position.cost} />
       </Grid>
 
-      <Grid item>
+      <Grid item xs={1}>
         <PositionTrending profitMargin={position.avgProfitMargin} />
       </Grid>
 
       {/* Current value */}
-      <Grid item>
+      <Grid item xs>
         <PositionValue value={position.holdings * position.currentPrice} hasProfit={hasProfit} />
       </Grid>
-      <Grid item>
+      <Grid item xs>
         <PriceAndAmount price={position.currentPrice} amount={position.holdings} />
       </Grid>
     </Grid>
