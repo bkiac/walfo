@@ -5,14 +5,15 @@ import ColorHash from 'color-hash';
 
 const colorHash = new ColorHash();
 
-function Tag({ tag, className, onDelete }) {
+function Tag({ tag, className, onClick, clicked, onDelete }) {
   return (
     <Chip
+      clickable={onClick !== undefined}
+      onClick={onClick}
       className={className}
       label={tag}
-      color="primary"
       onDelete={onDelete}
-      style={{ backgroundColor: colorHash.hex(tag) }}
+      style={clicked ? { color: '#fff', backgroundColor: colorHash.hex(tag) } : {}}
     />
   );
 }
@@ -21,10 +22,14 @@ Tag.propTypes = {
   tag: PropTypes.string.isRequired,
   onDelete: PropTypes.func,
   className: PropTypes.string,
+  onClick: PropTypes.func,
+  clicked: PropTypes.bool,
 };
 
 Tag.defaultProps = {
   onDelete: undefined,
+  onClick: undefined,
+  clicked: false,
   className: '',
 };
 

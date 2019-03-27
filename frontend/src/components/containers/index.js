@@ -14,3 +14,4 @@ export { default as PortfolioDialogs } from './PortfolioDialogs';
 export { default as DeleteTransactionConfirmation } from './DeleteTransactionConfirmation';
 export { default as PortfolioGraph } from './PortfolioGraph';
 export { default as PortfolioSummary } from './PortfolioSummary';
+export { default as TagsSelector } from './TagsSelector';

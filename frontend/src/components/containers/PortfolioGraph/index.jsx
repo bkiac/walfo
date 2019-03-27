@@ -33,7 +33,7 @@ function createData(historicalData) {
 }
 
 function PortfolioGraph() {
-  const { portfolioName, selectedTags, queryDate } = useContext(PortfolioContext);
+  const { portfolioName, queryTags, queryDate } = useContext(PortfolioContext);
 
   const cacheData = useRef();
 
@@ -41,6 +41,7 @@ function PortfolioGraph() {
     portfolioApi.getHistoricalPortfolio,
     portfolioName,
     queryDate,
+    queryTags,
   );
 
   if (cacheData.current === undefined && historicalPortfolio.isLoading) {

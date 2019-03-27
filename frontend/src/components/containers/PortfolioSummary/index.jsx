@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 import { PortfolioContext } from '../../../contexts';
 import style from './style.module.scss';
 import { PositionValue } from '../../views';
+import TagsSelector from '../TagsSelector';
 
 function PortfolioSummary() {
   const {
@@ -13,6 +14,8 @@ function PortfolioSummary() {
     queryDate,
     setQueryDate,
     getDateOfFirstTransaction,
+    getAllTags,
+    setQueryTags,
   } = useContext(PortfolioContext);
 
   return (
@@ -47,6 +50,10 @@ function PortfolioSummary() {
               margin="none"
             />
           </Grid>
+        </Grid>
+
+        <Grid item className="width-100p">
+          <TagsSelector tags={getAllTags()} onChange={setQueryTags} />
         </Grid>
 
         <Grid item>

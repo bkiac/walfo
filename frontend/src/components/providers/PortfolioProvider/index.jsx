@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 import * as PropTypes from 'prop-types';
 import { normalize, schema } from 'normalizr';
-import { minBy } from 'lodash';
+import { minBy, uniq } from 'lodash';
 import dayjs from 'dayjs';
 import { DashboardContext, PortfolioContext } from '../../../contexts';
 import { useApiOnMount, useIsLoading } from '../../../hooks';
@@ -61,21 +61,26 @@ function PortfolioProvider({ children }) {
   );
 
   // Memoize getters
-  const getPositionsList = useCallback(() => Object.values(positions), [positions]);
+  const getPositionsList = useCallback(() => Object.values(positions), [normalizedPortfolio]);
+  const getTransactionsList = useCallback(() => Object.values(transactions), [normalizedPortfolio]);
   const getTransactionsForPosition = useCallback(
     positionId => positions[positionId].transactions.map(txId => transactions[txId]),
-    [positions, transactions],
+    [normalizedPortfolio],
   );
   const getPositionByTransactionId = useCallback(
     txId => getPositionsList().find(p => p.transactions.includes(txId)),
-    [getPositionsList],
+    [normalizedPortfolio],
   );
   const hasOnlyOneTransaction = useCallback(() => Object.values(transactions).length === 1, [
-    transactions,
+    normalizedPortfolio,
   ]);
   const getDateOfFirstTransaction = useCallback(
-    () => dayjs(minBy(Object.values(transactions), 'date').date).format('YYYY-MM-DD'),
-    [transactions],
+    () => dayjs(minBy(getTransactionsList(), 'date').date).format('YYYY-MM-DD'),
+    [normalizedPortfolio],
+  );
+  const getAllTags = useCallback(
+    () => uniq(getPositionsList().reduce((tags, p) => [...tags, ...p.tags], [])),
+    [normalizedPortfolio],
   );
 
   // API method dashboard action wrappers
@@ -112,6 +117,7 @@ function PortfolioProvider({ children }) {
         getPositionsList,
         queryDate: queryDate || getDateOfFirstTransaction(),
         setQueryDate,
+        getAllTags,
         queryTags,
         setQueryTags,
       }}
