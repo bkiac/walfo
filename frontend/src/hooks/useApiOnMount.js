@@ -12,13 +12,15 @@ function fetchReducer(state, action) {
       return {
         ...state,
         isLoading: true,
+        hasSuccess: false,
         hasError: false,
+        data: undefined,
       };
     case FetchActionType.SUCCESS:
       return {
         ...state,
         isLoading: false,
-        hasError: false,
+        hasSuccess: true,
         data: action.payload,
       };
     case FetchActionType.FAILURE:

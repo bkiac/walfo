@@ -1,10 +1,10 @@
-import React, { useRef, useState } from 'react';
-import * as PropTypes from 'prop-types';
+import React, { useContext, useRef } from 'react';
 import dayjs from 'dayjs';
 import { Line } from 'react-chartjs-2';
 import { useApiOnMount } from '../../../hooks';
 import { Spinner } from '../../views';
 import { portfolioApi } from '../../../api';
+import { PortfolioContext } from '../../../contexts';
 
 function createData(historicalData) {
   const values = Object.values(historicalData);
@@ -32,54 +32,38 @@ function createData(historicalData) {
   };
 }
 
-function PortfolioGraph({ portfolioName }) {
+function PortfolioGraph() {
+  const { portfolioName, selectedTags, queryDate } = useContext(PortfolioContext);
+
   const cacheData = useRef();
-  const [startDate, setStartDate] = useState(
-    dayjs()
-      .subtract(7, 'day')
-      .format('YYYY-MM-DD'),
-  );
+
   const [historicalPortfolio] = useApiOnMount(
     portfolioApi.getHistoricalPortfolio,
     portfolioName,
-    startDate,
+    queryDate,
   );
 
   if (cacheData.current === undefined && historicalPortfolio.isLoading) {
     return <Spinner />;
   }
 
+  // Show previous results until loading if finished
+  let data;
   if (!historicalPortfolio.isLoading) {
-    cacheData.current = createData(historicalPortfolio.data);
+    data = createData(historicalPortfolio.data);
+    cacheData.current = data;
   }
-  const data = createData(historicalPortfolio.data);
 
   return (
-    <div>
-      <input
-        type="date"
-        value={startDate}
-        onChange={e => {
-          setStartDate(e.target.value);
-        }}
-      />
-
-      <Line
-        width={800}
-        height={200}
-        options={{
-          legend: {
-            display: false,
-          },
-        }}
-        data={data || cacheData.current}
-      />
-    </div>
+    <Line
+      options={{
+        legend: {
+          display: false,
+        },
+      }}
+      data={data || cacheData.current}
+    />
   );
 }
-
-PortfolioGraph.propTypes = {
-  portfolioName: PropTypes.string.isRequired,
-};
 
 export default PortfolioGraph;

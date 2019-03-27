@@ -1,15 +1,12 @@
 import React, { useContext } from 'react';
-import { Grid, Fab } from '@material-ui/core';
-import { Add as AddIcon } from '@material-ui/icons';
+import { Grid } from '@material-ui/core';
 import { Positions } from '../../views';
-import { DashboardContext, PortfolioContext } from '../../../contexts';
-import style from './style.module.scss';
+import { PortfolioContext } from '../../../contexts';
 import PortfolioGraph from '../PortfolioGraph';
+import PortfolioSummary from '../PortfolioSummary';
 
 function Portfolio() {
-  const { openFormDialog } = useContext(DashboardContext);
   const {
-    portfolioName,
     getPositionsList,
     getTransactionsForPosition,
     editTransaction,
@@ -18,12 +15,16 @@ function Portfolio() {
 
   return (
     <Grid container direction="column" justify="flex-start" alignItems="center">
-      <PortfolioGraph portfolioName={portfolioName} />
-
-      <Fab variant="extended" onClick={openFormDialog} color="inherit" className={style.addButton}>
-        <AddIcon />
-        Transaction
-      </Fab>
+      <Grid item className="width-100p">
+        <Grid container direction="row" justify="space-between" alignItems="flex-start" spacing={8}>
+          <Grid item xs={6}>
+            <PortfolioSummary />
+          </Grid>
+          <Grid item xs={6}>
+            <PortfolioGraph />
+          </Grid>
+        </Grid>
+      </Grid>
 
       <Positions
         positions={getPositionsList()}

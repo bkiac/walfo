@@ -13,3 +13,4 @@ export { default as AddTransactionToPortfolioForm } from './AddTransactionToPort
 export { default as PortfolioDialogs } from './PortfolioDialogs';
 export { default as DeleteTransactionConfirmation } from './DeleteTransactionConfirmation';
 export { default as PortfolioGraph } from './PortfolioGraph';
+export { default as PortfolioSummary } from './PortfolioSummary';
