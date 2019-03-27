@@ -10,13 +10,12 @@ exports.getPortfolioNames = async (req, res) => {
   res.status(200).send(portfolioNames);
 };
 
-exports.getBasePortfolioData = async (req, res) => {
+exports.getCurrentPortfolioData = async (req, res) => {
   const { user } = req;
   const { portfolio } = req.params;
   const { tags } = req.query;
 
   const positions = await Transaction.getPositions(user, portfolio, tags);
-  const portfolioCost = positions.reduce((c, p) => c + p.cost, 0);
 
   const symbols = await Transaction.getSymbols(user);
   const prices = cryptocompare.collectPriceMultiBatch(
@@ -30,10 +29,16 @@ exports.getBasePortfolioData = async (req, res) => {
     {},
   );
 
+  let portfolioCost = 0;
+  let portfolioValue = 0;
   const positionsWithPriceData = positions.map(p => {
     const currentPrice = simplifiedPrices[p.symbol];
     const value = p.holdings * currentPrice;
     const avgProfitMargin = -(1 - value / p.cost);
+
+    portfolioCost += p.cost;
+    portfolioValue += value;
+
     return {
       ...p,
       currentPrice,
@@ -42,7 +47,12 @@ exports.getBasePortfolioData = async (req, res) => {
     };
   });
 
-  res.status(200).send({ name: portfolio, cost: portfolioCost, positions: positionsWithPriceData });
+  res.status(200).send({
+    name: portfolio,
+    cost: portfolioCost,
+    value: portfolioValue,
+    positions: positionsWithPriceData,
+  });
 };
 
 exports.getHistoricalPortfolioValues = async (req, res) => {
