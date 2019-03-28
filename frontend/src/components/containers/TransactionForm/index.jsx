@@ -1,13 +1,16 @@
-import React, { useEffect } from 'react';
-import { TextField, Grid, Fab, MenuItem } from '@material-ui/core';
+import React, { useContext, useEffect } from 'react';
+import { Grid, Fab, MenuItem } from '@material-ui/core';
 import { Add as AddIcon, Edit as EditIcon } from '@material-ui/icons';
 import { Field, Form, Formik } from 'formik';
 import dayjs from 'dayjs';
 import * as PropTypes from 'prop-types';
+import * as Yup from 'yup';
 import TagsField from '../TagsField';
 import CoinField from '../CoinField';
-import { useApiCallback } from '../../../hooks';
+import { useApiCallback, useValidateResponse } from '../../../hooks';
 import * as OwnTypes from '../../../prop-types';
+import { FormikTextField } from '../../views';
+import { CoinsContext } from '../../../contexts';
 
 function TransactionForm({
   onSubmit,
@@ -15,14 +18,19 @@ function TransactionForm({
   initialValues,
   shouldCreateNewPortfolio,
   portfolioName,
-  positions,
+  getTagsForPosition,
+  getHoldingsForPosition,
+  portfolios,
 }) {
+  const { coins } = useContext(CoinsContext);
+
   const [response, request] = useApiCallback(onSubmit);
+  const responseErrors = useValidateResponse(response);
   useEffect(() => {
     if (response.hasSuccess && onSuccess) {
       onSuccess(response.data);
     }
-  }, [response.hasSuccess]);
+  }, [onSuccess, response.data, response.hasSuccess]);
 
   return (
     <Formik
@@ -43,6 +51,44 @@ function TransactionForm({
               tags: [],
             }
       }
+      validationSchema={Yup.object().shape({
+        portfolio: !shouldCreateNewPortfolio
+          ? Yup.string()
+              .oneOf([portfolioName])
+              .required()
+          : Yup.string()
+              .notOneOf(portfolios)
+              .required(),
+
+        symbol: Yup.string()
+          .test('is-valid-symbol', 'Please provide a valid coin!', function checkSymbol(symbol) {
+            return coins[symbol] !== undefined;
+          })
+          .required(),
+
+        type: Yup.string()
+          .oneOf(['BUY', 'SELL'])
+          .required(),
+
+        amount: Yup.number()
+          .min(0)
+          .when('type', (type, schema) =>
+            !shouldCreateNewPortfolio && type === 'SELL'
+              ? schema.test('max', "You can't sell more than you have!", function max(amount) {
+                  return amount <= getHoldingsForPosition(this.parent.symbol);
+                })
+              : schema.max(Number.MAX_SAFE_INTEGER),
+          )
+          .required(),
+
+        price: Yup.number()
+          .min(0)
+          .required(),
+
+        date: Yup.date()
+          .max(dayjs().format('YYYY-MM-DD'))
+          .required(),
+      })}
       onSubmit={inputTx => request(inputTx)}
     >
       {({ handleSubmit, setFieldValue, isValid, values }) => (
@@ -50,9 +96,10 @@ function TransactionForm({
           <Grid container direction="column" justify="flex-start" alignItems="center">
             {shouldCreateNewPortfolio && (
               <Field name="portfolio">
-                {({ field }) => (
-                  <TextField
-                    {...field}
+                {formik => (
+                  <FormikTextField
+                    formik={formik}
+                    responseErrors={responseErrors}
                     label="Portfolio"
                     margin="normal"
                     variant="outlined"
@@ -77,9 +124,10 @@ function TransactionForm({
             <Grid item className="width-100p">
               <Grid container direction="row" justify="space-between" alignItems="flex-start">
                 <Field name="type">
-                  {({ field }) => (
-                    <TextField
-                      {...field}
+                  {formik => (
+                    <FormikTextField
+                      formik={formik}
+                      responseErrors={responseErrors}
                       select
                       label="Type"
                       margin="normal"
@@ -88,16 +136,22 @@ function TransactionForm({
                     >
                       <MenuItem value="BUY">Buy</MenuItem>
                       {shouldCreateNewPortfolio ? null : <MenuItem value="SELL">Sell</MenuItem>}
-                    </TextField>
+                    </FormikTextField>
                   )}
                 </Field>
 
                 <Field name="amount">
-                  {({ field }) => (
-                    <TextField
-                      {...field}
+                  {formik => (
+                    <FormikTextField
+                      formik={formik}
+                      responseErrors={responseErrors}
                       type="number"
-                      min="0"
+                      inputProps={{
+                        min: 0,
+                        max: shouldCreateNewPortfolio
+                          ? Number.MAX_SAFE_INTEGER
+                          : getHoldingsForPosition(values.symbol) || Number.MAX_SAFE_INTEGER,
+                      }}
                       label="Amount"
                       margin="normal"
                       variant="outlined"
@@ -106,11 +160,14 @@ function TransactionForm({
                 </Field>
 
                 <Field name="price">
-                  {({ field }) => (
-                    <TextField
-                      {...field}
+                  {formik => (
+                    <FormikTextField
+                      formik={formik}
+                      responseErrors={responseErrors}
                       type="number"
-                      min="0"
+                      inputProps={{
+                        min: 0,
+                      }}
                       label="Price"
                       margin="normal"
                       variant="outlined"
@@ -121,9 +178,13 @@ function TransactionForm({
             </Grid>
 
             <Field name="date">
-              {({ field }) => (
-                <TextField
-                  {...field}
+              {formik => (
+                <FormikTextField
+                  formik={formik}
+                  responseErrors={responseErrors}
+                  inputProps={{
+                    max: dayjs().format('YYYY-MM-DD'),
+                  }}
                   type="date"
                   label="Date"
                   margin="normal"
@@ -138,9 +199,7 @@ function TransactionForm({
                 {({ field }) => (
                   <TagsField
                     {...field}
-                    initialTags={
-                      positions && positions[values.symbol] ? positions[values.symbol].tags : []
-                    }
+                    initialTags={!shouldCreateNewPortfolio ? getTagsForPosition(values.symbol) : []}
                     onChange={tags => setFieldValue('tags', tags)}
                   />
                 )}
@@ -160,23 +219,28 @@ function TransactionForm({
 
 TransactionForm.propTypes = {
   onSubmit: PropTypes.func.isRequired,
+  portfolios: PropTypes.arrayOf(PropTypes.string).isRequired,
+
   onSuccess: PropTypes.func,
 
-  portfolioName: PropTypes.string,
-
-  // @todo: Conditional prop type: !shouldCreateNewPortfolio -> positions.isRequired
-  shouldCreateNewPortfolio: PropTypes.bool,
-  positions: PropTypes.objectOf(OwnTypes.position),
-
   initialValues: OwnTypes.transaction,
+
+  // @todo: Conditional props type: !shouldCreateNewPortfolio -> {...}.isRequired
+  shouldCreateNewPortfolio: PropTypes.bool,
+  portfolioName: PropTypes.string,
+  getTagsForPosition: PropTypes.func,
+  getHoldingsForPosition: PropTypes.func,
 };
 
 TransactionForm.defaultProps = {
   onSuccess: undefined,
-  shouldCreateNewPortfolio: false,
+
   initialValues: undefined,
+
+  shouldCreateNewPortfolio: false,
   portfolioName: '',
-  positions: undefined,
+  getTagsForPosition: undefined,
+  getHoldingsForPosition: undefined,
 };
 
 export default TransactionForm;

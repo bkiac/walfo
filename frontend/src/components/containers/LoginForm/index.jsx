@@ -1,12 +1,12 @@
 import React from 'react';
-import TextField from '@material-ui/core/TextField';
 import { Field, Form, Formik } from 'formik';
-import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
-import { useLogin } from '../../../hooks';
+import { Grid, Button } from '@material-ui/core';
+import { useLogin, useValidateResponse } from '../../../hooks';
+import FormikTextField from '../../views/FormikTextField';
 
 function LoginForm() {
-  const [, login] = useLogin();
+  const [response, login] = useLogin();
+  const responseErrors = useValidateResponse(response);
 
   return (
     <Formik
@@ -18,14 +18,15 @@ function LoginForm() {
         login(values);
       }}
     >
-      {formik => (
-        <Form onSubmit={formik.handleSubmit}>
+      {({ handleSubmit }) => (
+        <Form onSubmit={handleSubmit}>
           <Grid container direction="column" alignItems="center">
             <Grid item>
               <Field name="email">
-                {({ field }) => (
-                  <TextField
-                    {...field}
+                {formik => (
+                  <FormikTextField
+                    formik={formik}
+                    responseErrors={responseErrors}
                     label="Email"
                     type="text"
                     margin="normal"
@@ -37,9 +38,10 @@ function LoginForm() {
 
             <Grid item>
               <Field name="password">
-                {({ field }) => (
-                  <TextField
-                    {...field}
+                {formik => (
+                  <FormikTextField
+                    formik={formik}
+                    responseErrors={responseErrors}
                     label="Password"
                     type="password"
                     margin="normal"

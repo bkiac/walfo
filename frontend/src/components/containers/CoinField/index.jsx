@@ -2,8 +2,8 @@ import React, { useContext } from 'react';
 import deburr from 'lodash/deburr';
 import Downshift from 'downshift';
 import { TextField, Paper, MenuItem } from '@material-ui/core';
-import { CoinsContext } from '../../../contexts';
 import * as PropTypes from 'prop-types';
+import { CoinsContext } from '../../../contexts';
 
 function renderInput(inputProps) {
   const { InputProps, ref, ...other } = inputProps;
@@ -19,6 +19,7 @@ function renderInput(inputProps) {
   );
 }
 
+// eslint-disable-next-line react/prop-types
 function renderSuggestion({ suggestion, index, itemProps, highlightedIndex, selectedItem }) {
   const isHighlighted = highlightedIndex === index;
   const isSelected = (selectedItem ? selectedItem.label : '').indexOf(suggestion.label) > -1;
@@ -56,7 +57,7 @@ function getSuggestions(data, value) {
       });
 }
 
-function CoinField({ onChange, value: initialSymbol, disabled }) {
+function CoinField({ error, helperText, onChange, value: initialSymbol, disabled }) {
   const { coins, coinListForInput } = useContext(CoinsContext);
   const initialCoin = coins[initialSymbol];
   const initialSelectedItem = initialCoin
@@ -86,6 +87,8 @@ function CoinField({ onChange, value: initialSymbol, disabled }) {
             fullWidth: true,
             InputProps: getInputProps({
               placeholder: 'Bitcoin (BTC)',
+              error,
+              helperText,
               disabled,
             }),
           })}
@@ -111,12 +114,16 @@ function CoinField({ onChange, value: initialSymbol, disabled }) {
 }
 
 CoinField.propTypes = {
+  error: PropTypes.bool,
+  helperText: PropTypes.string,
   onChange: PropTypes.func.isRequired,
   value: PropTypes.string,
   disabled: PropTypes.bool,
 };
 
 CoinField.defaultProps = {
+  error: false,
+  helperText: '',
   value: '',
   disabled: false,
 };

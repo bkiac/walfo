@@ -18,7 +18,18 @@ exports.login = (req, res, next) => {
     }
 
     if (!user) {
-      return res.status(401).send({ message: 'Authentication failure' });
+      return res.status(401).send({
+        errors: [
+          {
+            param: 'email',
+            msg: 'Wrong email',
+          },
+          {
+            param: 'password',
+            msg: 'or password!',
+          },
+        ],
+      });
     }
 
     return req.login(user, { session: false }, async loginErr => {
