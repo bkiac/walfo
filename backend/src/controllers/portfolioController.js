@@ -10,13 +10,12 @@ exports.getPortfolioNames = async (req, res) => {
   res.status(200).send(portfolioNames);
 };
 
-exports.getBasePortfolioData = async (req, res) => {
+exports.getCurrentPortfolioData = async (req, res) => {
   const { user } = req;
   const { portfolio } = req.params;
   const { tags } = req.query;
 
   const positions = await Transaction.getPositions(user, portfolio, tags);
-  const portfolioCost = positions.reduce((c, p) => c + p.cost, 0);
 
   const symbols = await Transaction.getSymbols(user);
   const prices = cryptocompare.collectPriceMultiBatch(
@@ -30,10 +29,16 @@ exports.getBasePortfolioData = async (req, res) => {
     {},
   );
 
+  let portfolioCost = 0;
+  let portfolioValue = 0;
   const positionsWithPriceData = positions.map(p => {
     const currentPrice = simplifiedPrices[p.symbol];
     const value = p.holdings * currentPrice;
     const avgProfitMargin = -(1 - value / p.cost);
+
+    portfolioCost += p.cost;
+    portfolioValue += value;
+
     return {
       ...p,
       currentPrice,
@@ -42,7 +47,12 @@ exports.getBasePortfolioData = async (req, res) => {
     };
   });
 
-  res.status(200).send({ name: portfolio, cost: portfolioCost, positions: positionsWithPriceData });
+  res.status(200).send({
+    name: portfolio,
+    cost: portfolioCost,
+    value: portfolioValue,
+    positions: positionsWithPriceData,
+  });
 };
 
 exports.getHistoricalPortfolioValues = async (req, res) => {
@@ -51,18 +61,15 @@ exports.getHistoricalPortfolioValues = async (req, res) => {
   const { date, tags } = req.query;
 
   // The start of the day specified
-  const startDate = moment(date)
-    .utc()
-    .startOf('day');
-  // Yesterday, the end of the day
+  const startDate = moment(date).startOf('day');
+  // Today, the end of the day
   const endDate = moment()
     .utc()
-    .subtract(1, 'day')
     .endOf('day');
   const numOfDays = Math.floor(moment.duration(endDate.diff(startDate)).asDays());
 
   // Get all symbols for this duration
-  const symbols = await Transaction.getSymbols(user, portfolio, startDate);
+  const symbols = await Transaction.getSymbols(user, portfolio, endDate);
 
   // Get position data for each day from the database
   const positionsByDay = await Transaction.getPositionsForEachDayBetweenDates(
@@ -73,7 +80,7 @@ exports.getHistoricalPortfolioValues = async (req, res) => {
     tags,
   );
 
-  // Query cryptocompare for price data between yesterday and yesterday - N days
+  // Query cryptocompare for price data between today and (today - N) days
   // and collect results into a single prices object
   const prices = cryptocompare.collectHistoDayBatch(
     symbols,
@@ -85,9 +92,10 @@ exports.getHistoricalPortfolioValues = async (req, res) => {
   );
 
   // Calculate portfolio values per each day
-  const portfolioValuePerDay = positionsByDay.map((positions, i) =>
-    positions.reduce((value, p) => prices[p.id][i].USD * p.totalHoldings, 0),
-  );
+  const portfolioValuePerDay = positionsByDay.map((positions, i) => ({
+    date: moment(startDate).add(i, 'day'),
+    value: positions.reduce((value, p) => value + prices[p.symbol][i].USD * p.holdings, 0),
+  }));
 
   return res.status(200).send(portfolioValuePerDay);
 };

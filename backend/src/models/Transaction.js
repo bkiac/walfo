@@ -88,7 +88,7 @@ const pipelines = {
             },
           },
         },
-        cost: {
+        totalCost: {
           $sum: {
             $cond: {
               if: { $eq: ['BUY', '$type'] },
@@ -97,17 +97,26 @@ const pipelines = {
             },
           },
         },
+        numOfBoughtCoins: {
+          $sum: {
+            $cond: {
+              if: { $eq: ['BUY', '$type'] },
+              then: '$amount',
+              else: 0,
+            },
+          },
+        },
         transactions: { $push: '$$ROOT' },
       },
     },
-    // Set `id` field to symbol
+    // Calculate cost from average coin price (total spent / number of coins) * current holdings
     {
       $project: {
         _id: 0,
         symbol: '$_id',
         tags: '$tags',
-        cost: '$cost',
         holdings: '$holdings',
+        cost: { $multiply: ['$holdings', { $divide: ['$totalCost', '$numOfBoughtCoins'] }] },
         transactions: '$transactions',
       },
     },
@@ -144,7 +153,7 @@ schema.statics.getSymbols = function getSymbols(userId, portfolio, startDate) {
   return this.distinct('symbol', distinct);
 };
 
-schema.statics.getPositions = function getPositions(userId, portfolio, startDate, tags) {
+schema.statics.getPositions = function getPositions(userId, portfolio, tags, startDate) {
   const match = { user: Types.ObjectId(userId), portfolio };
 
   if (startDate) {
@@ -178,7 +187,7 @@ schema.statics.getPositionsForEachDayBetweenDates = function getPositionsForEach
 
   const positionsForEachDay = [];
   for (let i = 1; i <= numOfDays; i += 1) {
-    positionsForEachDay.push(this.getPositions(userId, portfolio, startMoment, tags));
+    positionsForEachDay.push(this.getPositions(userId, portfolio, tags, startMoment));
     startMoment.add(1, 'day');
   }
 

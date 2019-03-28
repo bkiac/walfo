@@ -12,7 +12,7 @@ router.get(
   authController.protect,
   validationController.getPortfolioDataValidators,
   validationController.validate,
-  portfolioController.getBasePortfolioData,
+  portfolioController.getCurrentPortfolioData,
 );
 
 router.get(
