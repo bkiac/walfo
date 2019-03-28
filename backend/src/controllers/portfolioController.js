@@ -60,8 +60,8 @@ exports.getHistoricalPortfolioValues = async (req, res) => {
   const { portfolio } = req.params;
   const { date, tags } = req.query;
 
-  // The start of the day specified
-  const startDate = moment(date).startOf('day');
+  // The end of the day specified
+  const startDate = moment(date).endOf('day');
   // Today, the end of the day
   const endDate = moment()
     .utc()
@@ -86,7 +86,7 @@ exports.getHistoricalPortfolioValues = async (req, res) => {
     symbols,
     'USD',
     await cryptocompare.histoDayBatch(symbols, 'USD', {
-      limit: numOfDays - 1,
+      limit: numOfDays,
       timestamp: endDate.toDate(),
     }),
   );
