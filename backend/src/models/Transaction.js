@@ -153,7 +153,7 @@ schema.statics.getSymbols = function getSymbols(userId, portfolio, startDate) {
   return this.distinct('symbol', distinct);
 };
 
-schema.statics.getPositions = function getPositions(userId, portfolio, startDate, tags) {
+schema.statics.getPositions = function getPositions(userId, portfolio, tags, startDate) {
   const match = { user: Types.ObjectId(userId), portfolio };
 
   if (startDate) {
@@ -187,7 +187,7 @@ schema.statics.getPositionsForEachDayBetweenDates = function getPositionsForEach
 
   const positionsForEachDay = [];
   for (let i = 1; i <= numOfDays; i += 1) {
-    positionsForEachDay.push(this.getPositions(userId, portfolio, startMoment, tags));
+    positionsForEachDay.push(this.getPositions(userId, portfolio, tags, startMoment));
     startMoment.add(1, 'day');
   }
 

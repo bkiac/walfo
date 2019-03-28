@@ -61,7 +61,7 @@ exports.deleteTransactionValidators = [
     }),
 ];
 
-exports.basePortfolioValidators = [
+exports.getPortfolioDataValidators = [
   param('portfolio').custom(async (portfolio, { req }) =>
     Transaction.findOne({ user: req.user, portfolio }),
   ),
@@ -71,19 +71,8 @@ exports.basePortfolioValidators = [
   sanitizeQuery('tags').customSanitizer(tags => tags.split(',')),
 ];
 
-exports.getPortfolioDataValidators = [
-  ...exports.basePortfolioValidators,
-  query('date')
-    .isISO8601()
-    .optional()
-    .custom(async (date, { req }) => {
-      const symbols = await Transaction.getSymbols(req.user, req.params.portfolio, date);
-      return symbols.length > 0;
-    }),
-];
-
 exports.getHistoricalPortfolioValidators = [
-  ...exports.basePortfolioValidators,
+  ...exports.getPortfolioDataValidators,
   query('date')
     .isISO8601()
     .custom(async (date, { req }) => {
