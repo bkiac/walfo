@@ -182,13 +182,12 @@ schema.statics.getPositionsForEachDayBetweenDates = function getPositionsForEach
   endDate,
   tags,
 ) {
-  const startMoment = moment(startDate);
-  const numOfDays = Math.floor(moment.duration(moment(endDate).diff(startMoment)).asDays());
+  const numOfDays = Math.floor(moment.duration(moment(endDate).diff(moment(startDate))).asDays());
 
   const positionsForEachDay = [];
-  for (let i = 1; i <= numOfDays; i += 1) {
-    positionsForEachDay.push(this.getPositions(userId, portfolio, tags, startMoment));
-    startMoment.add(1, 'day');
+  for (let i = 0; i <= numOfDays; i += 1) {
+    const date = moment(startDate).add(i, 'day');
+    positionsForEachDay.push(this.getPositions(userId, portfolio, tags, date));
   }
 
   return Promise.all(positionsForEachDay);
