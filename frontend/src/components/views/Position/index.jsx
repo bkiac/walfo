@@ -13,14 +13,14 @@ import Transactions from '../Transactions';
 import style from './style.module.scss';
 import PositionSummary from '../PositionSummary';
 
-function Position({ position, transactions, editTransaction, removeTransaction }) {
+function Position({ position, transactions, editTransaction, removeTransaction, queryTags }) {
   return (
     <ExpansionPanel className={style.width}>
       <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
         <Grid container direction="column" justify="flex-start" alignItems="flex-start" spacing={8}>
           <PositionSummary position={position} />
 
-          <Tags tags={position.tags} />
+          <Tags activeTags={queryTags} tags={position.tags} />
         </Grid>
       </ExpansionPanelSummary>
 
@@ -40,6 +40,11 @@ Position.propTypes = {
   transactions: PropTypes.arrayOf(OwnTypes.transaction).isRequired,
   editTransaction: PropTypes.func.isRequired,
   removeTransaction: PropTypes.func.isRequired,
+  queryTags: PropTypes.arrayOf(PropTypes.string),
+};
+
+Position.defaultProps = {
+  queryTags: [],
 };
 
 export default Position;

@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import * as PropTypes from 'prop-types';
 import { normalize, schema } from 'normalizr';
 import { minBy, uniq } from 'lodash';
@@ -32,55 +32,102 @@ function PortfolioProvider({ children }) {
     openConfirmationDialog,
   } = useContext(DashboardContext);
 
-  // Query portfolio
-  const [portfolioResponse, refreshPortfolio] = useApiOnMount(
-    portfolioApi.getPortfolio,
-    portfolioName,
-  );
-  const isLoading = useIsLoading([portfolioResponse]);
-
   const [queryDate, setQueryDate] = useState();
   const [queryTags, setQueryTags] = useState();
 
+  // Query portfolio
+  const [basePortfolioResponse, refreshBasePortfolio] = useApiOnMount(
+    portfolioApi.getPortfolio,
+    portfolioName,
+  );
+  const cachedBasePortfolio = useRef();
+
+  const [filteredPortfolioResponse, refreshFilteredPortfolio] = useApiOnMount(
+    portfolioApi.getPortfolio,
+    portfolioName,
+    queryTags,
+  );
+  const cachedFilteredPortfolio = useRef();
+
+  const isLoading = useIsLoading([basePortfolioResponse, filteredPortfolioResponse]);
+
+  function refreshPortfolio() {
+    refreshBasePortfolio();
+    refreshFilteredPortfolio();
+  }
+
   // Normalize response data
-  const normalizedPortfolio = useMemo(
-    () => !isLoading && normalize(portfolioResponse.data, portfolioSchema),
-    [portfolioResponse],
+  const normalizedBasePortfolio = useMemo(() => {
+    // Use the cached data if it's available and response is still pending
+    if (!basePortfolioResponse.isLoading || cachedBasePortfolio.current) {
+      return normalize(basePortfolioResponse.data || cachedBasePortfolio.current, portfolioSchema);
+    }
+    return undefined;
+  }, [basePortfolioResponse]);
+  const basePositions = useMemo(
+    () => normalizedBasePortfolio && normalizedBasePortfolio.entities.positions,
+    [normalizedBasePortfolio],
   );
-  const portfolio = useMemo(
-    () => normalizedPortfolio.entities && Object.values(normalizedPortfolio.entities.portfolios)[0],
-    [normalizedPortfolio],
+  const baseTransactions = useMemo(
+    () => normalizedBasePortfolio && normalizedBasePortfolio.entities.transactions,
+    [normalizedBasePortfolio],
   );
-  const transactions = useMemo(
-    () => normalizedPortfolio.entities && normalizedPortfolio.entities.transactions,
-    [normalizedPortfolio],
+
+  const normalizedFilteredPortfolio = useMemo(() => {
+    // Use the cached data if it's available and response is still pending
+    if (!filteredPortfolioResponse.isLoading || cachedFilteredPortfolio.current) {
+      return normalize(
+        filteredPortfolioResponse.data || cachedFilteredPortfolio.current,
+        portfolioSchema,
+      );
+    }
+    return undefined;
+  }, [filteredPortfolioResponse]);
+  const filteredPortfolio = useMemo(
+    () =>
+      normalizedFilteredPortfolio &&
+      Object.values(normalizedFilteredPortfolio.entities.portfolios)[0],
+    [normalizedFilteredPortfolio],
   );
-  const positions = useMemo(
-    () => normalizedPortfolio.entities && normalizedPortfolio.entities.positions,
-    [normalizedPortfolio],
+  const filteredPositions = useMemo(
+    () => normalizedFilteredPortfolio && normalizedFilteredPortfolio.entities.positions,
+    [normalizedFilteredPortfolio],
+  );
+  const filteredTransactions = useMemo(
+    () => normalizedFilteredPortfolio && normalizedFilteredPortfolio.entities.transactions,
+    [normalizedFilteredPortfolio],
   );
 
   // Memoize getters
-  const getPositionsList = useCallback(() => Object.values(positions), [normalizedPortfolio]);
-  const getTransactionsList = useCallback(() => Object.values(transactions), [normalizedPortfolio]);
+  const getBasePositionsList = useCallback(() => Object.values(basePositions), [basePositions]);
+  const getBaseTransactionsList = useCallback(() => Object.values(baseTransactions), [
+    baseTransactions,
+  ]);
+
+  const getFilteredPositionsList = useCallback(
+    () => (filteredPositions ? Object.values(filteredPositions) : []),
+    [filteredPositions],
+  );
+
+  // Memoize helpers
   const getTransactionsForPosition = useCallback(
-    positionId => positions[positionId].transactions.map(txId => transactions[txId]),
-    [normalizedPortfolio],
+    positionId => basePositions[positionId].transactions.map(txId => baseTransactions[txId]),
+    [basePositions, baseTransactions],
   );
   const getPositionByTransactionId = useCallback(
-    txId => getPositionsList().find(p => p.transactions.includes(txId)),
-    [normalizedPortfolio],
+    txId => getBasePositionsList().find(p => p.transactions.includes(txId)),
+    [getBasePositionsList],
   );
-  const hasOnlyOneTransaction = useCallback(() => Object.values(transactions).length === 1, [
-    normalizedPortfolio,
+  const hasOnlyOneTransaction = useCallback(() => Object.values(baseTransactions).length === 1, [
+    baseTransactions,
   ]);
   const getDateOfFirstTransaction = useCallback(
-    () => dayjs(minBy(getTransactionsList(), 'date').date).format('YYYY-MM-DD'),
-    [normalizedPortfolio],
+    () => dayjs(minBy(getBaseTransactionsList(), 'date').date).format('YYYY-MM-DD'),
+    [getBaseTransactionsList],
   );
   const getAllTags = useCallback(
-    () => uniq(getPositionsList().reduce((tags, p) => [...tags, ...p.tags], [])),
-    [normalizedPortfolio],
+    () => uniq(getBasePositionsList().reduce((tags, p) => [...tags, ...p.tags], [])),
+    [getBasePositionsList],
   );
 
   // API method dashboard action wrappers
@@ -96,25 +143,36 @@ function PortfolioProvider({ children }) {
     openConfirmationDialog();
   }
 
-  if (isLoading) {
+  if (
+    (cachedBasePortfolio.current === undefined || cachedFilteredPortfolio.current === undefined) &&
+    isLoading
+  ) {
     return <Spinner />;
   }
+
+  cachedBasePortfolio.current = !basePortfolioResponse.isLoading
+    ? basePortfolioResponse.data
+    : cachedBasePortfolio.current;
+  cachedFilteredPortfolio.current = !filteredPortfolioResponse.isLoading
+    ? filteredPortfolioResponse.data
+    : filteredPortfolioResponse.current;
+
   return (
     <PortfolioContext.Provider
       value={{
-        portfolio,
+        portfolio: filteredPortfolio,
         portfolioName,
         hasOnlyOneTransaction,
         refreshPortfolio,
-        transactions,
+        transactions: filteredTransactions,
         getDateOfFirstTransaction,
         addTransaction,
         editTransaction,
         removeTransaction,
         getTransactionsForPosition,
         getPositionByTransactionId,
-        positions,
-        getPositionsList,
+        positions: filteredPositions,
+        getPositionsList: getFilteredPositionsList,
         queryDate: queryDate || getDateOfFirstTransaction(),
         setQueryDate,
         getAllTags,

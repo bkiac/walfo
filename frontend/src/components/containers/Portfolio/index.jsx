@@ -11,6 +11,7 @@ function Portfolio() {
     getTransactionsForPosition,
     editTransaction,
     removeTransaction,
+    queryTags,
   } = useContext(PortfolioContext);
 
   return (
@@ -31,6 +32,7 @@ function Portfolio() {
         getTransactionsForPosition={getTransactionsForPosition}
         editTransaction={editTransaction}
         removeTransaction={removeTransaction}
+        queryTags={queryTags}
       />
     </Grid>
   );
