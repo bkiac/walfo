@@ -6,7 +6,6 @@ jobs:
     - stage: Tests
       before_script:
         - yarn install
-        - yarn bootstrap
       script:
         - yarn test
 deploy:
