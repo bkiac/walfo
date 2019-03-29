@@ -1,5 +1,5 @@
 import React from 'react';
-import { Field, Form, Formik } from 'formik';
+import { Form, Formik } from 'formik';
 import { Grid, Button } from '@material-ui/core';
 import * as Yup from 'yup';
 import { useRegister, useValidateResponse } from '../../../hooks';
@@ -37,46 +37,34 @@ function RegisterForm() {
         <Form onSubmit={handleSubmit}>
           <Grid container direction="column" alignItems="center">
             <Grid item>
-              <Field name="email">
-                {formik => (
-                  <FormikTextField
-                    formik={formik}
-                    responseErrors={responseErrors}
-                    label="Email"
-                    type="text"
-                    margin="normal"
-                    variant="outlined"
-                  />
-                )}
-              </Field>
+              <FormikTextField
+                name="email"
+                responseErrors={responseErrors}
+                label="Email"
+                type="text"
+                margin="normal"
+                variant="outlined"
+              />
             </Grid>
 
             <Grid item>
-              <Field name="password">
-                {formik => (
-                  <FormikTextField
-                    formik={formik}
-                    label="Password"
-                    type="password"
-                    margin="normal"
-                    variant="outlined"
-                  />
-                )}
-              </Field>
+              <FormikTextField
+                name="password"
+                label="Password"
+                type="password"
+                margin="normal"
+                variant="outlined"
+              />
             </Grid>
 
             <Grid item>
-              <Field name="confirmPassword">
-                {formik => (
-                  <FormikTextField
-                    formik={formik}
-                    label="Confirm password"
-                    type="password"
-                    margin="normal"
-                    variant="outlined"
-                  />
-                )}
-              </Field>
+              <FormikTextField
+                name="confirmPassword"
+                label="Confirm password"
+                type="password"
+                margin="normal"
+                variant="outlined"
+              />
             </Grid>
 
             <Grid item>
