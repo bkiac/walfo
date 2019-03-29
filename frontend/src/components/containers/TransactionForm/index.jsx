@@ -9,8 +9,10 @@ import TagsField from '../TagsField';
 import CoinField from '../CoinField';
 import { useApiCallback, useValidateResponse } from '../../../hooks';
 import * as OwnTypes from '../../../prop-types';
-import { FormikTextField } from '../../views';
+import { FormikTextField, FieldWithError } from '../../views';
 import { CoinsContext } from '../../../contexts';
+import Debug from '../../views/Debug';
+import { any } from 'prop-types';
 
 function TransactionForm({
   onSubmit,
@@ -91,108 +93,91 @@ function TransactionForm({
       })}
       onSubmit={inputTx => request(inputTx)}
     >
-      {({ handleSubmit, setFieldValue, isValid, values }) => (
+      {({ handleSubmit, setFieldValue, isValid, values, touched, setTouched, errors }) => (
         <Form onSubmit={handleSubmit}>
           <Grid container direction="column" justify="flex-start" alignItems="center">
             {shouldCreateNewPortfolio && (
-              <Field name="portfolio">
-                {formik => (
-                  <FormikTextField
-                    formik={formik}
-                    responseErrors={responseErrors}
-                    label="Portfolio"
-                    margin="normal"
-                    variant="outlined"
-                    fullWidth
-                  />
-                )}
-              </Field>
+              <FormikTextField
+                name="portfolio"
+                responseErrors={responseErrors}
+                label="Portfolio"
+                margin="normal"
+                variant="outlined"
+                fullWidth
+              />
             )}
 
             <Grid item className="width-100p">
-              <Field name="symbol">
-                {({ field }) => (
+              <FieldWithError name="symbol">
+                {({ field, hasError, errorMessage }) => (
                   <CoinField
                     {...field}
-                    onChange={symbol => setFieldValue('symbol', symbol)}
+                    error={hasError}
+                    helperText={errorMessage}
                     disabled={initialValues !== undefined}
                   />
                 )}
-              </Field>
+              </FieldWithError>
             </Grid>
 
             <Grid item className="width-100p">
               <Grid container direction="row" justify="space-between" alignItems="flex-start">
-                <Field name="type">
-                  {formik => (
-                    <FormikTextField
-                      formik={formik}
-                      responseErrors={responseErrors}
-                      select
-                      label="Type"
-                      margin="normal"
-                      variant="outlined"
-                      disabled={initialValues !== undefined}
-                    >
-                      <MenuItem value="BUY">Buy</MenuItem>
-                      {shouldCreateNewPortfolio ? null : <MenuItem value="SELL">Sell</MenuItem>}
-                    </FormikTextField>
-                  )}
-                </Field>
+                <FormikTextField
+                  name="type"
+                  responseErrors={responseErrors}
+                  select
+                  label="Type"
+                  margin="normal"
+                  variant="outlined"
+                  disabled={initialValues !== undefined}
+                >
+                  <MenuItem value="BUY">Buy</MenuItem>
+                  {shouldCreateNewPortfolio ? null : <MenuItem value="SELL">Sell</MenuItem>}
+                </FormikTextField>
 
-                <Field name="amount">
-                  {formik => (
-                    <FormikTextField
-                      formik={formik}
-                      responseErrors={responseErrors}
-                      type="number"
-                      inputProps={{
-                        min: 0,
-                        max: shouldCreateNewPortfolio
-                          ? Number.MAX_SAFE_INTEGER
-                          : getHoldingsForPosition(values.symbol) || Number.MAX_SAFE_INTEGER,
-                      }}
-                      label="Amount"
-                      margin="normal"
-                      variant="outlined"
-                    />
-                  )}
-                </Field>
+                <FormikTextField
+                  name="amount"
+                  responseErrors={responseErrors}
+                  type="number"
+                  inputProps={{
+                    min: 0,
+                    max: shouldCreateNewPortfolio
+                      ? Number.MAX_SAFE_INTEGER
+                      : getHoldingsForPosition(values.symbol) || Number.MAX_SAFE_INTEGER,
+                    step: 'any',
+                  }}
+                  label="Amount"
+                  margin="normal"
+                  variant="outlined"
+                />
 
-                <Field name="price">
-                  {formik => (
-                    <FormikTextField
-                      formik={formik}
-                      responseErrors={responseErrors}
-                      type="number"
-                      inputProps={{
-                        min: 0,
-                      }}
-                      label="Price"
-                      margin="normal"
-                      variant="outlined"
-                    />
-                  )}
-                </Field>
+                <FormikTextField
+                  name="price"
+                  responseErrors={responseErrors}
+                  type="number"
+                  inputProps={{
+                    min: 0,
+                    step: 'any',
+                  }}
+                  label="Price"
+                  margin="normal"
+                  variant="outlined"
+                />
               </Grid>
             </Grid>
 
-            <Field name="date">
-              {formik => (
-                <FormikTextField
-                  formik={formik}
-                  responseErrors={responseErrors}
-                  inputProps={{
-                    max: dayjs().format('YYYY-MM-DD'),
-                  }}
-                  type="date"
-                  label="Date"
-                  margin="normal"
-                  variant="outlined"
-                  fullWidth
-                />
-              )}
-            </Field>
+            <FormikTextField
+              name="date"
+              responseErrors={responseErrors}
+              inputProps={{
+                max: dayjs().format('YYYY-MM-DD'),
+              }}
+              type="date"
+              label="Date"
+              margin="normal"
+              variant="outlined"
+              fullWidth
+            />
 
             <Grid item className="width-100p">
               <Field name="tags">
@@ -211,6 +196,8 @@ function TransactionForm({
             {initialValues ? <EditIcon /> : <AddIcon />}
             {initialValues ? 'Update transaction' : 'Create transaction'}
           </Fab>
+
+          <Debug any={{ values, touched, errors }} />
         </Form>
       )}
     </Formik>

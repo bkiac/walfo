@@ -1,23 +1,20 @@
 import React from 'react';
-import { TextField } from '@material-ui/core';
 import * as PropTypes from 'prop-types';
+import { TextField } from '@material-ui/core';
+import FieldWithError from '../FieldWithError';
 
-function FormikTextField({ formik, responseErrors, ...rest }) {
-  const {
-    field,
-    form: { touched, errors },
-  } = formik;
-  const hasError =
-    touched[field.name] &&
-    (errors[field.name] !== undefined || responseErrors[field.name] !== undefined);
-  const errorMessage = touched[field.name] && (errors[field.name] || responseErrors[field.name]);
-
-  return <TextField {...field} error={hasError} helperText={errorMessage} {...rest} />;
+function FormikTextField({ name, responseErrors, ...rest }) {
+  return (
+    <FieldWithError name={name} responseErrors={responseErrors}>
+      {({ field, hasError, errorMessage }) => (
+        <TextField {...field} error={hasError} helperText={errorMessage} {...rest} />
+      )}
+    </FieldWithError>
+  );
 }
 
 FormikTextField.propTypes = {
-  // eslint-disable-next-line react/forbid-prop-types
-  formik: PropTypes.object.isRequired,
+  name: PropTypes.string.isRequired,
   responseErrors: PropTypes.objectOf(PropTypes.string),
 };
 

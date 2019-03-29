@@ -10,3 +10,4 @@ export { default as Tag } from './Tag';
 export { default as PositionTrending } from './PositionTrending';
 export { default as PriceAndAmount } from './PriceAndAmount';
 export { default as FormikTextField } from './FormikTextField';
+export { default as FieldWithError } from './FieldWithError';

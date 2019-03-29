@@ -2,7 +2,7 @@ import React from 'react';
 import { Field, Form, Formik } from 'formik';
 import { Grid, Button } from '@material-ui/core';
 import { useLogin, useValidateResponse } from '../../../hooks';
-import FormikTextField from '../../views/FormikTextField';
+import FormikTextField from '../../views/FieldWithError';
 
 function LoginForm() {
   const [response, login] = useLogin();

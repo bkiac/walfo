@@ -57,7 +57,7 @@ function getSuggestions(data, value) {
       });
 }
 
-function CoinField({ error, helperText, onChange, value: initialSymbol, disabled }) {
+function CoinField({ onChange, value: initialSymbol, disabled, error, helperText, ...rest }) {
   const { coins, coinListForInput } = useContext(CoinsContext);
   const initialCoin = coins[initialSymbol];
   const initialSelectedItem = initialCoin
@@ -67,8 +67,15 @@ function CoinField({ error, helperText, onChange, value: initialSymbol, disabled
   return (
     <Downshift
       initialSelectedItem={initialSelectedItem}
-      onChange={selection => onChange(selection.value)}
       itemToString={item => (item ? item.label : '')}
+      onChange={selection =>
+        onChange({
+          target: {
+            name: rest.name || rest.id,
+            value: selection.value,
+          },
+        })
+      }
     >
       {({
         getInputProps,
@@ -85,11 +92,12 @@ function CoinField({ error, helperText, onChange, value: initialSymbol, disabled
             margin: 'normal',
             variant: 'outlined',
             fullWidth: true,
+            error,
+            helperText,
+            disabled,
             InputProps: getInputProps({
               placeholder: 'Bitcoin (BTC)',
-              error,
-              helperText,
-              disabled,
+              ...rest,
             }),
           })}
           <div {...getMenuProps()}>
@@ -114,6 +122,7 @@ function CoinField({ error, helperText, onChange, value: initialSymbol, disabled
 }
 
 CoinField.propTypes = {
+  name: PropTypes.string.isRequired,
   error: PropTypes.bool,
   helperText: PropTypes.string,
   onChange: PropTypes.func.isRequired,
