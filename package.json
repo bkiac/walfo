@@ -5,7 +5,7 @@
   "scripts": {
     "install": "yarn lerna bootstrap",
     "test": "lerna run --stream test",
-    "start": "./start.sh"
+    "build": "./start.sh"
   },
   "dependencies": {
     "lerna": "^3.13.1"
