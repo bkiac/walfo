@@ -12,7 +12,6 @@ import * as OwnTypes from '../../../prop-types';
 import { FormikTextField, FieldWithError } from '../../views';
 import { CoinsContext } from '../../../contexts';
 import Debug from '../../views/Debug';
-import { any } from 'prop-types';
 
 function TransactionForm({
   onSubmit,
