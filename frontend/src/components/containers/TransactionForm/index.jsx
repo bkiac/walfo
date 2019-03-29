@@ -11,7 +11,6 @@ import { useApiCallback, useValidateResponse } from '../../../hooks';
 import * as OwnTypes from '../../../prop-types';
 import { FormikTextField, FieldWithError } from '../../views';
 import { CoinsContext } from '../../../contexts';
-import Debug from '../../views/Debug';
 
 function TransactionForm({
   onSubmit,
@@ -195,8 +194,6 @@ function TransactionForm({
             {initialValues ? <EditIcon /> : <AddIcon />}
             {initialValues ? 'Update transaction' : 'Create transaction'}
           </Fab>
-
-          <Debug any={{ values, touched, errors }} />
         </Form>
       )}
     </Formik>

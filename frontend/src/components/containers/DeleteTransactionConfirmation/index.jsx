@@ -1,7 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import { Grid, Button } from '@material-ui/core';
 import { DashboardContext, PortfolioContext } from '../../../contexts';
-import { Debug } from '../../views';
 import { useApiCallback } from '../../../hooks';
 import { transactionApi } from '../../../api';
 
@@ -44,8 +43,6 @@ function DeleteTransactionConfirmation() {
 
   return (
     <Grid container direction="column" justify="flex-start" alignItems="center">
-      <Debug any={tx} />
-
       <Grid item>
         <Grid container direction="row" justify="center" alignItems="center">
           <Button variant="contained" color="secondary" onClick={() => deleteTx(tx)}>
