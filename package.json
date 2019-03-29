@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "license": "ISC",
   "scripts": {
-    "bootstrap": "lerna bootstrap",
+    "install": "yarn install --ignore-scripts && yarn lerna bootstrap",
     "test": "lerna run --stream test",
-    "start": "sh -c 'cd ./frontend && yarn build && sudo cp -r build/* ../backend/public'"
+    "start": "./start.sh"
   },
   "dependencies": {
     "lerna": "^3.13.1"
