@@ -1,17 +1,18 @@
 Dependencies:
 
-````bash
+```bash
 $ yarn install
-$ yarn bootstrap
+```
 
 Test:
+
 ```bash
 $ yarn test
-````
+```
 
-Deploy:
+Build frontend app and start backend:
 
 ```bash
 # From root
-$ yarn start
+$ yarn build
 ```
