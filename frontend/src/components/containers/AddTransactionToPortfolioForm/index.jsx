@@ -4,13 +4,15 @@ import { DashboardContext, PortfolioContext } from '../../../contexts';
 import * as transactionsApi from '../../../api/transactionApi';
 
 function AddTransactionToPortfolioForm() {
-  const { selectedTransaction, closeDialog } = useContext(DashboardContext);
+  const { selectedTransaction, closeDialog, portfolios } = useContext(DashboardContext);
   const {
     portfolioName,
     transactions,
     positions,
     refreshPortfolio,
     getPositionByTransactionId,
+    getHoldingsForPosition,
+    getTagsForPosition,
   } = useContext(PortfolioContext);
 
   const tx = transactions[selectedTransaction];
@@ -26,6 +28,9 @@ function AddTransactionToPortfolioForm() {
         closeDialog();
         refreshPortfolio();
       }}
+      portfolios={portfolios}
+      getTagsForPosition={getTagsForPosition}
+      getHoldingsForPosition={getHoldingsForPosition}
       initialValues={tx}
       portfolioName={portfolioName}
       onSubmit={tx ? transactionsApi.updateTransaction : transactionsApi.createTransaction}

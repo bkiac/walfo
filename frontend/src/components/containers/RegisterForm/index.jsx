@@ -1,12 +1,26 @@
 import React from 'react';
-import TextField from '@material-ui/core/TextField';
-import { Field, Form, Formik } from 'formik';
-import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
-import { useRegister } from '../../../hooks';
+import { Form, Formik } from 'formik';
+import { Grid, Button } from '@material-ui/core';
+import * as Yup from 'yup';
+import { useRegister, useValidateResponse } from '../../../hooks';
+import { FormikTextField } from '../../views';
+
+const validationSchema = Yup.object().shape({
+  email: Yup.string()
+    .email()
+    .required(),
+  password: Yup.string().required(),
+  confirmPassword: Yup.string()
+    .test('match', "Your passwords don't match.", function equals(confirmPassword) {
+      return confirmPassword === this.parent.password;
+    })
+    .required(),
+});
 
 function RegisterForm() {
-  const [, register] = useRegister();
+  const [res, register] = useRegister();
+  const responseErrors = useValidateResponse(res);
+
   return (
     <Formik
       initialValues={{
@@ -14,57 +28,47 @@ function RegisterForm() {
         password: '',
         confirmPassword: '',
       }}
+      validationSchema={validationSchema}
       onSubmit={values => {
         register(values);
       }}
     >
-      {formik => (
-        <Form onSubmit={formik.handleSubmit}>
+      {({ handleSubmit, isValid }) => (
+        <Form onSubmit={handleSubmit}>
           <Grid container direction="column" alignItems="center">
             <Grid item>
-              <Field name="email">
-                {({ field }) => (
-                  <TextField
-                    {...field}
-                    label="Email"
-                    type="text"
-                    margin="normal"
-                    variant="outlined"
-                  />
-                )}
-              </Field>
+              <FormikTextField
+                name="email"
+                responseErrors={responseErrors}
+                label="Email"
+                type="text"
+                margin="normal"
+                variant="outlined"
+              />
             </Grid>
 
             <Grid item>
-              <Field name="password">
-                {({ field }) => (
-                  <TextField
-                    {...field}
-                    label="Password"
-                    type="password"
-                    margin="normal"
-                    variant="outlined"
-                  />
-                )}
-              </Field>
+              <FormikTextField
+                name="password"
+                label="Password"
+                type="password"
+                margin="normal"
+                variant="outlined"
+              />
             </Grid>
 
             <Grid item>
-              <Field name="confirmPassword">
-                {({ field }) => (
-                  <TextField
-                    {...field}
-                    label="Confirm password"
-                    type="password"
-                    margin="normal"
-                    variant="outlined"
-                  />
-                )}
-              </Field>
+              <FormikTextField
+                name="confirmPassword"
+                label="Confirm password"
+                type="password"
+                margin="normal"
+                variant="outlined"
+              />
             </Grid>
 
             <Grid item>
-              <Button type="submit" variant="contained" color="primary">
+              <Button type="submit" variant="contained" color="primary" disabled={!isValid}>
                 Register
               </Button>
             </Grid>

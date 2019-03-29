@@ -125,6 +125,14 @@ function PortfolioProvider({ children }) {
     () => dayjs(minBy(getBaseTransactionsList(), 'date').date).format('YYYY-MM-DD'),
     [getBaseTransactionsList],
   );
+  const getHoldingsForPosition = useCallback(
+    symbol => (basePositions[symbol] ? basePositions[symbol].holdings : 0),
+    [basePositions],
+  );
+  const getTagsForPosition = useCallback(
+    symbol => (basePositions[symbol] ? basePositions[symbol].tags : []),
+    [basePositions],
+  );
   const getAllTags = useCallback(
     () => uniq(getBasePositionsList().reduce((tags, p) => [...tags, ...p.tags], [])),
     [getBasePositionsList],
@@ -171,10 +179,13 @@ function PortfolioProvider({ children }) {
         removeTransaction,
         getTransactionsForPosition,
         getPositionByTransactionId,
+        basePositions,
         positions: filteredPositions,
         getPositionsList: getFilteredPositionsList,
         queryDate: queryDate || getDateOfFirstTransaction(),
         setQueryDate,
+        getHoldingsForPosition,
+        getTagsForPosition,
         getAllTags,
         queryTags,
         setQueryTags,

@@ -2,8 +2,8 @@ import React, { useContext } from 'react';
 import deburr from 'lodash/deburr';
 import Downshift from 'downshift';
 import { TextField, Paper, MenuItem } from '@material-ui/core';
-import { CoinsContext } from '../../../contexts';
 import * as PropTypes from 'prop-types';
+import { CoinsContext } from '../../../contexts';
 
 function renderInput(inputProps) {
   const { InputProps, ref, ...other } = inputProps;
@@ -19,6 +19,7 @@ function renderInput(inputProps) {
   );
 }
 
+// eslint-disable-next-line react/prop-types
 function renderSuggestion({ suggestion, index, itemProps, highlightedIndex, selectedItem }) {
   const isHighlighted = highlightedIndex === index;
   const isSelected = (selectedItem ? selectedItem.label : '').indexOf(suggestion.label) > -1;
@@ -56,7 +57,7 @@ function getSuggestions(data, value) {
       });
 }
 
-function CoinField({ onChange, value: initialSymbol, disabled }) {
+function CoinField({ onChange, value: initialSymbol, disabled, error, helperText, ...rest }) {
   const { coins, coinListForInput } = useContext(CoinsContext);
   const initialCoin = coins[initialSymbol];
   const initialSelectedItem = initialCoin
@@ -66,8 +67,15 @@ function CoinField({ onChange, value: initialSymbol, disabled }) {
   return (
     <Downshift
       initialSelectedItem={initialSelectedItem}
-      onChange={selection => onChange(selection.value)}
       itemToString={item => (item ? item.label : '')}
+      onChange={selection =>
+        onChange({
+          target: {
+            name: rest.name || rest.id,
+            value: selection.value,
+          },
+        })
+      }
     >
       {({
         getInputProps,
@@ -84,9 +92,12 @@ function CoinField({ onChange, value: initialSymbol, disabled }) {
             margin: 'normal',
             variant: 'outlined',
             fullWidth: true,
+            error,
+            helperText,
+            disabled,
             InputProps: getInputProps({
               placeholder: 'Bitcoin (BTC)',
-              disabled,
+              ...rest,
             }),
           })}
           <div {...getMenuProps()}>
@@ -111,12 +122,17 @@ function CoinField({ onChange, value: initialSymbol, disabled }) {
 }
 
 CoinField.propTypes = {
+  name: PropTypes.string.isRequired,
+  error: PropTypes.bool,
+  helperText: PropTypes.string,
   onChange: PropTypes.func.isRequired,
   value: PropTypes.string,
   disabled: PropTypes.bool,
 };
 
 CoinField.defaultProps = {
+  error: false,
+  helperText: '',
   value: '',
   disabled: false,
 };

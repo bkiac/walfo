@@ -5,7 +5,7 @@ import TransactionForm from '../TransactionForm';
 import { DashboardContext } from '../../../contexts';
 
 function InitialTransactionForm() {
-  const { refreshPortfolios, selectPortfolio } = useContext(DashboardContext);
+  const { refreshPortfolios, selectPortfolio, portfolios } = useContext(DashboardContext);
   return (
     <Grid container direction="column" justify="flex-start" alignItems="center">
       <Typography variant="h6">Create a transaction for your new portfolio!</Typography>
@@ -13,6 +13,7 @@ function InitialTransactionForm() {
       <TransactionForm
         shouldCreateNewPortfolio
         onSubmit={transactionsApi.createTransaction}
+        portfolios={portfolios}
         onSuccess={tx => {
           refreshPortfolios();
           selectPortfolio(tx.portfolio);

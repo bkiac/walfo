@@ -16,7 +16,16 @@ exports.createTransactionValidators = [
     .isString()
     .custom(async value => cryptocompare.price(value, 'USD')),
   body('date').isISO8601(),
-  body('amount').isNumeric(),
+  body('amount')
+    .isNumeric()
+    .custom(async (amount, { req: { user, body: { type, portfolio, symbol } } }) => {
+      if (type === 'SELL') {
+        const txs = await Transaction.find({ user, portfolio, symbol });
+        const holdingsForPosition = txs.reduce((h, t) => h + t.amount, 0);
+        return amount <= holdingsForPosition;
+      }
+      return true;
+    }),
   body('price').isNumeric(),
   body('type').custom(value => value === 'BUY' || value === 'SELL'),
   body('exchange')
@@ -98,8 +107,6 @@ exports.registerValidators = [
     .exists()
     .custom((value, { req }) => value === req.body.password),
 ];
-
-exports.getPricesForLastDaysValidators = [param('numOfDays').isInt({ min: 1, max: 2000 })];
 
 exports.validate = async (req, res, next) => {
   const errors = validationResult(req);
