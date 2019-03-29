@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "license": "ISC",
   "scripts": {
-    "install": "yarn install --ignore-scripts && yarn lerna bootstrap",
+    "install": "yarn lerna bootstrap",
     "test": "lerna run --stream test",
     "start": "./start.sh"
   },
