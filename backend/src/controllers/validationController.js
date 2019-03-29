@@ -21,7 +21,7 @@ exports.createTransactionValidators = [
     .custom(async (amount, { req: { user, body: { type, portfolio, symbol } } }) => {
       if (type === 'SELL') {
         const txs = await Transaction.find({ user, portfolio, symbol });
-        const holdingsForPosition = txs.reduce((h, t) => h + t.amount);
+        const holdingsForPosition = txs.reduce((h, t) => h + t.amount, 0);
         return amount <= holdingsForPosition;
       }
       return true;
