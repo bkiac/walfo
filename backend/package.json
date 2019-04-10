@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node ./src/start.js",
     "watch": "nodemon ./src/start.js --ignore node_modules/",
-    "test": "jest --config ./test/jest.config.js"
+    "test": "jest --config ./jest.config.js"
   },
   "dependencies": {
     "bcrypt": "^3.0.3",

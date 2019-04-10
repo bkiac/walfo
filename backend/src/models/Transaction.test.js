@@ -1,8 +1,8 @@
 /* eslint-env jest */
 const mongoose = require('mongoose');
-require('../../src/models/User');
-require('../../src/models/Tags');
-require('../../src/models/Transaction');
+require('./User');
+require('./Tags');
+require('./Transaction');
 
 const User = mongoose.model('User');
 const Tags = mongoose.model('Tags');
