@@ -24,6 +24,14 @@ afterAll(async () => {
 describe('Transaction', () => {
   let user;
 
+  const PRIMARY_PORTFOLIO = 'Primary';
+  const SECONDARY_PORTFOLIO = 'Secondary';
+  const TERTIARY_PORTFOLIO = 'Tertiary';
+
+  const PRIMARY_TAGS = ['hodl'];
+  const SECONDARY_TAGS = ['hodl', 'pump'];
+  const TERTIARY_TAGS = ['hodl', 'pump', 'dump'];
+
   beforeAll(async () => {
     user = await new User({
       email: 'not@your.keys',
@@ -31,75 +39,125 @@ describe('Transaction', () => {
     });
     await user.save();
 
-    const tags = await new Tags({
-      array: ['hodl', 'pump', 'dump'],
+    const primaryTags = await new Tags({
+      array: PRIMARY_TAGS,
     });
-    await tags.save();
+    await primaryTags.save();
+
+    const secondaryTags = await new Tags({
+      array: SECONDARY_TAGS,
+    });
+    await secondaryTags.save();
+
+    const tertiaryTags = await new Tags({
+      array: TERTIARY_TAGS,
+    });
+    await tertiaryTags.save();
 
     const BTC = [
       {
         user,
-        portfolio: 'Main',
+        portfolio: PRIMARY_PORTFOLIO,
         symbol: 'BTC',
         type: 'BUY',
         date: '2018-06-12',
         amount: 1,
         price: 3500,
-        tags,
+        tags: primaryTags,
       },
       {
         user,
-        portfolio: 'Secondary',
+        portfolio: PRIMARY_PORTFOLIO,
+        symbol: 'BTC',
+        type: 'BUY',
+        date: '2018-05-12',
+        amount: 1,
+        price: 4000,
+        tags: primaryTags,
+      },
+      {
+        user,
+        portfolio: PRIMARY_PORTFOLIO,
+        symbol: 'BTC',
+        type: 'BUY',
+        date: '2018-04-12',
+        amount: 1,
+        price: 4500,
+        tags: primaryTags,
+      },
+      {
+        user,
+        portfolio: SECONDARY_PORTFOLIO,
         symbol: 'BTC',
         type: 'BUY',
         date: '2018-06-13',
         amount: 2,
         price: 3500,
-        tags,
+        tags: secondaryTags,
       },
       {
         user,
-        portfolio: 'Tertiary',
+        portfolio: SECONDARY_PORTFOLIO,
+        symbol: 'BTC',
+        type: 'BUY',
+        date: '2018-06-13',
+        amount: 2,
+        price: 3500,
+        tags: secondaryTags,
+      },
+      {
+        user,
+        portfolio: TERTIARY_PORTFOLIO,
         symbol: 'BTC',
         type: 'BUY',
         date: '2018-06-14',
         amount: 3,
         price: 3500,
-        tags,
+        tags: tertiaryTags,
       },
     ];
     const ETH = [
       {
         user,
-        portfolio: 'Main',
+        portfolio: PRIMARY_PORTFOLIO,
         symbol: 'ETH',
         type: 'BUY',
         date: '2018-07-12',
         amount: 1,
         price: 250,
-        tags,
+        tags: primaryTags,
       },
       {
         user,
-        portfolio: 'Secondary',
+        portfolio: PRIMARY_PORTFOLIO,
+        symbol: 'ETH',
+        type: 'BUY',
+        date: '2018-08-12',
+        amount: 3,
+        price: 200,
+        tags: primaryTags,
+      },
+      {
+        user,
+        portfolio: SECONDARY_PORTFOLIO,
         symbol: 'ETH',
         type: 'BUY',
         date: '2018-07-13',
         amount: 2,
         price: 250,
-        tags,
+        tags: secondaryTags,
       },
     ];
     const LTC = [
       {
         user,
-        portfolio: 'Main',
+        portfolio: PRIMARY_PORTFOLIO,
         symbol: 'LTC',
         type: 'BUY',
         date: '2018-08-12',
         amount: 1,
-        price: 3500,
-        tags,
+        price: 35,
+        tags: primaryTags,
       },
     ];
 
@@ -120,13 +178,13 @@ describe('Transaction', () => {
     });
 
     it('should return symbols with matching portfolio', async () => {
-      let symbols = await Transaction.getSymbols(user._id, 'Main');
+      let symbols = await Transaction.getSymbols(user._id, PRIMARY_PORTFOLIO);
       expect(symbols.sort()).toEqual(['BTC', 'ETH', 'LTC'].sort());
 
-      symbols = await Transaction.getSymbols(user._id, 'Secondary');
+      symbols = await Transaction.getSymbols(user._id, SECONDARY_PORTFOLIO);
       expect(symbols.sort()).toEqual(['BTC', 'ETH'].sort());
 
-      symbols = await Transaction.getSymbols(user._id, 'Tertiary');
+      symbols = await Transaction.getSymbols(user._id, TERTIARY_PORTFOLIO);
       expect(symbols.sort()).toEqual(['BTC'].sort());
     });
 
@@ -142,14 +200,47 @@ describe('Transaction', () => {
     });
 
     it('should return symbols which were added before the specified date with matching portfolio', async () => {
-      let symbols = await Transaction.getSymbols(user._id, 'Main', '2018-08-12');
+      let symbols = await Transaction.getSymbols(user._id, PRIMARY_PORTFOLIO, '2018-08-12');
       expect(symbols.sort()).toEqual(['BTC', 'ETH', 'LTC'].sort());
 
-      symbols = await Transaction.getSymbols(user._id, 'Secondary', '2018-07-12');
+      symbols = await Transaction.getSymbols(user._id, SECONDARY_PORTFOLIO, '2018-07-12');
       expect(symbols.sort()).toEqual(['BTC'].sort());
 
-      symbols = await Transaction.getSymbols(user._id, 'Tertiary', '2018-06-12');
+      symbols = await Transaction.getSymbols(user._id, TERTIARY_PORTFOLIO, '2018-06-12');
       expect(symbols.sort()).toEqual([].sort());
+    });
+  });
+
+  describe('getPositions', () => {
+    it("should return the user's transactions grouped into positions", async () => {
+      const positions = await Transaction.getPositions(user._id, PRIMARY_PORTFOLIO);
+
+      const expectedBtcPosition = {
+        symbol: 'BTC',
+        tags: PRIMARY_TAGS,
+        holdings: 3,
+        cost: 12000,
+      };
+      const currentBtcPosition = positions.find(p => p.symbol === 'BTC');
+      expect(currentBtcPosition).toMatchObject(expectedBtcPosition);
+
+      const expectedEthPosition = {
+        symbol: 'ETH',
+        tags: PRIMARY_TAGS,
+        holdings: 4,
+        cost: 850,
+      };
+      const currentEthPosition = positions.find(p => p.symbol === 'ETH');
+      expect(currentEthPosition).toMatchObject(expectedEthPosition);
+
+      const expectedLtcPosition = {
+        symbol: 'LTC',
+        tags: PRIMARY_TAGS,
+        holdings: 1,
+        cost: 35,
+      };
+      const currentLtcPosition = positions.find(p => p.symbol === 'LTC');
+      expect(currentLtcPosition).toMatchObject(expectedLtcPosition);
     });
   });
 });
