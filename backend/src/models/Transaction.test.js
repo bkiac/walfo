@@ -113,8 +113,28 @@ describe('Transaction', () => {
         symbol: 'BTC',
         type: 'BUY',
         date: '2018-06-14',
-        amount: 3,
-        price: 3500,
+        amount: 1,
+        price: 3000,
+        tags: tags1,
+      },
+      {
+        user,
+        portfolio: TERTIARY_PORTFOLIO,
+        symbol: 'BTC',
+        type: 'BUY',
+        date: '2018-06-15',
+        amount: 1,
+        price: 4000,
+        tags: tags1,
+      },
+      {
+        user,
+        portfolio: TERTIARY_PORTFOLIO,
+        symbol: 'BTC',
+        type: 'BUY',
+        date: '2018-06-16',
+        amount: 1,
+        price: 5000,
         tags: tags1,
       },
     ];
@@ -319,6 +339,55 @@ describe('Transaction', () => {
       };
       const currentEthPosition = positions.find(p => p.symbol === 'ETH');
       expect(currentEthPosition).toMatchObject(expectedEthPosition);
+    });
+  });
+
+  describe('getPositionsForEachDayBetweenDates', () => {
+    it('should return correct positions for each day between dates', async () => {
+      const startDate = moment('2018-06-14').endOf('day');
+      const endDate = moment('2018-06-16').endOf('day');
+      // Include the last day
+      const numOfDays = Math.floor(moment.duration(endDate.diff(startDate)).asDays()) + 1;
+
+      const positionsForEachDay = await Transaction.getPositionsForEachDayBetweenDates(
+        user._id,
+        TERTIARY_PORTFOLIO,
+        startDate,
+        endDate,
+      );
+
+      // Should have a position array for each day
+      expect(positionsForEachDay).toHaveLength(numOfDays);
+
+      // Should only have 1 position for the first day
+      let [positionsForTheDay] = positionsForEachDay;
+      expect(positionsForTheDay).toHaveLength(1);
+      let expectedPosition = {
+        symbol: 'BTC',
+        holdings: 1,
+        cost: 3000,
+      };
+      expect(positionsForTheDay[0]).toMatchObject(expectedPosition);
+
+      // Should only have 1 position for the second day
+      [, positionsForTheDay] = positionsForEachDay;
+      expect(positionsForTheDay).toHaveLength(1);
+      expectedPosition = {
+        symbol: 'BTC',
+        holdings: 2,
+        cost: 7000,
+      };
+      expect(positionsForTheDay[0]).toMatchObject(expectedPosition);
+
+      // Should only have 1 position for the third day
+      [, , positionsForTheDay] = positionsForEachDay;
+      expect(positionsForTheDay).toHaveLength(1);
+      expectedPosition = {
+        symbol: 'BTC',
+        holdings: 3,
+        cost: 12000,
+      };
+      expect(positionsForTheDay[0]).toMatchObject(expectedPosition);
     });
   });
 });
