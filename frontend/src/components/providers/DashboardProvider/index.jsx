@@ -17,6 +17,9 @@ function DashboardProvider({ children }) {
 
   const [selectedTransaction, selectTransaction] = useState('');
 
+  const [queryDate, setQueryDate] = useState();
+  const [queryTags, setQueryTags] = useState();
+
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isFormDialogOpen, setIsFormDialogOpen] = useState(false);
   const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] = useState(false);
@@ -44,6 +47,8 @@ function DashboardProvider({ children }) {
     setSelectedPortfolio(portfolio);
     selectTransaction('');
     closeDrawer();
+    setQueryDate();
+    setQueryDate();
   }
 
   if (isLoading) {
@@ -67,6 +72,10 @@ function DashboardProvider({ children }) {
         selectPortfolio,
         selectedTransaction,
         selectTransaction,
+        queryDate,
+        setQueryDate,
+        queryTags,
+        setQueryTags,
       }}
     >
       {children}

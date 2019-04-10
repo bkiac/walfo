@@ -4,8 +4,8 @@ import * as PropTypes from 'prop-types';
 import style from './style.module.scss';
 import { Tag } from '../../views';
 
-function TagsSelector({ tags, onChange }) {
-  const [clickedTags, setClickedTags] = useState([]);
+function TagsSelector({ tags, initialClickedTags, onChange }) {
+  const [clickedTags, setClickedTags] = useState(initialClickedTags);
 
   function toggleTag(tag) {
     const isAlreadyClicked = clickedTags.includes(tag);
@@ -39,11 +39,13 @@ function TagsSelector({ tags, onChange }) {
 
 TagsSelector.propTypes = {
   tags: PropTypes.arrayOf(PropTypes.string),
+  initialClickedTags: PropTypes.arrayOf(PropTypes.string),
   onChange: PropTypes.func.isRequired,
 };
 
 TagsSelector.defaultProps = {
   tags: [],
+  initialClickedTags: [],
 };
 
 export default TagsSelector;

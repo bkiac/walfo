@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useContext, useMemo, useRef } from 'react';
 import * as PropTypes from 'prop-types';
 import { normalize, schema } from 'normalizr';
 import { minBy, uniq } from 'lodash';
@@ -30,10 +30,11 @@ function PortfolioProvider({ children }) {
     selectTransaction,
     openFormDialog,
     openConfirmationDialog,
+    queryDate,
+    setQueryDate,
+    queryTags,
+    setQueryTags,
   } = useContext(DashboardContext);
-
-  const [queryDate, setQueryDate] = useState();
-  const [queryTags, setQueryTags] = useState();
 
   // Query portfolio
   const [basePortfolioResponse, refreshBasePortfolio] = useApiOnMount(
