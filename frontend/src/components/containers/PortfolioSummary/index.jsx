@@ -15,6 +15,7 @@ function PortfolioSummary() {
     setQueryDate,
     getDateOfFirstTransaction,
     getAllTags,
+    queryTags,
     setQueryTags,
   } = useContext(PortfolioContext);
 
@@ -53,7 +54,11 @@ function PortfolioSummary() {
         </Grid>
 
         <Grid item className="width-100p">
-          <TagsSelector tags={getAllTags()} onChange={setQueryTags} />
+          <TagsSelector
+            tags={getAllTags()}
+            initialClickedTags={queryTags}
+            onChange={setQueryTags}
+          />
         </Grid>
 
         <Grid item>
