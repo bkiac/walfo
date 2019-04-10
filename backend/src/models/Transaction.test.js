@@ -1,6 +1,7 @@
 /* eslint-env jest */
 const mongoose = require('mongoose');
 const _ = require('lodash');
+const moment = require('moment');
 require('./User');
 require('./Tags');
 require('./Transaction');
@@ -275,6 +276,27 @@ describe('Transaction', () => {
       };
       const currentLtcPosition = positions.find(p => p.symbol === 'LTC');
       expect(currentLtcPosition).toMatchObject(expectedLtcPosition);
+    });
+
+    it('should return those transactions, which were added before the specified date', async () => {
+      const positions = await Transaction.getPositions(
+        user._id,
+        PRIMARY_PORTFOLIO,
+        undefined,
+        moment('2018-06-01'),
+      );
+
+      // Should only be 1 matching position
+      expect(positions).toHaveLength(1);
+
+      // filtered BTC transactions aggregated correctly
+      const expectedBtcPosition = {
+        symbol: 'BTC',
+        holdings: 2,
+        cost: 8500,
+      };
+      const currentBtcPosition = positions.find(p => p.symbol === 'BTC');
+      expect(currentBtcPosition).toMatchObject(expectedBtcPosition);
     });
   });
 });
