@@ -278,7 +278,7 @@ describe('Transaction', () => {
       expect(currentLtcPosition).toMatchObject(expectedLtcPosition);
     });
 
-    it('should return those transactions, which were added before the specified date', async () => {
+    it('should return positions with transactions, which were added before the specified date', async () => {
       const positions = await Transaction.getPositions(
         user._id,
         PRIMARY_PORTFOLIO,
@@ -297,6 +297,28 @@ describe('Transaction', () => {
       };
       const currentBtcPosition = positions.find(p => p.symbol === 'BTC');
       expect(currentBtcPosition).toMatchObject(expectedBtcPosition);
+    });
+
+    it('should return positions with transactions, which were added before the specified date, filtered by tags', async () => {
+      const tags = ['hodl', 'pump'];
+      const positions = await Transaction.getPositions(
+        user._id,
+        PRIMARY_PORTFOLIO,
+        tags,
+        moment('2018-08-01'),
+      );
+
+      // Should only be 1 matching position
+      expect(positions).toHaveLength(1);
+
+      // filtered ETH transactions aggregated correctly
+      const expectedEthPosition = {
+        symbol: 'ETH',
+        holdings: 1,
+        cost: 250,
+      };
+      const currentEthPosition = positions.find(p => p.symbol === 'ETH');
+      expect(currentEthPosition).toMatchObject(expectedEthPosition);
     });
   });
 });
