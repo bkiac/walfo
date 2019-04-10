@@ -1,5 +1,6 @@
 /* eslint-env jest */
 const mongoose = require('mongoose');
+const _ = require('lodash');
 require('./User');
 require('./Tags');
 require('./Transaction');
@@ -28,9 +29,9 @@ describe('Transaction', () => {
   const SECONDARY_PORTFOLIO = 'Secondary';
   const TERTIARY_PORTFOLIO = 'Tertiary';
 
-  const PRIMARY_TAGS = ['hodl'];
-  const SECONDARY_TAGS = ['hodl', 'pump'];
-  const TERTIARY_TAGS = ['hodl', 'pump', 'dump'];
+  const TAGS_1 = ['hodl', 'satoshi', 'nakamoto'];
+  const TAGS_2 = ['hodl', 'pump', 'libertarianism'];
+  const TAGS_3 = ['hodl', 'pump', 'dump'];
 
   beforeAll(async () => {
     user = await new User({
@@ -39,20 +40,20 @@ describe('Transaction', () => {
     });
     await user.save();
 
-    const primaryTags = await new Tags({
-      array: PRIMARY_TAGS,
+    const tags1 = await new Tags({
+      array: TAGS_1,
     });
-    await primaryTags.save();
+    await tags1.save();
 
-    const secondaryTags = await new Tags({
-      array: SECONDARY_TAGS,
+    const tags2 = await new Tags({
+      array: TAGS_2,
     });
-    await secondaryTags.save();
+    await tags2.save();
 
-    const tertiaryTags = await new Tags({
-      array: TERTIARY_TAGS,
+    const tags3 = await new Tags({
+      array: TAGS_3,
     });
-    await tertiaryTags.save();
+    await tags3.save();
 
     const BTC = [
       {
@@ -63,7 +64,7 @@ describe('Transaction', () => {
         date: '2018-06-12',
         amount: 1,
         price: 3500,
-        tags: primaryTags,
+        tags: tags1,
       },
       {
         user,
@@ -73,7 +74,7 @@ describe('Transaction', () => {
         date: '2018-05-12',
         amount: 1,
         price: 4000,
-        tags: primaryTags,
+        tags: tags1,
       },
       {
         user,
@@ -83,7 +84,7 @@ describe('Transaction', () => {
         date: '2018-04-12',
         amount: 1,
         price: 4500,
-        tags: primaryTags,
+        tags: tags1,
       },
       {
         user,
@@ -93,7 +94,7 @@ describe('Transaction', () => {
         date: '2018-06-13',
         amount: 2,
         price: 3500,
-        tags: secondaryTags,
+        tags: tags1,
       },
       {
         user,
@@ -103,7 +104,7 @@ describe('Transaction', () => {
         date: '2018-06-13',
         amount: 2,
         price: 3500,
-        tags: secondaryTags,
+        tags: tags1,
       },
       {
         user,
@@ -113,7 +114,7 @@ describe('Transaction', () => {
         date: '2018-06-14',
         amount: 3,
         price: 3500,
-        tags: tertiaryTags,
+        tags: tags1,
       },
     ];
     const ETH = [
@@ -125,7 +126,7 @@ describe('Transaction', () => {
         date: '2018-07-12',
         amount: 1,
         price: 250,
-        tags: primaryTags,
+        tags: tags2,
       },
       {
         user,
@@ -135,7 +136,7 @@ describe('Transaction', () => {
         date: '2018-08-12',
         amount: 3,
         price: 200,
-        tags: primaryTags,
+        tags: tags2,
       },
       {
         user,
@@ -145,7 +146,7 @@ describe('Transaction', () => {
         date: '2018-07-13',
         amount: 2,
         price: 250,
-        tags: secondaryTags,
+        tags: tags2,
       },
     ];
     const LTC = [
@@ -157,7 +158,7 @@ describe('Transaction', () => {
         date: '2018-08-12',
         amount: 1,
         price: 35,
-        tags: primaryTags,
+        tags: tags3,
       },
     ];
 
@@ -215,27 +216,60 @@ describe('Transaction', () => {
     it("should return the user's transactions grouped into positions", async () => {
       const positions = await Transaction.getPositions(user._id, PRIMARY_PORTFOLIO);
 
+      // Contains all possible symbols
+      expect(positions).toHaveLength(3);
+
+      // BTC transactions aggregated correctly
       const expectedBtcPosition = {
         symbol: 'BTC',
-        tags: PRIMARY_TAGS,
         holdings: 3,
         cost: 12000,
       };
       const currentBtcPosition = positions.find(p => p.symbol === 'BTC');
       expect(currentBtcPosition).toMatchObject(expectedBtcPosition);
 
+      // ETH transactions aggregated correctly
       const expectedEthPosition = {
         symbol: 'ETH',
-        tags: PRIMARY_TAGS,
         holdings: 4,
         cost: 850,
       };
       const currentEthPosition = positions.find(p => p.symbol === 'ETH');
       expect(currentEthPosition).toMatchObject(expectedEthPosition);
 
+      // LTC transactions aggregated correctly
       const expectedLtcPosition = {
         symbol: 'LTC',
-        tags: PRIMARY_TAGS,
+        holdings: 1,
+        cost: 35,
+      };
+      const currentLtcPosition = positions.find(p => p.symbol === 'LTC');
+      expect(currentLtcPosition).toMatchObject(expectedLtcPosition);
+    });
+
+    it("should return the user's transactions grouped into positions filtered by tags", async () => {
+      const tags = ['hodl', 'pump'];
+      const positions = await Transaction.getPositions(user._id, PRIMARY_PORTFOLIO, tags);
+
+      // Should only be 2 matching position
+      expect(positions).toHaveLength(2);
+
+      // Filter tags array is a subset of the merged array of position tags
+      const allTagsForPositions = positions.reduce((ts, p) => [..._.uniq(p.tags)]);
+      expect(allTagsForPositions).toEqual(expect.arrayContaining(tags));
+
+      // filtered ETH transactions aggregated correctly
+      const expectedEthPosition = {
+        symbol: 'ETH',
+        holdings: 4,
+        cost: 850,
+      };
+      const currentEthPosition = positions.find(p => p.symbol === 'ETH');
+      expect(currentEthPosition).toMatchObject(expectedEthPosition);
+
+      // filtered LTC transactions aggregated correctly
+      const expectedLtcPosition = {
+        symbol: 'LTC',
         holdings: 1,
         cost: 35,
       };
