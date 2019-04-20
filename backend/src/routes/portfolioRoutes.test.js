@@ -208,6 +208,7 @@ describe('portfolioRoutes', () => {
 
       await axios.post('/transactions', txForAnotherPortfolio, config);
     } catch (err) {
+      console.log(err.response.data);
       throw Error(err);
     }
   });

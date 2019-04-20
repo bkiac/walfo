@@ -1,11 +1,11 @@
 language: node_js
 node_js:
-  - lts/*
+- lts/*
 before_deploy: yarn build
 deploy:
   skip_cleanup: true
   provider: heroku
   run:
-    - restart
+  - restart
   api_key:
     secure: OLR5Wpe2R4ckPg4XAPVmmyRCh5ZPvDem3+CE1hBPJNIiXaanf1q1ORekA33OR0Zl+jBB34967qOOQKTzSWeqPHSwRzmQcbFoWZLMYjoHwNtkeIkEov5DPNXOOhzjdAn8kmMc5K5U6HjDMNdNbng6S/XfTPdxndxXjdhXPOlrBpD1VdCQxZ0Qzf9FpqS10WjF4FnI4Uxap6Mc9fotId6b1Poi5+BKIA01z7GJYs48mAH89FX4kM5YAx9dFyWrvdDv7lwwKPD6apI3ofVLBwc0gFs5OSbR54h+RBwe7OHcqqDb2iE74GNEVS6aIp/NlV5CCca/zVLgpVljgYmIsCRG4nm1SU5S9A/0j5pXWqEM8V/JWM+375fNfWHiThi2g1K/WNWT9WgrDdkL15HWQ9mJPpp2/Iu/9BaijAfSlxxu3iPzUO4Rw+9r5a2T6mIaAUldtFlPPtIW5DaEqrQFgtAckmrh0U8/GAHVJfOLpLHzNpf75aqbJCLQL8qwcGAAGqzJVst8+kRPp1shOJlyR+/uJbB3CtUsa6ooowZ925SdS/LKN79zWcyYncR/RvYmt2Ur/z9qAkJZWGcsYPh2JNHC8s/YJSuAvM+8+RzbtvZLUPMyvEEavGezAVKyZ9xtlgQYNJFqYT0f7/5EIUOl7EZ4VbYBpsF8Kbd20/s78BIeAYc=
