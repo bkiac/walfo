@@ -15,7 +15,7 @@ describe('authRoutes', () => {
         });
         expect(res.status).toBe(200);
       } catch (err) {
-        console.error(err.response.data);
+        console.error(err);
         throw Error(err);
       }
     });
@@ -78,7 +78,7 @@ describe('authRoutes', () => {
           confirmPassword: password,
         });
       } catch (err) {
-        console.error(err.response.data);
+        console.error(err);
         throw Error(err);
       }
     });
@@ -91,7 +91,7 @@ describe('authRoutes', () => {
         });
         expect(res.status).toBe(200);
       } catch (err) {
-        console.error(err.response.data);
+        console.error(err);
         throw Error(err);
       }
     });

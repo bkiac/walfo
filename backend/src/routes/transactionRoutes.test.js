@@ -33,7 +33,7 @@ describe('transactionRoutes', () => {
       const res = await axios.post('/auth/register', user);
       config.headers.Authorization = `Bearer ${res.data.token}`;
     } catch (err) {
-      console.error(err.response.data);
+      console.error(err);
       throw Error(err);
     }
   });
@@ -44,7 +44,7 @@ describe('transactionRoutes', () => {
         const res = await axios.post(route, validTx, config);
         expect(res.status).toBe(201);
       } catch (err) {
-        console.error(err.response.data);
+        console.error(err);
         throw Error(err);
       }
     });
@@ -194,7 +194,7 @@ describe('transactionRoutes', () => {
           [...validTx.tags, ...validUpdatedTx.tags].sort(),
         );
       } catch (err) {
-        console.error(err.response.data);
+        console.error(err);
         throw Error(err);
       }
     });
@@ -255,7 +255,7 @@ describe('transactionRoutes', () => {
         const deleteRes = await axios.delete(`${route}/${createRes.data._id}`, config);
         expect(deleteRes.status).toBe(200);
       } catch (err) {
-        console.error(err.response.data);
+        console.error(err);
         throw Error(err);
       }
     });
