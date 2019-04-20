@@ -120,7 +120,7 @@ module.exports = {
   // runner: "jest-runner",
 
   // The paths to modules that run some code to configure or set up the testing environment before each test
-  setupFiles: ['dotenv/config', './test/mongoose.js', './test/axios.js'],
+  setupFiles: ['dotenv/config', './test/models', './test/axios.js'],
 
   // A list of paths to modules that run some code to configure or set up the testing framework before each test
   setupFilesAfterEnv: ['./test/framework.js'],
