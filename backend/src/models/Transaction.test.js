@@ -1,27 +1,8 @@
 /* eslint-env jest */
-const mongoose = require('mongoose');
 const _ = require('lodash');
 const moment = require('moment');
-require('./User');
-require('./Tags');
-require('./Transaction');
 
-const User = mongoose.model('User');
-const Tags = mongoose.model('Tags');
-const Transaction = mongoose.model('Transaction');
-
-beforeAll(async () => {
-  await mongoose.connect(`${process.env.DATABASE}_test`, {
-    useNewUrlParser: true,
-    useCreateIndex: true,
-  });
-  mongoose.set('useFindAndModify', false);
-  mongoose.Promise = global.Promise;
-});
-
-afterAll(async () => {
-  await mongoose.disconnect();
-});
+const { User, Tags, Transaction } = global;
 
 describe('Transaction', () => {
   let user;
@@ -185,12 +166,6 @@ describe('Transaction', () => {
 
     const txs = [...BTC, ...ETH, ...LTC];
     await Promise.all(txs.map(tx => new Transaction(tx).save()));
-  });
-
-  afterAll(async () => {
-    await User.deleteMany({});
-    await Tags.deleteMany({});
-    await Transaction.deleteMany({});
   });
 
   describe('getSymbols', () => {

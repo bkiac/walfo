@@ -1,32 +1,11 @@
 /* eslint-env jest */
-const mongoose = require('mongoose');
-require('./Tags');
-
-const Tags = mongoose.model('Tags');
-
-beforeAll(async () => {
-  await mongoose.connect(`${process.env.DATABASE}_test`, {
-    useNewUrlParser: true,
-    useCreateIndex: true,
-  });
-  mongoose.set('useFindAndModify', false);
-  mongoose.Promise = global.Promise;
-});
-
-afterAll(async () => {
-  await mongoose.disconnect();
-});
+const { Tags } = global;
 
 describe('Tags', () => {
-  afterAll(async () => {
-    await Tags.deleteMany({});
-  });
-
   describe('addToSet', () => {
     it('should add new element', async () => {
       const tags = ['brand', 'new', 'tags'];
       let tagsDoc = await Tags.create({ array: tags });
-
       const oneNewTag = ['oneNew'];
       tagsDoc = await Tags.addToSet(tagsDoc._id, oneNewTag);
 
