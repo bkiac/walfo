@@ -8,9 +8,9 @@ const Tags = mongoose.model('Tags');
 const Transaction = mongoose.model('Transaction');
 
 module.exports = async () => {
-  User.collection.drop();
-  Tags.collection.drop();
-  Transaction.collection.drop();
+  await User.deleteMany({});
+  await Tags.deleteMany({});
+  await Transaction.deleteMany({});
 
   await global.database.disconnect();
 
