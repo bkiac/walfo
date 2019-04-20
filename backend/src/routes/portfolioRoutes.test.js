@@ -208,7 +208,7 @@ describe('portfolioRoutes', () => {
 
       await axios.post('/transactions', txForAnotherPortfolio, config);
     } catch (err) {
-      console.log(err.response.data);
+      console.error(err.response.data);
       throw Error(err);
     }
   });
@@ -220,6 +220,7 @@ describe('portfolioRoutes', () => {
         expect(res.status).toBe(200);
         expect(res.data.sort()).toEqual(['My Portfolio', 'Another Portfolio'].sort());
       } catch (err) {
+        console.error(err.response.data);
         throw Error(err);
       }
     });
@@ -232,6 +233,7 @@ describe('portfolioRoutes', () => {
         expect(res.status).toBe(200);
         expect(res.data).toMatchObject(myPortfolio);
       } catch (err) {
+        console.error(err.response.data);
         throw Error(err);
       }
     });
@@ -266,6 +268,7 @@ describe('portfolioRoutes', () => {
         // Last N days + today
         expect(res.data).toHaveLength(numOfLastDays + 1);
       } catch (err) {
+        console.error(err.response.data);
         throw Error(err);
       }
     });
