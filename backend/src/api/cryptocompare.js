@@ -9,12 +9,14 @@ const helpers = require('../utils/helpers');
 const baseUrl = process.env.API_URL;
 const apiKey = process.env.API_KEY;
 
-function dateToTimestamp(date) {
+const cryptocompare = {};
+
+cryptocompare.dateToTimestamp = function dateToTimestamp(date) {
   if (!(date instanceof Date)) throw new Error('timestamp must be an instance of Date.');
   return Math.floor(date.getTime() / 1000);
-}
+};
 
-function fetchJSON(url) {
+cryptocompare.fetchJSON = function fetchJSON(url) {
   let fullUrl = url;
   if (url.indexOf('?') > -1) {
     fullUrl += '&api_key=';
@@ -34,126 +36,132 @@ function fetchJSON(url) {
       if (body.Response === 'Error') throw body.Message;
       return body;
     });
-}
+};
 
-function coinList() {
+cryptocompare.coinList = function coinList() {
   const url = `${baseUrl}all/coinlist`;
-  return fetchJSON(url);
-}
+  return cryptocompare.fetchJSON(url);
+};
 
-function exchangeList() {
+cryptocompare.exchangeList = function exchangeList() {
   const url = `${baseUrl}all/exchanges`;
-  return fetchJSON(url);
-}
+  return cryptocompare.fetchJSON(url);
+};
 
-function constituentExchangeList(options = {}) {
+cryptocompare.constituentExchangeList = function constituentExchangeList(options = {}) {
   let url = `${baseUrl}all/includedexchanges`;
   if (options.instrument) url += `?instrument=${options.instrument}`;
-  return fetchJSON(url).then(result => result.Data);
-}
+  return cryptocompare.fetchJSON(url).then(result => result.Data);
+};
 
-function newsFeedsAndCategories() {
+cryptocompare.newsFeedsAndCategories = function newsFeedsAndCategories() {
   const url = `${baseUrl}news/feedsandcategories`;
-  return fetchJSON(url).then(result => result.Data);
-}
+  return cryptocompare.fetchJSON(url).then(result => result.Data);
+};
 
-function newsList(lang, options = {}) {
+cryptocompare.newsList = function newsList(lang, options = {}) {
   let url = `${baseUrl}v2/news/?lang=${lang}`;
   if (options.feeds) url += `&feeds=${options.feeds}`;
   if (options.categories) url += `&categories=${options.categories}`;
   if (options.excludeCategories) url += `&categories=${options.excludeCategories}`;
-  if (options.lTs) url += `&lTs=${dateToTimestamp(options.lTs)}`;
-  return fetchJSON(url).then(result => result.Data);
-}
+  if (options.lTs) url += `&lTs=${cryptocompare.dateToTimestamp(options.lTs)}`;
+  return cryptocompare.fetchJSON(url).then(result => result.Data);
+};
 
-function price(fsym, tsyms, options = {}) {
+cryptocompare.price = function price(fsym, tsyms, options = {}) {
   let url = `${baseUrl}price?fsym=${fsym}&tsyms=${tsyms}`;
   if (options.exchanges) url += `&e=${options.exchanges}`;
   if (options.tryConversion === false) url += '&tryConversion=false';
-  return fetchJSON(url);
-}
+  return cryptocompare.fetchJSON(url);
+};
 
-function priceMulti(fsyms, tsyms, options = {}) {
+cryptocompare.priceMulti = function priceMulti(fsyms, tsyms, options = {}) {
   let url = `${baseUrl}pricemulti?fsyms=${fsyms}&tsyms=${tsyms}`;
   if (options.exchanges) url += `&e=${options.exchanges}`;
   if (options.tryConversion === false) url += '&tryConversion=false';
-  return fetchJSON(url);
-}
+  return cryptocompare.fetchJSON(url);
+};
 
-function priceMultiBatch(fsyms, tsyms, options) {
+cryptocompare.priceMultiBatch = function priceMultiBatch(fsyms, tsyms, options) {
   const symbolChunks = helpers.chunk(fsyms, 50);
-  const prices = symbolChunks.map(sch => priceMulti(sch, tsyms, options));
+  const prices = symbolChunks.map(sch => cryptocompare.priceMulti(sch, tsyms, options));
   return Promise.all(prices);
-}
+};
 
-function collectPriceMultiBatch(priceMultiBatchResult) {
+cryptocompare.collectPriceMultiBatch = function collectPriceMultiBatch(priceMultiBatchResult) {
   return priceMultiBatchResult.reduce((p, pb) => ({
     ...p,
     ...pb,
   }));
-}
+};
 
-function priceFull(fsyms, tsyms, options = {}) {
+cryptocompare.priceFull = function priceFull(fsyms, tsyms, options = {}) {
   let url = `${baseUrl}pricemultifull?fsyms=${fsyms}&tsyms=${tsyms}`;
   if (options.exchanges) url += `&e=${options.exchanges}`;
   if (options.tryConversion === false) url += '&tryConversion=false';
   // We want the RAW data, not the DISPLAY data:
-  return fetchJSON(url).then(result => result.RAW);
-}
+  return cryptocompare.fetchJSON(url).then(result => result.RAW);
+};
 
-function priceHistorical(fsym, tsyms, time, options = {}) {
-  let url = `${baseUrl}pricehistorical?fsym=${fsym}&tsyms=${tsyms}&ts=${dateToTimestamp(time)}`;
+cryptocompare.priceHistorical = function priceHistorical(fsym, tsyms, time, options = {}) {
+  let url = `${baseUrl}pricehistorical?fsym=${fsym}&tsyms=${tsyms}&ts=${cryptocompare.dateToTimestamp(
+    time,
+  )}`;
   if (options.exchanges) url += `&e=${options.exchanges}`;
   if (options.tryConversion === false) url += '&tryConversion=false';
   // The API returns json with an extra layer of nesting, so remove it
-  return fetchJSON(url).then(result => result[fsym]);
-}
+  return cryptocompare.fetchJSON(url).then(result => result[fsym]);
+};
 
-function generateAvg(fsym, tsym, e, tryConversion) {
+cryptocompare.generateAvg = function generateAvg(fsym, tsym, e, tryConversion) {
   let url = `${baseUrl}generateAvg?fsym=${fsym}&tsym=${tsym}&e=${e}`;
   if (tryConversion === false) url += '&tryConversion=false';
-  return fetchJSON(url).then(result => result.RAW);
-}
+  return cryptocompare.fetchJSON(url).then(result => result.RAW);
+};
 
-function topPairs(fsym, limit) {
+cryptocompare.topPairs = function topPairs(fsym, limit) {
   let url = `${baseUrl}top/pairs?fsym=${fsym}`;
   if (limit) url += `&limit=${limit}`;
-  return fetchJSON(url).then(result => result.Data);
-}
+  return cryptocompare.fetchJSON(url).then(result => result.Data);
+};
 
-function topExchanges(fsym, tsym, limit) {
+cryptocompare.topExchanges = function topExchanges(fsym, tsym, limit) {
   let url = `${baseUrl}top/exchanges?fsym=${fsym}&tsym=${tsym}`;
   if (limit) url += `&limit=${limit}`;
-  return fetchJSON(url).then(result => result.Data);
-}
+  return cryptocompare.fetchJSON(url).then(result => result.Data);
+};
 
-function topExchangesFull(fsym, tsym, limit) {
+cryptocompare.topExchangesFull = function topExchangesFull(fsym, tsym, limit) {
   let url = `${baseUrl}top/exchanges/full?fsym=${fsym}&tsym=${tsym}`;
   if (limit) url += `&limit=${limit}`;
-  return fetchJSON(url).then(result => result.Data);
-}
+  return cryptocompare.fetchJSON(url).then(result => result.Data);
+};
 
-function histoDay(fsym, tsym, options = {}) {
+cryptocompare.histoDay = function histoDay(fsym, tsym, options = {}) {
   let url = `${baseUrl}histoday?fsym=${fsym}&tsym=${tsym}`;
   if (options.exchange) url += `&e=${options.exchange}`;
   if (options.limit === 'none') url += '&allData=true';
   else if (options.limit) url += `&limit=${options.limit}`;
   if (options.tryConversion === false) url += '&tryConversion=false';
   if (options.aggregate) url += `&aggregate=${options.aggregate}`;
-  if (options.timestamp) url += `&toTs=${dateToTimestamp(options.timestamp)}`;
+  if (options.timestamp) url += `&toTs=${cryptocompare.dateToTimestamp(options.timestamp)}`;
   if (options.aggregatePredictableTimePeriods)
     url += `&aggregatePredictableTimePeriods=${options.aggregatePredictableTimePeriods}`;
   if (options.allData) url += `&allData=${options.allData}`;
   if (options.toTs) url += `&toTs=${options.toTs}`;
-  return fetchJSON(url).then(result => result.Data);
-}
+  return cryptocompare.fetchJSON(url).then(result => result.Data);
+};
 
-function histoDayBatch(fsyms, tsym, options) {
-  const histos = fsyms.map(fsym => histoDay(fsym, tsym, options));
+cryptocompare.histoDayBatch = function histoDayBatch(fsyms, tsym, options) {
+  const histos = fsyms.map(fsym => cryptocompare.histoDay(fsym, tsym, options));
   return Promise.all(histos);
-}
+};
 
-function collectHistoDayBatch(symbols, fsym, histoDayBatchResult) {
+cryptocompare.collectHistoDayBatch = function collectHistoDayBatch(
+  symbols,
+  fsym,
+  histoDayBatchResult,
+) {
   return histoDayBatchResult.reduce(
     (p, hdb, i) => ({
       ...p,
@@ -161,39 +169,39 @@ function collectHistoDayBatch(symbols, fsym, histoDayBatchResult) {
     }),
     {},
   );
-}
+};
 
-function histoHour(fsym, tsym, options = {}) {
+cryptocompare.histoHour = function histoHour(fsym, tsym, options = {}) {
   let url = `${baseUrl}histohour?fsym=${fsym}&tsym=${tsym}`;
   if (options.exchange) url += `&e=${options.exchange}`;
   if (options.limit) url += `&limit=${options.limit}`;
   if (options.tryConversion === false) url += '&tryConversion=false';
   if (options.aggregate) url += `&aggregate=${options.aggregate}`;
-  if (options.timestamp) url += `&toTs=${dateToTimestamp(options.timestamp)}`;
+  if (options.timestamp) url += `&toTs=${cryptocompare.dateToTimestamp(options.timestamp)}`;
   if (options.allData) url += `&allData=${options.allData}`;
   if (options.toTs) url += `&toTs=${options.toTs}`;
-  return fetchJSON(url).then(result => result.Data);
-}
+  return cryptocompare.fetchJSON(url).then(result => result.Data);
+};
 
-function histoMinute(fsym, tsym, options = {}) {
+cryptocompare.histoMinute = function histoMinute(fsym, tsym, options = {}) {
   let url = `${baseUrl}histominute?fsym=${fsym}&tsym=${tsym}`;
   if (options.exchange) url += `&e=${options.exchange}`;
   if (options.limit) url += `&limit=${options.limit}`;
   if (options.tryConversion === false) url += '&tryConversion=false';
   if (options.aggregate) url += `&aggregate=${options.aggregate}`;
-  if (options.timestamp) url += `&toTs=${dateToTimestamp(options.timestamp)}`;
+  if (options.timestamp) url += `&toTs=${cryptocompare.dateToTimestamp(options.timestamp)}`;
   if (options.allData) url += `&allData=${options.allData}`;
   if (options.toTs) url += `&toTs=${options.toTs}`;
-  return fetchJSON(url).then(result => result.Data);
-}
+  return cryptocompare.fetchJSON(url).then(result => result.Data);
+};
 
-function latestSocial(options = {}) {
+cryptocompare.latestSocial = function latestSocial(options = {}) {
   let url = `${baseUrl}social/coin/latest`;
   if (options.coinId) url += `?coinId=${options.coinId}`;
-  return fetchJSON(url).then(result => result.Data);
-}
+  return cryptocompare.fetchJSON(url).then(result => result.Data);
+};
 
-function histoSocial(timePeriod, options = {}) {
+cryptocompare.histoSocial = function histoSocial(timePeriod, options = {}) {
   const url = `${baseUrl}social/coin/histo/${timePeriod === 'hour' ? 'hour' : 'day'}`;
   const query = [];
   if (options.coinId) query.push(`coinId=${options.coinId}`);
@@ -203,32 +211,9 @@ function histoSocial(timePeriod, options = {}) {
     query.push(`&aggregatePredictableTimePeriods=${options.aggregatePredictableTimePeriods}`);
   if (options.limit >= 1 && options.limit <= 2000) query.push(`limit=${options.limit}`);
   if (options.toTs) query.push(`toTs=${options.toTs}`);
-  return fetchJSON(`${url}${query.length > 0 ? `?${query.join('&')}` : ''}`).then(
-    result => result.Data,
-  );
-}
-
-module.exports = {
-  coinList,
-  constituentExchangeList,
-  exchangeList,
-  newsFeedsAndCategories,
-  newsList,
-  price,
-  priceMulti,
-  priceMultiBatch,
-  collectPriceMultiBatch,
-  priceFull,
-  priceHistorical,
-  generateAvg,
-  topPairs,
-  topExchanges,
-  topExchangesFull,
-  histoDay,
-  histoDayBatch,
-  collectHistoDayBatch,
-  histoHour,
-  histoMinute,
-  latestSocial,
-  histoSocial,
+  return exports
+    .fetchJSON(`${url}${query.length > 0 ? `?${query.join('&')}` : ''}`)
+    .then(result => result.Data);
 };
+
+module.exports = cryptocompare;
