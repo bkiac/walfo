@@ -46,6 +46,7 @@ passport.use(
     (JWTPayload, cb) => {
       User.findOne({ _id: JWTPayload.id })
         .then(user => {
+          if (!user) console.log(JWTPayload.id);
           return cb(null, user._id);
         })
         .catch(err => {
