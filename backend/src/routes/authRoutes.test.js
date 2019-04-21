@@ -1,5 +1,15 @@
 /* eslint-env jest */
+const db = require('../../test/database');
+
 const { axios } = global;
+
+beforeAll(async () => {
+  await db.setup();
+});
+
+afterAll(async () => {
+  await db.teardown();
+});
 
 describe('authRoutes', () => {
   const registerRoute = '/auth/register';

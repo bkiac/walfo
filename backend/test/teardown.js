@@ -1,18 +1,7 @@
-const mongoose = require('mongoose');
-require('../src/models/User');
-require('../src/models/Tags');
-require('../src/models/Transaction');
-
-const User = mongoose.model('User');
-const Tags = mongoose.model('Tags');
-const Transaction = mongoose.model('Transaction');
+const db = require('./database');
 
 module.exports = async () => {
-  await User.deleteMany({});
-  await Tags.deleteMany({});
-  await Transaction.deleteMany({});
-
-  await global.database.disconnect();
+  await db.teardown();
 
   await global.server.close();
 };

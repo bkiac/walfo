@@ -1,5 +1,15 @@
 /* eslint-env jest */
+const db = require('../../test/database');
+
 const { Tags } = global;
+
+beforeAll(async () => {
+  await db.setup();
+});
+
+afterAll(async () => {
+  await db.teardown();
+});
 
 describe('Tags', () => {
   describe('addToSet', () => {

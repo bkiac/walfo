@@ -1,7 +1,16 @@
 /* eslint-env jest */
 const moment = require('moment');
+const db = require('../../test/database');
 
 const { axios } = global;
+
+beforeAll(async () => {
+  await db.setup();
+});
+
+afterAll(async () => {
+  await db.teardown();
+});
 
 // Doesn't do anything...
 jest.mock('../api/cryptocompare', () => ({
@@ -147,8 +156,9 @@ describe('portfolioRoutes', () => {
   ];
 
   const txForAnotherPortfolio = {
-    ...bnbTx,
     portfolio: 'Another Portfolio',
+    symbol: 'BNB',
+    tags: ['platform'],
     date: moment().toISOString(),
     amount: 1,
     price: 15,
@@ -232,6 +242,11 @@ describe('portfolioRoutes', () => {
         const res = await axios.get(`${route}/My Portfolio`, config);
         expect(res.status).toBe(200);
         expect(res.data).toMatchObject(myPortfolio);
+        // const { portfolio, cost, value, positions } = res.data;
+        // expect(portfolio).toBe(myPortfolio.name);
+        // expect(cost).toBe(myPortfolio.cost);
+        // expect(value).toBe(expect.any(Number));
+        // expect(positions).toBe(expect.any(Array));
       } catch (err) {
         console.error(err);
         throw Error(err);
@@ -266,7 +281,7 @@ describe('portfolioRoutes', () => {
         const res = await axios.get(`${route}/My Portfolio/historical?date=${startDate}`, config);
         expect(res.status).toBe(200);
         // Last N days + today
-        expect(res.data).toHaveLength(numOfLastDays);
+        expect(res.data).toHaveLength(numOfLastDays + 1);
       } catch (err) {
         console.error(err);
         throw Error(err);

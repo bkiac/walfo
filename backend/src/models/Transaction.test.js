@@ -1,8 +1,17 @@
 /* eslint-env jest */
 const _ = require('lodash');
 const moment = require('moment');
+const db = require('../../test/database');
 
 const { User, Tags, Transaction } = global;
+
+beforeAll(async () => {
+  await db.setup();
+});
+
+afterAll(async () => {
+  await db.teardown();
+});
 
 describe('Transaction', () => {
   let user;
