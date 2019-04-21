@@ -23,7 +23,7 @@ exports.setup = async function setup() {
     useCreateIndex: true,
   });
   mongoose.connection.on('error', err => {
-    console.error(err.message);
+    console.error(`Database connection refused due to ${err.message}`);
   });
   return connection;
 };
