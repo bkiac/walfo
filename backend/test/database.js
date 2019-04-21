@@ -28,10 +28,12 @@ exports.setup = async function setup() {
   return connection;
 };
 
-exports.teardown = async function teardown() {
-  await User.deleteMany({});
-  await Tags.deleteMany({});
-  await Transaction.deleteMany({});
+exports.teardown = async function teardown(shouldDropCollections = false) {
+  if (shouldDropCollections) {
+    await User.deleteMany({});
+    await Tags.deleteMany({});
+    await Transaction.deleteMany({});
+  }
 
   await mongoose.disconnect();
 };
