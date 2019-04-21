@@ -14,7 +14,7 @@ const Transaction = mongoose.model('Transaction');
 exports.setup = async function setup() {
   mongoose.set('useFindAndModify', false);
   mongoose.Promise = global.Promise;
-  return mongoose.connect(`${process.env.DATABASE}_test`, {
+  const connection = await mongoose.connect(`${process.env.DATABASE}_test`, {
     keepAlive: 1,
     connectTimeoutMS: 30000,
     reconnectTries: 30,
@@ -22,6 +22,10 @@ exports.setup = async function setup() {
     useNewUrlParser: true,
     useCreateIndex: true,
   });
+  mongoose.connection.on('error', err => {
+    console.error(err.message);
+  });
+  return connection;
 };
 
 exports.teardown = async function teardown() {
