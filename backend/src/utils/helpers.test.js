@@ -1,5 +1,5 @@
 /* eslint-env jest */
-const helpers = require('../../src/utils/helpers');
+const helpers = require('./helpers');
 
 describe('helpers', () => {
   describe('chunk', () => {
