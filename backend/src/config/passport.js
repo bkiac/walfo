@@ -46,7 +46,14 @@ passport.use(
     (JWTPayload, cb) => {
       User.findOne({ _id: JWTPayload.id })
         .then(user => {
-          if (!user) console.log(JWTPayload.id);
+          if (!user) {
+            console.log(JWTPayload);
+            throw Error(
+              `There is no user with ID ${
+                JWTPayload.id
+              } for '${JWTPayload}' JWT token, generally this shouldn't happen.`,
+            );
+          }
           return cb(null, user._id);
         })
         .catch(err => {
