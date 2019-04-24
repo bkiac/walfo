@@ -49,7 +49,24 @@ exports.updateTransactionsValidators = [
     .not()
     .exists(),
   body('date').isISO8601(),
-  body('amount').isNumeric(),
+  body('amount')
+    .isNumeric()
+    .custom(async (amount, { req: { user, body: { type, portfolio, symbol } } }) => {
+      if (type === 'SELL') {
+        const txs = await Transaction.find({ user, portfolio, symbol });
+        const holdingsForPosition = txs.reduce((h, t) => h + t.amount, 0);
+        return amount <= holdingsForPosition;
+      }
+      return true;
+    })
+    .custom(async (amount, { req: { user, body: { type, portfolio, symbol } } }) => {
+      if (type === 'BUY') {
+        const txs = await Transaction.find({ user, portfolio, symbol, type });
+        const soldHoldings = txs.reduce((h, t) => h + t.amount, 0);
+        return amount >= soldHoldings;
+      }
+      return true;
+    }),
   body('price').isNumeric(),
   body('type')
     .not()

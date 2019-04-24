@@ -12,6 +12,7 @@ function AddTransactionToPortfolioForm() {
     refreshPortfolio,
     getPositionByTransactionId,
     getHoldingsForPosition,
+    getSoldHoldingsForPosition,
     getTagsForPosition,
   } = useContext(PortfolioContext);
 
@@ -31,6 +32,7 @@ function AddTransactionToPortfolioForm() {
       portfolios={portfolios}
       getTagsForPosition={getTagsForPosition}
       getHoldingsForPosition={getHoldingsForPosition}
+      getSoldHoldingsForPosition={getSoldHoldingsForPosition}
       initialValues={tx}
       portfolioName={portfolioName}
       onSubmit={tx ? transactionsApi.updateTransaction : transactionsApi.createTransaction}

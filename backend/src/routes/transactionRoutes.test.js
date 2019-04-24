@@ -208,6 +208,48 @@ describe('transactionRoutes', () => {
       }
     });
 
+    it('should not update sell transaction with too high amount', async () => {
+      try {
+        const validSellTx = { ...validTx, type: 'SELL' };
+
+        // Create new transaction
+        await axios.post(route, validTx, config);
+        // Create new sell transaction to sell 0.5 out of 1.2 BTC position
+        const sellTxRes = await axios.post(route, { ...validSellTx, amount: 0.5 }, config);
+
+        // Try to update the previous sell transaction, to sell more than 1.2 BTC
+        const res = await axios.put(
+          `${route}/${sellTxRes.data._id}`,
+          { ...validSellTx, amount: 2 },
+          config,
+        );
+        expect(res.status).not.toBe(200);
+      } catch (err) {
+        expect(err.response.status).toBe(422);
+      }
+    });
+
+    it('should not update buy transaction with too low amount', async () => {
+      try {
+        const validSellTx = { ...validTx, type: 'SELL' };
+
+        // Create new transaction
+        const buyTxRes = await axios.post(route, validTx, config);
+        // Create new sell transaction to sell 1 out of 1.2 BTC position
+        await axios.post(route, { ...validSellTx, amount: 1 }, config);
+
+        // Try to update the previous buy transaction's amount to be lower than its dependent sell transaction
+        const res = await axios.put(
+          `${route}/${buyTxRes.data._id}`,
+          { ...validTx, amount: 0.5 },
+          config,
+        );
+        expect(res.status).not.toBe(200);
+      } catch (err) {
+        expect(err.response.status).toBe(422);
+      }
+    });
+
     it('should not update transaction without authorization', async () => {
       try {
         const createRes = await axios.post(route, validTx, config);
