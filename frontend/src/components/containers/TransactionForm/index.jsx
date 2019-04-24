@@ -20,6 +20,7 @@ function TransactionForm({
   portfolioName,
   getTagsForPosition,
   getHoldingsForPosition,
+  getSoldHoldingsForPosition,
   portfolios,
 }) {
   const { coins } = useContext(CoinsContext);
@@ -71,14 +72,29 @@ function TransactionForm({
           .required(),
 
         amount: Yup.number()
-          .min(0)
-          .when('type', (type, schema) =>
-            !shouldCreateNewPortfolio && type === 'SELL'
-              ? schema.test('max', "You can't sell more than you have!", function max(amount) {
+          .when('type', (type, schema) => {
+            if (!shouldCreateNewPortfolio && type === 'SELL') {
+              return schema
+                .min(0)
+                .test('max', "You can't sell more than you have!", function max(amount) {
                   return amount <= getHoldingsForPosition(this.parent.symbol);
-                })
-              : schema.max(Number.MAX_SAFE_INTEGER),
-          )
+                });
+            }
+
+            if (initialValues && type === 'BUY') {
+              return schema
+                .max(Number.MAX_SAFE_INTEGER)
+                .test(
+                  'min',
+                  'The value is too low! There are "Sell" transactions depending on this transaction!',
+                  function min(amount) {
+                    return amount >= getSoldHoldingsForPosition(this.parent.symbol);
+                  },
+                );
+            }
+
+            return schema.min(0).max(Number.MAX_SAFE_INTEGER);
+          })
           .required(),
 
         price: Yup.number()
@@ -91,7 +107,7 @@ function TransactionForm({
       })}
       onSubmit={inputTx => request(inputTx)}
     >
-      {({ handleSubmit, setFieldValue, isValid, values, touched, setTouched, errors }) => (
+      {({ handleSubmit, setFieldValue, isValid, values }) => (
         <Form onSubmit={handleSubmit}>
           <Grid container direction="column" justify="flex-start" alignItems="center">
             {shouldCreateNewPortfolio && (
@@ -211,6 +227,7 @@ TransactionForm.propTypes = {
   portfolioName: PropTypes.string,
   getTagsForPosition: PropTypes.func,
   getHoldingsForPosition: PropTypes.func,
+  getSoldHoldingsForPosition: PropTypes.func,
 };
 
 TransactionForm.defaultProps = {
@@ -222,6 +239,7 @@ TransactionForm.defaultProps = {
   portfolioName: '',
   getTagsForPosition: undefined,
   getHoldingsForPosition: undefined,
+  getSoldHoldingsForPosition: undefined,
 };
 
 export default TransactionForm;

@@ -130,6 +130,14 @@ function PortfolioProvider({ children }) {
     symbol => (basePositions[symbol] ? basePositions[symbol].holdings : 0),
     [basePositions],
   );
+  const getSoldHoldingsForPosition = useCallback(
+    symbol =>
+      getTransactionsForPosition(symbol).reduce(
+        (h, tx) => h + (tx.type === 'SELL' ? tx.amount : 0),
+        0,
+      ),
+    [getTransactionsForPosition],
+  );
   const getTagsForPosition = useCallback(
     symbol => (basePositions[symbol] ? basePositions[symbol].tags : []),
     [basePositions],
@@ -186,6 +194,7 @@ function PortfolioProvider({ children }) {
         queryDate: queryDate || getDateOfFirstTransaction(),
         setQueryDate,
         getHoldingsForPosition,
+        getSoldHoldingsForPosition,
         getTagsForPosition,
         getAllTags,
         queryTags,
