@@ -211,9 +211,23 @@ cryptocompare.histoSocial = function histoSocial(timePeriod, options = {}) {
     query.push(`&aggregatePredictableTimePeriods=${options.aggregatePredictableTimePeriods}`);
   if (options.limit >= 1 && options.limit <= 2000) query.push(`limit=${options.limit}`);
   if (options.toTs) query.push(`toTs=${options.toTs}`);
-  return exports
+  return cryptocompare
     .fetchJSON(`${url}${query.length > 0 ? `?${query.join('&')}` : ''}`)
     .then(result => result.Data);
+};
+
+cryptocompare.topCoinsByVolume = function topCoinsByVolume(tsym = 'USD', options = {}) {
+  let url = `${baseUrl}top/totalvolfull?tsym=${tsym}`;
+  if (options.limit) url += `&limit=${options.limit}`;
+  if (options.page) url += `&page=${options.page}`;
+  return cryptocompare.fetchJSON(url);
+};
+
+cryptocompare.topCoinsByMarketCap = function topCoinsByMarketCap(tsym = 'USD', options = {}) {
+  let url = `${baseUrl}top/mktcapfull?tsym=${tsym}`;
+  if (options.limit) url += `&limit=${options.limit}`;
+  if (options.page) url += `&page=${options.page}`;
+  return cryptocompare.fetchJSON(url);
 };
 
 module.exports = cryptocompare;
