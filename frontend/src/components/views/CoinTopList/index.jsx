@@ -13,7 +13,7 @@ function CoinTopList({ api, type, options }) {
     return <Spinner />;
   }
   return (
-    <Grid container direction="column" justify="flex-start" alignItems="stretch">
+    <Grid container direction="column" justify="center" alignItems="stretch">
       <Grid container>
         <Grid item xs={1} className="text-align-center">
           #
@@ -23,10 +23,11 @@ function CoinTopList({ api, type, options }) {
           Name
         </Grid>
 
-        <Grid item className="text-align-center">
+        <Grid item xs className="text-align-right">
           {type}
         </Grid>
       </Grid>
+
       <CoinList coins={res.data} marketCap={options.marketCap} volume={options.volume} />
     </Grid>
   );

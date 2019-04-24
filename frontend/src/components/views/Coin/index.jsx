@@ -19,25 +19,25 @@ function Coin({ coin, rank, marketCap, volume, price, change }) {
       </Grid>
 
       {marketCap && (
-        <Grid item className="text-align-right">
+        <Grid item xs className="text-align-right">
           {formatCurrency(coin.RAW.USD.MKTCAP)}
         </Grid>
       )}
 
       {volume && (
-        <Grid item className="text-align-right">
+        <Grid item xs className="text-align-right">
           {formatCurrency(coin.RAW.USD.TOTALVOLUME24HTO)}
         </Grid>
       )}
 
       {price && (
-        <Grid item className="text-align-right">
+        <Grid item xs className="text-align-right">
           {formatCurrency(coin.RAW.USD.PRICE)}
         </Grid>
       )}
 
       {change && (
-        <Grid item className="text-align-right">
+        <Grid item xs className="text-align-right">
           {formatCurrency(coin.RAW.USD.CHANGEPCT24HOUR)}
         </Grid>
       )}
