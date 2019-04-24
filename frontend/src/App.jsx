@@ -25,7 +25,7 @@ function App() {
             </Route>
 
             <Route>
-              {() => (isEmpty(user) ? <Redirect to="/dashboard" /> : <Redirect to="/login" />)}
+              {() => (isEmpty(user) ? <Redirect to="/login" /> : <Redirect to="/dashboard" />)}
             </Route>
           </Switch>
         )}
