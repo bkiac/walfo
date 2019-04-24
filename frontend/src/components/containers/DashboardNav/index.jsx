@@ -6,7 +6,10 @@ import { useLogout } from '../../../hooks';
 
 function DashboardNav() {
   const logout = useLogout();
-  const { selectedPortfolio, NEW_PORTFOLIO, openDrawer } = useContext(DashboardContext);
+  const { selectedPortfolio, NEW_PORTFOLIO, openDrawer, openChangePasswordDialog } = useContext(
+    DashboardContext,
+  );
+
   return (
     <AppBar position="static">
       <Toolbar>
@@ -18,6 +21,9 @@ function DashboardNav() {
           {selectedPortfolio === NEW_PORTFOLIO ? 'New portfolio' : selectedPortfolio}
         </Typography>
 
+        <Button color="inherit" onClick={openChangePasswordDialog}>
+          Change password
+        </Button>
         <Button color="inherit" onClick={logout}>
           Logout
         </Button>
