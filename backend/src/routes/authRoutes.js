@@ -14,4 +14,12 @@ router.post(
 
 router.post('/login', authController.login);
 
+router.post(
+  '/change-password',
+  authController.protect,
+  validationController.changePasswordValidators,
+  validationController.validate,
+  authController.changePassword,
+);
+
 module.exports = router;

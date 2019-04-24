@@ -11,3 +11,4 @@ export { default as PositionTrending } from './PositionTrending';
 export { default as PriceAndAmount } from './PriceAndAmount';
 export { default as FormikTextField } from './FormikTextField';
 export { default as FieldWithError } from './FieldWithError';
+export { default as Alert } from './Alert';

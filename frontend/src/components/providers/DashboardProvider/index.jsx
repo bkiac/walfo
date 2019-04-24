@@ -21,6 +21,7 @@ function DashboardProvider({ children }) {
   const [queryTags, setQueryTags] = useState();
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isChangePasswordDialogOpen, setIsChangePasswordDialogOpen] = useState(false);
   const [isFormDialogOpen, setIsFormDialogOpen] = useState(false);
   const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] = useState(false);
 
@@ -37,10 +38,14 @@ function DashboardProvider({ children }) {
   function openConfirmationDialog() {
     setIsConfirmationDialogOpen(true);
   }
+  function openChangePasswordDialog() {
+    setIsChangePasswordDialogOpen(true);
+  }
   function closeDialog() {
     selectTransaction('');
     setIsFormDialogOpen(false);
     setIsConfirmationDialogOpen(false);
+    setIsChangePasswordDialogOpen(false);
   }
 
   function selectPortfolio(portfolio) {
@@ -62,8 +67,10 @@ function DashboardProvider({ children }) {
         closeDrawer,
         isFormDialogOpen,
         isConfirmationDialogOpen,
+        isChangePasswordDialogOpen,
         openFormDialog,
         openConfirmationDialog,
+        openChangePasswordDialog,
         closeDialog,
         NEW_PORTFOLIO,
         portfolios: portfolios.data,

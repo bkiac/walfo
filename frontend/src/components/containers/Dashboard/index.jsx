@@ -2,6 +2,7 @@ import React from 'react';
 import { useApiOnMount, useIsLoading } from '../../../hooks';
 import { coinsApi } from '../../../api';
 import { Spinner } from '../../views';
+import ChangePasswordDialog from '../ChangePasswordDialog';
 import Portfolio from '../Portfolio';
 import { CoinsProvider, DashboardProvider, PortfolioProvider } from '../../providers';
 import { DashboardContext } from '../../../contexts';
@@ -25,6 +26,8 @@ function Dashboard() {
           <PortfoliosDrawer />
 
           <DashboardNav />
+
+          <ChangePasswordDialog />
 
           <div className={style.padding}>
             <DashboardContext.Consumer>
