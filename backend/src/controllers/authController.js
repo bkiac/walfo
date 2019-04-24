@@ -46,3 +46,12 @@ exports.login = (req, res, next) => {
 exports.protect = (req, res, next) => {
   passport.authenticate('jwt', { session: false })(req, res, next);
 };
+
+exports.changePassword = async (req, res) => {
+  const { user } = req;
+  const { password } = req.body;
+
+  await User.changePassword(user._id, password);
+
+  return res.status(200).send('Successful password change!');
+};

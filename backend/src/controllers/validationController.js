@@ -107,6 +107,13 @@ exports.getHistoricalPortfolioValidators = [
     }),
 ];
 
+exports.passwordValidators = [
+  body('password').exists(),
+  body('confirmPassword')
+    .exists()
+    .custom((value, { req }) => value === req.body.password),
+];
+
 exports.registerValidators = [
   body('email')
     .isEmail()
@@ -119,11 +126,10 @@ exports.registerValidators = [
       const user = await User.findOne({ email: value });
       return user === null;
     }),
-  body('password').exists(),
-  body('confirmPassword')
-    .exists()
-    .custom((value, { req }) => value === req.body.password),
+  ...exports.passwordValidators,
 ];
+
+exports.changePasswordValidators = [...exports.passwordValidators];
 
 exports.validate = async (req, res, next) => {
   const errors = validationResult(req);

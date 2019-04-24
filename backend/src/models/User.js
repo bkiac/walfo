@@ -28,6 +28,10 @@ userSchema.methods.validatePassword = function validatePassword(password) {
   return bcrypt.compareSync(password, this.passwordHash);
 };
 
+userSchema.statics.changePassword = function changePassword(id, newPassword) {
+  return this.findOneAndUpdate({ _id: id }, { passwordHash: bcrypt.hashSync(newPassword, 12) });
+};
+
 userSchema.plugin(passportLocalMongoose, { usernameField: 'email' });
 
 userSchema.plugin(mongodbErrorHandler);
