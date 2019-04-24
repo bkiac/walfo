@@ -139,9 +139,7 @@ function TransactionForm({
                   type="number"
                   inputProps={{
                     min: 0,
-                    max: shouldCreateNewPortfolio
-                      ? Number.MAX_SAFE_INTEGER
-                      : getHoldingsForPosition(values.symbol) || Number.MAX_SAFE_INTEGER,
+                    max: Number.MAX_SAFE_INTEGER,
                     step: 'any',
                   }}
                   label="Amount"
