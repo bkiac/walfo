@@ -12,3 +12,6 @@ export { default as PriceAndAmount } from './PriceAndAmount';
 export { default as FormikTextField } from './FormikTextField';
 export { default as FieldWithError } from './FieldWithError';
 export { default as Alert } from './Alert';
+export { default as CoinList } from './CoinList';
+export { default as Coin } from './Coin';
+export { default as CoinTopList } from './CoinTopList';

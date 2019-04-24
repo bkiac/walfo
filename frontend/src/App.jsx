@@ -4,7 +4,7 @@ import { isEmpty } from 'lodash';
 import { LoginForm, RegisterForm } from './components/containers';
 import { UserProvider } from './components/providers';
 import { UserContext } from './contexts';
-import { DashboardPage } from './components/pages';
+import { DashboardPage, TopListsPage, CoinPage } from './components/pages';
 
 function App() {
   return (
@@ -23,6 +23,9 @@ function App() {
             <Route path="/dashboard">
               {() => (isEmpty(user) ? <Redirect to="/login" /> : <DashboardPage />)}
             </Route>
+
+            <Route path="/browse/:symbol" component={CoinPage} />
+            <Route path="/browse" component={TopListsPage} />
 
             <Route>
               {() => (isEmpty(user) ? <Redirect to="/login" /> : <Redirect to="/dashboard" />)}
