@@ -58,7 +58,7 @@ app.use((err, req, res) => {
 });
 
 app.on('unhandledRejection', err => {
-  console.log(err.toString());
+  console.log('Caught UnhandledPromiseRejection', err.toString());
 });
 
 // done!

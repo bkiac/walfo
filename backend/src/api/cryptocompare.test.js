@@ -1,5 +1,5 @@
 /* eslint-env jest */
-const cryptocompare = require('../../src/api/cryptocompare');
+const cryptocompare = require('./cryptocompare');
 const sampleCoins = require('./mktcapfull');
 
 describe('cryptocompare', () => {
