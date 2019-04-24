@@ -1,6 +1,7 @@
 import { Grid } from '@material-ui/core';
 import React from 'react';
 import * as PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import * as OwnTypes from '../../../prop-types';
 import { formatCurrency } from '../../../formats';
 
@@ -14,7 +15,7 @@ function Coin({ coin, rank, marketCap, volume, price, change }) {
       )}
 
       <Grid item xs={3}>
-        {coin.CoinInfo.FullName}
+        <Link to={`/browse/${coin.CoinInfo.Name}`}> {coin.CoinInfo.FullName}</Link>
       </Grid>
 
       {marketCap && (

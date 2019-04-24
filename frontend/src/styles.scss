@@ -4,6 +4,11 @@ html {
   font-family: 'Roboto Mono', monospace;
 }
 
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
 .margin-bottom-8 {
   margin-bottom: 8px;
 }
