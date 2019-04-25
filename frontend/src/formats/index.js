@@ -8,7 +8,7 @@ function joinZeros(decimals) {
 }
 
 export function formatCurrency(number, decimals = 2) {
-  return numeral(number).format(`$0,0.${joinZeros(decimals)}`);
+  return numeral(number).format(`$0,0[.]${joinZeros(decimals)}`);
 }
 
 export function formatAmount(number, decimals = 2) {

@@ -61,7 +61,7 @@ function HistoricalCoinPriceGraph({ historicalPrices }) {
               ticks: {
                 // Include a dollar sign in the ticks
                 callback(value) {
-                  return formatCurrency(value, 0);
+                  return formatCurrency(value, 4);
                 },
               },
             },
