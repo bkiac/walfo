@@ -6,7 +6,13 @@ import { LoginForm, RegisterForm } from './components/containers';
 import { CoinsProvider, UserProvider } from './components/providers';
 import { Spinner } from './components/views';
 import { UserContext } from './contexts';
-import { DashboardPage, TopListsPage, CoinInfoPage, LoginPage, RegisterPage } from './components/pages';
+import {
+  DashboardPage,
+  TopListsPage,
+  CoinInfoPage,
+  LoginPage,
+  RegisterPage,
+} from './components/pages';
 import { useApiOnMount, useIsLoading } from './hooks';
 
 function App() {
@@ -37,9 +43,9 @@ function App() {
               <Route path="/browse/:symbol" component={CoinInfoPage} />
               <Route path="/browse" component={TopListsPage} />
 
-              <Route>
-                {() => (isEmpty(user) ? <Redirect to="/login" /> : <Redirect to="/dashboard" />)}
-              </Route>
+              <Route exact path="/" component={TopListsPage} />
+
+              <Route>{() => <div>The requested page does not exist!</div>}</Route>
             </Switch>
           )}
         </UserContext.Consumer>
