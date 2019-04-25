@@ -10,4 +10,6 @@ router.get('/top/market-cap', coinsController.getTopCoinsByMarketCap);
 
 router.get('/market-data', coinsController.getFullMarketDataForCoins);
 
+router.get('/historical', coinsController.getHistoricalPriceDataForCoinBetweenDates);
+
 module.exports = router;
