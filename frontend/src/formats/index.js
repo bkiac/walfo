@@ -10,7 +10,7 @@ export function formatAmount(number) {
 }
 
 export function formatPercentage(number) {
-  return numeral(number).format('0%');
+  return numeral(number).format('0.00%');
 }
 
 export function formatDate(date) {
