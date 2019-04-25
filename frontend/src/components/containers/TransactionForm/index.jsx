@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-duplicate-props */
 import React, { useContext, useEffect } from 'react';
 import { Grid, Fab, MenuItem, InputAdornment } from '@material-ui/core';
 import { Add as AddIcon, Edit as EditIcon } from '@material-ui/icons';
