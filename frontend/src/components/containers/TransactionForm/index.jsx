@@ -174,7 +174,9 @@ function TransactionForm({
                   label="Price per unit"
                   margin="normal"
                   variant="outlined"
-                  startAdornment={<InputAdornment position="start">$</InputAdornment>}
+                  InputProps={{
+                    startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                  }}
                 />
               </Grid>
             </Grid>
