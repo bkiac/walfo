@@ -1,11 +1,11 @@
-import { Grid } from '@material-ui/core';
+import { Grid, Typography } from '@material-ui/core';
 import React from 'react';
 import * as PropTypes from 'prop-types';
 import { useApiOnMount, useIsLoading } from '../../../hooks';
 import CoinList from '../CoinList';
 import Spinner from '../Spinner';
 
-function CoinTopList({ api, type, options }) {
+function CoinTopList({ api, type, tableName, options }) {
   const [res] = useApiOnMount(api);
   const isLoading = useIsLoading([res]);
 
@@ -14,6 +14,12 @@ function CoinTopList({ api, type, options }) {
   }
   return (
     <Grid container direction="column" justify="center" alignItems="stretch">
+      <Grid item style={{ height: 56, marginBottom: 8 }}>
+        <Typography variant="h6" style={{ lineHeight: '56px' }}>
+          {type}
+        </Typography>
+      </Grid>
+
       <Grid container>
         <Grid item xs={1} className="text-align-center">
           #
@@ -24,7 +30,7 @@ function CoinTopList({ api, type, options }) {
         </Grid>
 
         <Grid item xs className="text-align-right">
-          {type}
+          {tableName}
         </Grid>
       </Grid>
 
@@ -36,6 +42,7 @@ function CoinTopList({ api, type, options }) {
 CoinTopList.propTypes = {
   api: PropTypes.func.isRequired,
   type: PropTypes.string.isRequired,
+  tableName: PropTypes.string.isRequired,
   options: PropTypes.shape({
     marketCap: PropTypes.bool,
     volume: PropTypes.bool,

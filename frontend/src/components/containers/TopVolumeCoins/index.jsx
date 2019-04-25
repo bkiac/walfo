@@ -6,7 +6,8 @@ function TopVolumeCoins() {
   return (
     <CoinTopList
       api={coinsApi.getTopCoinsByVolume}
-      type="Volume (24h)"
+      type="Top cryptocurrencies by 24h volume"
+      tableName="Volume (24h)"
       options={{ volume: true }}
     />
   );

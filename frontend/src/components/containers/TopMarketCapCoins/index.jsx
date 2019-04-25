@@ -6,7 +6,8 @@ function TopMarketCapCoins() {
   return (
     <CoinTopList
       api={coinsApi.getTopCoinsByMarketCap}
-      type="Market Cap"
+      type="Top cryptocurrencies by market cap"
+      tableName="Market Cap"
       options={{ marketCap: true }}
     />
   );

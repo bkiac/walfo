@@ -25,12 +25,29 @@ function SearchCoins() {
   return (
     <Grid container direction="column" justify="center" alignItems="stretch">
       <TextField
-        label="Search coin"
+        label="Search cryptocurrencies"
         value={searchValue}
         onChange={e => setSearchValue(e.target.value)}
+        style={{ marginBottom: 8 }}
       />
 
-      {isLoading ? <Spinner /> : <CoinList coins={res.data} price change />}
+      <Grid container>
+        <Grid item xs={5}>
+          Name
+        </Grid>
+
+        <Grid item xs className="text-align-right">
+          Price
+        </Grid>
+
+        <Grid item xs className="text-align-right">
+          Change (24h)
+        </Grid>
+      </Grid>
+
+      <div style={{ height: 176 }}>
+        {isLoading ? <Spinner /> : <CoinList coins={res.data} price change />}
+      </div>
     </Grid>
   );
 }
