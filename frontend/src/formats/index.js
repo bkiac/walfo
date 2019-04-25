@@ -13,8 +13,11 @@ export function formatAmount(number) {
   return numeral(number).format('0.00');
 }
 
-export function formatPercentage(number) {
-  return numeral(number).format('0.00%');
+export function formatPercentage(number, decimals = 2) {
+  const zeros = Array.from(new Array(decimals))
+    .map(() => '0')
+    .join('');
+  return numeral(number).format(`0.${zeros}%`);
 }
 
 export function formatDate(date) {

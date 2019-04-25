@@ -51,7 +51,7 @@ function Coin({ coin, rank, marketCap, volume, price, change }) {
 
       {change && (
         <Grid item xs className={`text-align-right ${hasProfit ? style.gain : style.loss}`}>
-          {formatPercentage(coin.marketData.CHANGEPCT24HOUR / 100)}
+          {formatPercentage(coin.marketData.CHANGEPCT24HOUR / 100, 4)}
         </Grid>
       )}
     </Grid>
