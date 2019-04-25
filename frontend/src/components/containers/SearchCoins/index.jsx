@@ -49,7 +49,7 @@ function SearchCoins() {
       </Grid>
 
       <div style={{ height: '400px' }}>
-        {isLoading ? <Spinner /> : <CoinList coins={res.data} price change />}
+        {isLoading ? <Spinner /> : <CoinList coins={!res.hasError ? res.data : []} price change />}
       </div>
     </Grid>
   );
