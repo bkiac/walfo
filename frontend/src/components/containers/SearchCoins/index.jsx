@@ -3,22 +3,29 @@ import React, { useContext, useMemo, useState } from 'react';
 import { CoinsContext } from '../../../contexts';
 import { coinsApi } from '../../../api';
 import { useApiOnMount, useIsLoading } from '../../../hooks';
-import { Spinner } from '../../views';
-import CoinList from '../../views/CoinList';
+import { Spinner, CoinList } from '../../views';
+
+const WAIT_INTERVAL = 1000;
+
+function search(coinList, value) {
+  return coinList
+    .filter(({ label }) => label.toLowerCase().includes(value.toLowerCase()))
+    .slice(0, 10)
+    .map(c => c.value);
+}
 
 function SearchCoins() {
   const { coinListForInput } = useContext(CoinsContext);
   const [searchValue, setSearchValue] = useState('');
+  const [searchResults, setSearchResults] = useState(search(coinListForInput, ''));
+  const [timer, setTimer] = useState(null);
 
-  const searchResults = useMemo(
-    () =>
-      coinListForInput
-        .filter(({ label }) => label.toLowerCase().includes(searchValue.toLowerCase()))
-        .slice(0, 10)
-        .map(c => c.value),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [searchValue],
-  );
+  function handleChange({ target: { value } }) {
+    clearTimeout(timer);
+    setSearchValue(value);
+    setTimer(setTimeout(() => setSearchResults(search(coinListForInput, value)), WAIT_INTERVAL));
+  }
+
   const [res] = useApiOnMount(coinsApi.getFullMarketDataForCoins, searchResults);
   const isLoading = useIsLoading([res]);
 
@@ -27,7 +34,7 @@ function SearchCoins() {
       <TextField
         label="Search cryptocurrencies"
         value={searchValue}
-        onChange={e => setSearchValue(e.target.value)}
+        onChange={handleChange}
         style={{ marginBottom: 8 }}
       />
 
