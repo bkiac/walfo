@@ -6,7 +6,7 @@ import { LoginForm, RegisterForm } from './components/containers';
 import { CoinsProvider, UserProvider } from './components/providers';
 import { Spinner } from './components/views';
 import { UserContext } from './contexts';
-import { DashboardPage, TopListsPage, CoinInfoPage } from './components/pages';
+import { DashboardPage, TopListsPage, CoinInfoPage, LoginPage, RegisterPage } from './components/pages';
 import { useApiOnMount, useIsLoading } from './hooks';
 
 function App() {
@@ -23,11 +23,11 @@ function App() {
           {({ user }) => (
             <Switch>
               <Route path="/login">
-                {() => (isEmpty(user) ? <LoginForm /> : <Redirect to="/dashboard" />)}
+                {() => (isEmpty(user) ? <LoginPage /> : <Redirect to="/dashboard" />)}
               </Route>
 
               <Route path="/register">
-                {() => (isEmpty(user) ? <RegisterForm /> : <Redirect to="/dashboard" />)}
+                {() => (isEmpty(user) ? <RegisterPage /> : <Redirect to="/dashboard" />)}
               </Route>
 
               <Route path="/dashboard">

@@ -15,3 +15,4 @@ export { default as Alert } from './Alert';
 export { default as CoinList } from './CoinList';
 export { default as Coin } from './Coin';
 export { default as CoinTopList } from './CoinTopList';
+export { default as AuthNav } from './AuthNav';
