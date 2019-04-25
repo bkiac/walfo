@@ -31,6 +31,7 @@ export const coin = PropTypes.shape({
   info: PropTypes.shape({
     Name: PropTypes.string.isRequired,
     CoinName: PropTypes.string,
+    ImageUrl: PropTypes.string.isRequired,
     FullName: PropTypes.string.isRequired,
     Algorithm: PropTypes.string.isRequired,
     ProofType: PropTypes.string.isRequired,

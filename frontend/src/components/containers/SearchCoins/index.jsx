@@ -1,9 +1,10 @@
-import { Grid, TextField } from '@material-ui/core';
-import React, { useContext, useMemo, useState } from 'react';
+import { Grid, TextField, Typography } from '@material-ui/core';
+import React, { useContext, useState } from 'react';
 import { CoinsContext } from '../../../contexts';
 import { coinsApi } from '../../../api';
 import { useApiOnMount, useIsLoading } from '../../../hooks';
 import { Spinner, CoinList } from '../../views';
+import style from './style.module.scss';
 
 const WAIT_INTERVAL = 1000;
 
@@ -31,30 +32,23 @@ function SearchCoins() {
 
   return (
     <Grid container direction="column" justify="center" alignItems="stretch">
-      <TextField
-        label="Search cryptocurrencies"
-        value={searchValue}
-        onChange={handleChange}
-        style={{ marginBottom: 8 }}
-      />
+      <TextField label="Search cryptocurrencies" value={searchValue} onChange={handleChange} />
 
-      <Grid container>
+      <Grid container className={`bold ${style.header}`}>
         <Grid item xs={5}>
-          Name
+          <Typography variant="subtitle2">Name</Typography>
         </Grid>
 
         <Grid item xs className="text-align-right">
-          Price
+          <Typography variant="subtitle2">Price</Typography>
         </Grid>
 
         <Grid item xs className="text-align-right">
-          Change (24h)
+          <Typography variant="subtitle2"> Change (24h)</Typography>
         </Grid>
       </Grid>
 
-      <div style={{ height: 176 }}>
-        {isLoading ? <Spinner /> : <CoinList coins={res.data} price change />}
-      </div>
+      <div>{isLoading ? <Spinner /> : <CoinList coins={res.data} price change />}</div>
     </Grid>
   );
 }

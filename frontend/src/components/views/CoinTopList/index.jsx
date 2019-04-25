@@ -4,6 +4,7 @@ import * as PropTypes from 'prop-types';
 import { useApiOnMount, useIsLoading } from '../../../hooks';
 import CoinList from '../CoinList';
 import Spinner from '../Spinner';
+import style from './style.module.scss';
 
 function CoinTopList({ api, type, tableName, options }) {
   const [res] = useApiOnMount(api);
@@ -20,17 +21,17 @@ function CoinTopList({ api, type, tableName, options }) {
         </Typography>
       </Grid>
 
-      <Grid container>
+      <Grid container className={`bold ${style.header}`}>
         <Grid item xs={1} className="text-align-center">
-          #
+          <Typography variant="subtitle2">#</Typography>
         </Grid>
 
         <Grid item xs={3}>
-          Name
+          <Typography variant="subtitle2">Name</Typography>
         </Grid>
 
         <Grid item xs className="text-align-right">
-          {tableName}
+          <Typography variant="subtitle2"> {tableName}</Typography>
         </Grid>
       </Grid>
 
