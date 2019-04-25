@@ -19,7 +19,7 @@ export const position = PropTypes.shape({
   transactions: PropTypes.arrayOf(PropTypes.string).isRequired,
 });
 
-export const rawMarketData = PropTypes.shape({
+export const marketData = PropTypes.shape({
   PRICE: PropTypes.number.isRequired,
   TOTALVOLUME24HTO: PropTypes.number.isRequired,
   CHANGE24HOUR: PropTypes.number.isRequired,
@@ -27,25 +27,13 @@ export const rawMarketData = PropTypes.shape({
   MKTCAP: PropTypes.number.isRequired,
 });
 
-export const displayMarketData = PropTypes.shape({
-  PRICE: PropTypes.string.isRequired,
-  TOTALVOLUME24HTO: PropTypes.string.isRequired,
-  CHANGE24HOUR: PropTypes.string.isRequired,
-  CHANGEPCT24HOUR: PropTypes.string.isRequired,
-  MKTCAP: PropTypes.string.isRequired,
-});
-
 export const coin = PropTypes.shape({
-  CoinInfo: PropTypes.shape({
+  info: PropTypes.shape({
     Name: PropTypes.string.isRequired,
+    CoinName: PropTypes.string,
     FullName: PropTypes.string.isRequired,
     Algorithm: PropTypes.string.isRequired,
     ProofType: PropTypes.string.isRequired,
   }),
-  RAW: PropTypes.shape({
-    USD: rawMarketData,
-  }),
-  DISPLAY: PropTypes.shape({
-    USD: displayMarketData,
-  }),
+  marketData: marketData.isRequired,
 });

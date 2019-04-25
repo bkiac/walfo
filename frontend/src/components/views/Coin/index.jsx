@@ -3,7 +3,7 @@ import React from 'react';
 import * as PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import * as OwnTypes from '../../../prop-types';
-import { formatCurrency } from '../../../formats';
+import { formatCurrency, formatPercentage } from '../../../formats';
 
 function Coin({ coin, rank, marketCap, volume, price, change }) {
   return (
@@ -14,31 +14,31 @@ function Coin({ coin, rank, marketCap, volume, price, change }) {
         </Grid>
       )}
 
-      <Grid item xs={3}>
-        <Link to={`/browse/${coin.CoinInfo.Name}`}> {coin.CoinInfo.FullName}</Link>
+      <Grid item xs={5}>
+        <Link to={`/browse/${coin.info.Name}`}>{coin.info.CoinName || coin.info.FullName}</Link>
       </Grid>
 
       {marketCap && (
         <Grid item xs className="text-align-right">
-          {formatCurrency(coin.RAW.USD.MKTCAP)}
+          {formatCurrency(coin.marketData.MKTCAP)}
         </Grid>
       )}
 
       {volume && (
         <Grid item xs className="text-align-right">
-          {formatCurrency(coin.RAW.USD.TOTALVOLUME24HTO)}
+          {formatCurrency(coin.marketData.TOTALVOLUME24HTO)}
         </Grid>
       )}
 
       {price && (
         <Grid item xs className="text-align-right">
-          {formatCurrency(coin.RAW.USD.PRICE)}
+          {formatCurrency(coin.marketData.PRICE)}
         </Grid>
       )}
 
       {change && (
         <Grid item xs className="text-align-right">
-          {formatCurrency(coin.RAW.USD.CHANGEPCT24HOUR)}
+          {formatPercentage(coin.marketData.CHANGEPCT24HOUR / 100)}
         </Grid>
       )}
     </Grid>

@@ -11,3 +11,9 @@ export function getTopCoinsByVolume() {
 export function getTopCoinsByMarketCap() {
   return axios.get('/coins/top/market-cap');
 }
+
+export function getFullMarketDataForCoins(symbols) {
+  return axios.get('/coins/market-data', {
+    params: { symbols },
+  });
+}
