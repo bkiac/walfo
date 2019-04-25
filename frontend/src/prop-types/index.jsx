@@ -21,10 +21,13 @@ export const position = PropTypes.shape({
 
 export const marketData = PropTypes.shape({
   PRICE: PropTypes.number.isRequired,
-  TOTALVOLUME24HTO: PropTypes.number.isRequired,
+  VOLUME24HOURTO: PropTypes.number.isRequired,
   CHANGE24HOUR: PropTypes.number.isRequired,
   CHANGEPCT24HOUR: PropTypes.number.isRequired,
   MKTCAP: PropTypes.number.isRequired,
+  HIGH24HOUR: PropTypes.number.isRequired,
+  LOW24HOUR: PropTypes.number.isRequired,
+  SUPPLY: PropTypes.number.isRequired,
 });
 
 export const coin = PropTypes.shape({
@@ -35,6 +38,8 @@ export const coin = PropTypes.shape({
     FullName: PropTypes.string.isRequired,
     Algorithm: PropTypes.string.isRequired,
     ProofType: PropTypes.string.isRequired,
+    TotalCoinSupply: PropTypes.number.isRequired,
+    TotalCoinsMined: PropTypes.number.isRequired,
   }),
   marketData: marketData.isRequired,
 });
