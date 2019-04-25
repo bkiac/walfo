@@ -4,7 +4,7 @@ import { coinsApi } from '../../../api';
 import { Spinner } from '../../views';
 import ChangePasswordDialog from '../ChangePasswordDialog';
 import Portfolio from '../Portfolio';
-import { CoinsProvider, DashboardProvider, PortfolioProvider } from '../../providers';
+import { DashboardProvider, PortfolioProvider } from '../../providers';
 import { DashboardContext } from '../../../contexts';
 import style from './style.module.scss';
 import PortfoliosDrawer from '../PortfoliosDrawer';
@@ -20,34 +20,32 @@ function Dashboard() {
     return <Spinner />;
   }
   return (
-    <CoinsProvider initialCoins={coinList.data}>
-      <DashboardProvider>
-        <>
-          <PortfoliosDrawer />
+    <DashboardProvider>
+      <>
+        <PortfoliosDrawer />
 
-          <DashboardNav />
+        <DashboardNav />
 
-          <ChangePasswordDialog />
+        <ChangePasswordDialog />
 
-          <div className={style.padding}>
-            <DashboardContext.Consumer>
-              {({ selectedPortfolio, NEW_PORTFOLIO }) =>
-                selectedPortfolio === NEW_PORTFOLIO ? (
-                  <InitialTransactionForm />
-                ) : (
-                  <PortfolioProvider portfolioName={selectedPortfolio}>
-                    <>
-                      <Portfolio />
-                      <PortfolioDialogs />
-                    </>
-                  </PortfolioProvider>
-                )
-              }
-            </DashboardContext.Consumer>
-          </div>
-        </>
-      </DashboardProvider>
-    </CoinsProvider>
+        <div className={style.padding}>
+          <DashboardContext.Consumer>
+            {({ selectedPortfolio, NEW_PORTFOLIO }) =>
+              selectedPortfolio === NEW_PORTFOLIO ? (
+                <InitialTransactionForm />
+              ) : (
+                <PortfolioProvider portfolioName={selectedPortfolio}>
+                  <>
+                    <Portfolio />
+                    <PortfolioDialogs />
+                  </>
+                </PortfolioProvider>
+              )
+            }
+          </DashboardContext.Consumer>
+        </div>
+      </>
+    </DashboardProvider>
   );
 }
 
