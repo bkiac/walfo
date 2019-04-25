@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { Fab, Paper, Grid, Typography, TextField } from '@material-ui/core';
 import { Add as AddIcon } from '@material-ui/icons';
 import dayjs from 'dayjs';
@@ -6,6 +6,8 @@ import { PortfolioContext } from '../../../contexts';
 import style from './style.module.scss';
 import { PositionValue } from '../../views';
 import TagsSelector from '../TagsSelector';
+
+const WAIT_INTERVAL = 1000;
 
 function PortfolioSummary() {
   const {
@@ -18,6 +20,13 @@ function PortfolioSummary() {
     queryTags,
     setQueryTags,
   } = useContext(PortfolioContext);
+
+  const [timer, setTimer] = useState(null);
+
+  function handleTagsChange(inputTags) {
+    clearTimeout(timer);
+    setTimer(setTimeout(() => setQueryTags(inputTags), WAIT_INTERVAL));
+  }
 
   return (
     <Paper elevation={1} className={style.paper}>
@@ -57,7 +66,7 @@ function PortfolioSummary() {
           <TagsSelector
             tags={getAllTags()}
             initialClickedTags={queryTags}
-            onChange={setQueryTags}
+            onChange={handleTagsChange}
           />
         </Grid>
 
