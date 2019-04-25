@@ -6,7 +6,8 @@
     "install": "yarn lerna bootstrap",
     "test": "lerna run --stream test",
     "build": "sh -c 'cd ./frontend && yarn build && sudo cp -r build/* ../backend/public'",
-    "start": "sh -c 'cd ./backend && yarn start'"
+    "start": "sh -c 'cd ./backend && yarn start'",
+    "watch": "lerna run watch"
   },
   "dependencies": {
     "lerna": "^3.13.1"
