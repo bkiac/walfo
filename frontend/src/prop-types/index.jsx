@@ -38,8 +38,8 @@ export const coin = PropTypes.shape({
     FullName: PropTypes.string.isRequired,
     Algorithm: PropTypes.string.isRequired,
     ProofType: PropTypes.string.isRequired,
-    TotalCoinSupply: PropTypes.number.isRequired,
-    TotalCoinsMined: PropTypes.number.isRequired,
+    TotalCoinSupply: PropTypes.string,
+    TotalCoinsMined: PropTypes.number,
   }),
   marketData: marketData.isRequired,
 });
