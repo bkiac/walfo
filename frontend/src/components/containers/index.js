@@ -16,3 +16,8 @@ export { default as PortfolioGraph } from './PortfolioGraph';
 export { default as PortfolioSummary } from './PortfolioSummary';
 export { default as TagsSelector } from './TagsSelector';
 export { default as ChangePasswordDialog } from './ChangePasswordDialog';
+export { default as TopMarketCapCoins } from './TopMarketCapCoins';
+export { default as TopVolumeCoins } from './TopVolumeCoins';
+export { default as SearchCoins } from './SearchCoins';
+export { default as DetailedCoin } from './DetailedCoin';
+export { default as BrowseNav } from './BrowseNav';

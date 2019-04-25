@@ -4,10 +4,35 @@ html {
   font-family: 'Roboto Mono', monospace;
 }
 
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
 .margin-bottom-8 {
   margin-bottom: 8px;
 }
 
 .width-100p {
   width: 100% !important;
+}
+
+.height-100p {
+  height: 100% !important;
+}
+
+.text-align-center {
+  text-align: center;
+}
+
+.text-align-right {
+  text-align: right;
+}
+
+.bold {
+  font-weight: 500 !important;
+}
+
+.italic {
+  font-style: italic !important;
 }

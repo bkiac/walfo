@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import { Grid, Fab, MenuItem } from '@material-ui/core';
+import { Grid, Fab, MenuItem, InputAdornment } from '@material-ui/core';
 import { Add as AddIcon, Edit as EditIcon } from '@material-ui/icons';
 import { Field, Form, Formik } from 'formik';
 import dayjs from 'dayjs';
@@ -171,9 +171,10 @@ function TransactionForm({
                     min: 0,
                     step: 'any',
                   }}
-                  label="Price"
+                  label="Price per unit"
                   margin="normal"
                   variant="outlined"
+                  startAdornment={<InputAdornment position="start">$</InputAdornment>}
                 />
               </Grid>
             </Grid>

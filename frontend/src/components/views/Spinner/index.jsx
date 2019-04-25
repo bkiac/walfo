@@ -3,7 +3,7 @@ import { CircularProgress, Grid } from '@material-ui/core';
 
 function Spinner() {
   return (
-    <Grid container direction="column" justify="center" alignItems="center">
+    <Grid container direction="column" justify="center" alignItems="center" className="height-100p">
       <Grid item>
         <CircularProgress />
       </Grid>

@@ -1,16 +1,22 @@
 import numeral from 'numeral';
 import dayjs from 'dayjs';
 
-export function formatCurrency(number) {
-  return numeral(number).format('$0,0.00');
+function joinZeros(decimals) {
+  return Array.from(new Array(decimals))
+    .map(() => '0')
+    .join('');
 }
 
-export function formatAmount(number) {
-  return numeral(number).format('0.00');
+export function formatCurrency(number, decimals = 2) {
+  return numeral(number).format(`$0,0[.]${joinZeros(decimals)}`);
 }
 
-export function formatPercentage(number) {
-  return numeral(number).format('0%');
+export function formatAmount(number, decimals = 2) {
+  return numeral(number).format(`0,0.${joinZeros(decimals)}`);
+}
+
+export function formatPercentage(number, decimals = 2) {
+  return numeral(number).format(`0.${joinZeros(decimals)}%`);
 }
 
 export function formatDate(date) {

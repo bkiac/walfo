@@ -1,6 +1,7 @@
 import React, { useContext, useRef } from 'react';
 import dayjs from 'dayjs';
 import { Line } from 'react-chartjs-2';
+import { formatCurrency } from '../../../formats';
 import { useApiOnMount } from '../../../hooks';
 import { Spinner } from '../../views';
 import { portfolioApi } from '../../../api';
@@ -60,6 +61,18 @@ function PortfolioGraph() {
       options={{
         legend: {
           display: false,
+        },
+        scales: {
+          yAxes: [
+            {
+              ticks: {
+                // Include a dollar sign in the ticks
+                callback(value) {
+                  return formatCurrency(value, 0);
+                },
+              },
+            },
+          ],
         },
       }}
       data={data || cacheData.current}
