@@ -21,6 +21,7 @@ export const position = PropTypes.shape({
 
 export const marketData = PropTypes.shape({
   PRICE: PropTypes.number.isRequired,
+  TOTALVOLUME24HTO: PropTypes.number.isRequired,
   VOLUME24HOURTO: PropTypes.number.isRequired,
   CHANGE24HOUR: PropTypes.number.isRequired,
   CHANGEPCT24HOUR: PropTypes.number.isRequired,

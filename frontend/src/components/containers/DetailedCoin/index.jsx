@@ -83,7 +83,13 @@ function DetailedCoin({ symbol }) {
 
   return (
     <>
-      <Grid container direction="row" justify="center" alignItems="stretch">
+      <Grid
+        container
+        direction="row"
+        justify="center"
+        alignItems="stretch"
+        style={{ marginBottom: '32px' }}
+      >
         <Grid item xs={3}>
           <img
             src={`https://cryptocompare.com${coin.info.ImageUrl}`}
@@ -92,7 +98,7 @@ function DetailedCoin({ symbol }) {
           />
         </Grid>
 
-        <Grid item xs={2}>
+        <Grid item xs={3}>
           <Grid container direction="column" justify="flex-start" alignItems="stretch">
             <Typography variant="h5">General info</Typography>
             <Row field="Full Name" value={coin.info.FullName} />
@@ -118,7 +124,7 @@ function DetailedCoin({ symbol }) {
               hasProfit={hasProfit}
             />
             <Row
-              field="Change (24h)"
+              field="Change percentage (24h)"
               value={formatPercentage(coin.marketData.CHANGEPCT24HOUR / 100, 4)}
               hasProfit={hasProfit}
             />
@@ -126,7 +132,14 @@ function DetailedCoin({ symbol }) {
             <Row field="Supply" value={formatAmount(coin.marketData.SUPPLY)} />
             <Row field="Market Cap" value={formatCurrency(coin.marketData.MKTCAP)} />
 
-            <Row field="Volume (24h)" value={formatCurrency(coin.marketData.VOLUME24HOURTO)} />
+            <Row
+              field="USD Trading Pair Volume (24h)"
+              value={formatCurrency(coin.marketData.VOLUME24HOURTO)}
+            />
+            <Row
+              field="Total Volume (24h)"
+              value={formatCurrency(coin.marketData.TOTALVOLUME24HTO)}
+            />
           </Grid>
         </Grid>
       </Grid>
