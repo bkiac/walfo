@@ -1,14 +1,23 @@
+import { Grid } from '@material-ui/core';
 import React from 'react';
-import { CoinInfo, BrowseNav } from '../../containers';
+import { DetailedCoin, BrowseNav } from '../../containers';
 
 // eslint-disable-next-line react/prop-types
-function CoinInfoPage({ match }) {
+function DetailedCoinPage({ match }) {
   return (
     <>
       <BrowseNav />
-      <CoinInfo symbol={match.params.symbol.toUpperCase()} />
+      <Grid
+        container
+        direction="row"
+        justify="center"
+        alignItems="center"
+        style={{ padding: '16px 16px' }}
+      >
+        <DetailedCoin symbol={match.params.symbol.toUpperCase()} />
+      </Grid>
     </>
   );
 }
 
-export default CoinInfoPage;
+export default DetailedCoinPage;

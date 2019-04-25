@@ -3,7 +3,7 @@ import React from 'react';
 import * as PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import * as OwnTypes from '../../../prop-types';
-import { formatCurrency, formatPercentage, formatUnitPrice } from '../../../formats';
+import { formatCurrency, formatPercentage } from '../../../formats';
 import style from './style.module.scss';
 
 function Coin({ coin, rank, marketCap, volume, price, change }) {
@@ -45,7 +45,7 @@ function Coin({ coin, rank, marketCap, volume, price, change }) {
 
       {price && (
         <Grid item xs className="text-align-right">
-          {formatUnitPrice(coin.marketData.PRICE)}
+          {formatCurrency(coin.marketData.PRICE, 4)}
         </Grid>
       )}
 

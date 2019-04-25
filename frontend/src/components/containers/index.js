@@ -19,5 +19,5 @@ export { default as ChangePasswordDialog } from './ChangePasswordDialog';
 export { default as TopMarketCapCoins } from './TopMarketCapCoins';
 export { default as TopVolumeCoins } from './TopVolumeCoins';
 export { default as SearchCoins } from './SearchCoins';
-export { default as CoinInfo } from './CoinInfo';
+export { default as DetailedCoin } from './DetailedCoin';
 export { default as BrowseNav } from './BrowseNav';
