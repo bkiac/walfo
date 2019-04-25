@@ -44,7 +44,7 @@ function App() {
 
               <Route exact path="/" component={TopListsPage} />
 
-              <Route>{() => <div>The requested page does not exist!</div>}</Route>
+              <Route component={() => <div>The requested page does not exist!</div>} />
             </Switch>
           )}
         </UserContext.Consumer>
