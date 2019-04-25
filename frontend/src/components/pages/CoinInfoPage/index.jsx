@@ -6,7 +6,7 @@ import { DetailedCoin, BrowseNav } from '../../containers';
 function DetailedCoinPage({ match }) {
   return (
     <>
-      <BrowseNav />
+      <BrowseNav symbol={match.params.symbol} />
       <Grid
         container
         direction="row"
