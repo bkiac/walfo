@@ -98,7 +98,12 @@ function DetailedCoin({ symbol }) {
             <Row field="Full Name" value={coin.info.FullName} />
             <Row field="Algorithm" value={coin.info.Algorithm} />
             <Row field="Proof Type" value={coin.info.ProofType} />
-            <Row field="Total Supply" value={formatAmount(coin.info.TotalCoinSupply)} />
+            <Row
+              field="Total Supply"
+              value={
+                coin.info.TotalCoinSupply === '0' ? '∞' : formatAmount(coin.info.TotalCoinSupply)
+              }
+            />
             <Row field="Mined" value={formatAmount(coin.info.TotalCoinsMined)} />
 
             <div style={{ marginBottom: '8px' }} />
