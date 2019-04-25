@@ -1,9 +1,11 @@
 import React from 'react';
 import { Grid } from '@material-ui/core';
+import { Link } from 'react-router-dom';
 import PositionValue from '../PositionValue';
 import * as OwnTypes from '../../../prop-types';
 import PositionTrending from '../PositionTrending';
 import PriceAndAmount from '../PriceAndAmount';
+import style from './style.module.scss';
 
 /**
  * @todo: Grid item positioning
@@ -18,9 +20,11 @@ function PositionSummary({ position }) {
       alignItems="center"
       className="margin-bottom-8"
     >
-      <Grid item xs={1}>
-        {position.symbol}
-      </Grid>
+      <Link to={`/browse/${position.symbol}`}>
+        <Grid item xs={1} className={style.symbol}>
+          {position.symbol}
+        </Grid>
+      </Link>
 
       {/* Base value */}
       <Grid item xs>
