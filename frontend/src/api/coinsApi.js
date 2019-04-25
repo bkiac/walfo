@@ -17,3 +17,9 @@ export function getFullMarketDataForCoins(symbols) {
     params: { symbols },
   });
 }
+
+export function getHistoricalDataForCoin(symbol, startDate, endDate) {
+  return axios.get('/coins/historical', {
+    params: { symbol, startDate, endDate },
+  });
+}

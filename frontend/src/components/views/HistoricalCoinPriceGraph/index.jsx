@@ -1,58 +1,51 @@
-import React, { useContext, useRef } from 'react';
+import React, { useRef } from 'react';
 import dayjs from 'dayjs';
 import { Line } from 'react-chartjs-2';
+import * as PropTypes from 'prop-types';
 import { formatCurrency } from '../../../formats';
-import { useApiOnMount } from '../../../hooks';
-import { Spinner } from '../../views';
-import { portfolioApi } from '../../../api';
-import { PortfolioContext } from '../../../contexts';
+import Spinner from '../Spinner';
+
+const dataSetDisplay = {
+  fill: 'origin',
+  pointBackgroundColor: '#fff',
+  pointBorderWidth: 1,
+  pointHoverRadius: 5,
+  pointHoverBorderWidth: 2,
+  pointRadius: 1,
+  pointHitRadius: 10,
+};
 
 function createData(historicalData) {
-  const values = Object.values(historicalData);
-  const labels = values.map(v => dayjs(v.date).format('YYYY-MM-DD'));
-  const data = values.map(v => v.value);
+  const data = Object.values(historicalData);
+  const labels = data.map(v => dayjs(v.date).format('YYYY-MM-DD'));
+  const prices = data.map(v => v.price);
   return {
     labels,
     datasets: [
       {
-        fill: 'origin',
+        ...dataSetDisplay,
         backgroundColor: 'rgba(75,192,192,0.4)',
         borderColor: 'rgba(75,192,192,1)',
         pointBorderColor: 'rgba(75,192,192,1)',
-        pointBackgroundColor: '#fff',
-        pointBorderWidth: 1,
-        pointHoverRadius: 5,
         pointHoverBackgroundColor: 'rgba(75,192,192,1)',
         pointHoverBorderColor: 'rgba(220,220,220,1)',
-        pointHoverBorderWidth: 2,
-        pointRadius: 1,
-        pointHitRadius: 10,
-        data,
+        data: prices,
       },
     ],
   };
 }
 
-function PortfolioGraph() {
-  const { portfolioName, queryTags, queryDate } = useContext(PortfolioContext);
-
+function HistoricalCoinPriceGraph({ historicalPrices }) {
   const cacheData = useRef();
 
-  const [historicalPortfolio] = useApiOnMount(
-    portfolioApi.getHistoricalPortfolio,
-    portfolioName,
-    queryDate,
-    queryTags,
-  );
-
-  if (cacheData.current === undefined && historicalPortfolio.isLoading) {
+  if (cacheData.current === undefined && historicalPrices.isLoading) {
     return <Spinner />;
   }
 
   // Show previous results until loading if finished
   let data;
-  if (!historicalPortfolio.isLoading) {
-    data = createData(historicalPortfolio.data);
+  if (!historicalPrices.isLoading) {
+    data = createData(historicalPrices.data);
     cacheData.current = data;
   }
 
@@ -80,4 +73,16 @@ function PortfolioGraph() {
   );
 }
 
-export default PortfolioGraph;
+HistoricalCoinPriceGraph.propTypes = {
+  historicalPrices: PropTypes.shape({
+    isLoading: PropTypes.bool.isRequired,
+    data: PropTypes.arrayOf(
+      PropTypes.shape({
+        date: PropTypes.string.isRequired,
+        volume: PropTypes.number.isRequired,
+      }),
+    ),
+  }).isRequired,
+};
+
+export default HistoricalCoinPriceGraph;

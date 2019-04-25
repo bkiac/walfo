@@ -1,12 +1,12 @@
-import { Grid, Typography, Link } from '@material-ui/core';
-import React from 'react';
+import { Grid, Typography, TextField } from '@material-ui/core';
+import React, { useState } from 'react';
 import * as PropTypes from 'prop-types';
+import dayjs from 'dayjs';
 import { coinsApi } from '../../../api';
 import { useApiOnMount, useIsLoading } from '../../../hooks';
-import { Alert, Spinner } from '../../views';
-import Debug from '../../views/Debug';
+import { Alert, Spinner, HistoricalCoinPriceGraph, HistoricalCoinVolumeGraph } from '../../views';
 import style from './style.module.scss';
-import { formatCurrency, formatPercentage, formatAmount } from '../../../formats';
+import { formatCurrency, formatPercentage, formatAmount, formatDate } from '../../../formats';
 
 // eslint-disable-next-line react/prop-types
 function Row({ field, value, hasProfit }) {
@@ -24,7 +24,9 @@ function Row({ field, value, hasProfit }) {
         alignItems="flex-start"
         style={{ marginBottom: '4px' }}
       >
-        <Typography variant="body1" className="bold">{field}:</Typography>
+        <Typography variant="body1" className="bold">
+          {field}:
+        </Typography>
         <div className={className}>
           <Typography variant="body1" color="inherit">
             {value}
@@ -35,7 +37,36 @@ function Row({ field, value, hasProfit }) {
   );
 }
 
+// eslint-disable-next-line react/prop-types
+function Graphs({ symbol, startDate, endDate }) {
+  const [historicalData] = useApiOnMount(
+    coinsApi.getHistoricalDataForCoin,
+    symbol,
+    startDate,
+    endDate,
+  );
+  return (
+    <Grid container direction="row" justify="center" alignItems="center" spacing={16}>
+      <Grid item xs={12} md={4}>
+        <Typography variant="h6" style={{ marginBottom: '8px' }}>
+          Price
+        </Typography>
+        <HistoricalCoinPriceGraph historicalPrices={historicalData} />
+      </Grid>
+
+      <Grid item xs={12} md={4}>
+        <Typography variant="h6" style={{ marginBottom: '8px' }}>
+          Volume
+        </Typography>
+        <HistoricalCoinVolumeGraph historicalVolumes={historicalData} />
+      </Grid>
+    </Grid>
+  );
+}
+
 function DetailedCoin({ symbol }) {
+  const [startDate, setStartDate] = useState(formatDate(dayjs().subtract('7', 'day')));
+  const [endDate, setEndDate] = useState(formatDate(dayjs()));
   const [res] = useApiOnMount(coinsApi.getFullMarketDataForCoins, symbol);
   const isLoading = useIsLoading([res]);
 
@@ -90,12 +121,43 @@ function DetailedCoin({ symbol }) {
             <Row field="Supply" value={formatAmount(coin.marketData.SUPPLY)} />
             <Row field="Market Cap" value={formatCurrency(coin.marketData.MKTCAP)} />
 
-            <Row field="Volume (24h)" value={formatCurrency(coin.marketData.TOTALVOLUME24HTO)} />
+            <Row field="Volume (24h)" value={formatCurrency(coin.marketData.VOLUME24HOURTO)} />
           </Grid>
         </Grid>
       </Grid>
 
-      <Debug any={coin} />
+      <Grid
+        container
+        direction="row"
+        justify="center"
+        alignItems="center"
+        style={{ marginBottom: '16px' }}
+      >
+        <TextField
+          type="date"
+          value={startDate}
+          label="From"
+          inputProps={{
+            max: formatDate(dayjs().subtract(1, 'day')),
+          }}
+          onChange={e => setStartDate(e.target.value)}
+          margin="none"
+          style={{ marginRight: '8px' }}
+        />
+
+        <TextField
+          type="date"
+          label="To"
+          value={endDate}
+          inputProps={{
+            max: formatDate(dayjs()),
+          }}
+          onChange={e => setEndDate(e.target.value)}
+          margin="none"
+        />
+      </Grid>
+
+      <Graphs symbol={symbol} startDate={startDate} endDate={endDate} />
     </>
   );
 }
