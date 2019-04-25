@@ -80,6 +80,11 @@ function DetailedCoin({ symbol }) {
 
   const coin = res.data[0];
   const hasProfit = coin.marketData.CHANGE24HOUR >= 0;
+  const { TotalCoinSupply } = coin.info;
+  const totalySupply =
+    TotalCoinSupply === '0' || TotalCoinSupply === 0 || TotalCoinSupply === 'N/A'
+      ? '∞'
+      : formatAmount(TotalCoinSupply);
 
   return (
     <>
@@ -104,12 +109,7 @@ function DetailedCoin({ symbol }) {
             <Row field="Full Name" value={coin.info.FullName} />
             <Row field="Algorithm" value={coin.info.Algorithm} />
             <Row field="Proof Type" value={coin.info.ProofType} />
-            <Row
-              field="Total Supply"
-              value={
-                coin.info.TotalCoinSupply === '0' ? '∞' : formatAmount(coin.info.TotalCoinSupply)
-              }
-            />
+            <Row field="Total Supply" value={totalySupply} />
             <Row field="Mined" value={formatAmount(coin.info.TotalCoinsMined)} />
 
             <div style={{ marginBottom: '8px' }} />
