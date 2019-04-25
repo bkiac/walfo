@@ -52,7 +52,7 @@ function DashboardProvider({ children }) {
     setSelectedPortfolio(portfolio);
     selectTransaction('');
     closeDrawer();
-    setQueryDate();
+    setQueryTags();
     setQueryDate();
   }
 
