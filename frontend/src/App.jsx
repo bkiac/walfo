@@ -2,7 +2,6 @@ import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { isEmpty } from 'lodash';
 import { coinsApi } from './api';
-import { LoginForm, RegisterForm } from './components/containers';
 import { CoinsProvider, UserProvider } from './components/providers';
 import { Spinner } from './components/views';
 import { UserContext } from './contexts';
