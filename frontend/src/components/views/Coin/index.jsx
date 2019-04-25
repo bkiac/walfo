@@ -33,13 +33,13 @@ function Coin({ coin, rank, marketCap, volume, price, change }) {
 
       {marketCap && (
         <Grid item xs className="text-align-right">
-          {formatCurrency(coin.marketData.MKTCAP)}
+          {formatCurrency(coin.marketData.MKTCAP, 0)}
         </Grid>
       )}
 
       {volume && (
         <Grid item xs className="text-align-right">
-          {formatCurrency(coin.marketData.VOLUME24HOURTO)}
+          {formatCurrency(coin.marketData.VOLUME24HOURTO, 0)}
         </Grid>
       )}
 
