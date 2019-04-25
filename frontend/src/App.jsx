@@ -6,7 +6,7 @@ import { LoginForm, RegisterForm } from './components/containers';
 import { CoinsProvider, UserProvider } from './components/providers';
 import { Spinner } from './components/views';
 import { UserContext } from './contexts';
-import { DashboardPage, TopListsPage, CoinPage } from './components/pages';
+import { DashboardPage, TopListsPage, CoinInfoPage } from './components/pages';
 import { useApiOnMount, useIsLoading } from './hooks';
 
 function App() {
@@ -34,7 +34,7 @@ function App() {
                 {() => (isEmpty(user) ? <Redirect to="/login" /> : <DashboardPage />)}
               </Route>
 
-              <Route path="/browse/:symbol" component={CoinPage} />
+              <Route path="/browse/:symbol" component={CoinInfoPage} />
               <Route path="/browse" component={TopListsPage} />
 
               <Route>
