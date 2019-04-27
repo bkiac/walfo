@@ -6,7 +6,6 @@ export { default as TransactionForm } from './TransactionForm';
 export { default as TagsField } from './TagsField';
 export { default as CoinField } from './CoinField';
 export { default as PortfoliosDrawer } from './PortfoliosDrawer';
-export { default as TransactionDialog } from './TransactionDialog';
 export { default as DashboardNav } from './DashboardNav';
 export { default as InitialTransactionForm } from './InitialTransactionForm';
 export { default as AddTransactionToPortfolioForm } from './AddTransactionToPortfolioForm';
