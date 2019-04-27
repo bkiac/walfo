@@ -21,7 +21,9 @@ function PortfolioDialogs() {
     <Dialog open={isOpen} onClose={closeDialog} fullWidth maxWidth="md">
       {isFormDialogOpen ? (
         <>
-          <DialogTitle>New Transaction</DialogTitle>
+          <DialogTitle>
+            {selectedTransaction ? 'Update Transaction' : 'New Transaction'}
+          </DialogTitle>
           <DialogContent>
             <AddTransactionToPortfolioForm onSuccess={closeDialog} />
           </DialogContent>
