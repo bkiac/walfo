@@ -144,6 +144,7 @@ describe('transactionRoutes', () => {
       date: moment('2017-01-02').toISOString(),
       amount: 2,
       price: 1000,
+      type: 'SELL',
       tags: ['changed', 'tags'],
     };
 
@@ -153,7 +154,7 @@ describe('transactionRoutes', () => {
         const createRes = await axios.post(route, validTx, config);
         expect(createRes.data).toMatchObject({ ...validTx, tags: { array: validTx.tags } });
 
-        // Update previously added transaction's `date`, `amount`, `price` and `tags`
+        // Update previously added transaction's `type`, `date`, `amount`, `price` and `tags`
         const updateRes = await axios.put(`${route}/${createRes.data._id}`, validUpdatedTx, config);
         expect(updateRes.status).toBe(200);
         expect(updateRes.data).toMatchObject({
@@ -201,19 +202,6 @@ describe('transactionRoutes', () => {
         await axios.put(
           `${route}/${createRes.data._id}`,
           { ...validUpdatedTx, symbol: 'ETH' },
-          config,
-        );
-      } catch (err) {
-        expect(err.response.status).toBe(422);
-      }
-    });
-
-    it('should not update the type of a transaction', async () => {
-      try {
-        const createRes = await axios.post(route, validTx, config);
-        await axios.put(
-          `${route}/${createRes.data._id}`,
-          { ...validUpdatedTx, type: 'SELL' },
           config,
         );
       } catch (err) {

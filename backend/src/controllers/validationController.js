@@ -6,27 +6,29 @@ const cryptocompare = require('../api/cryptocompare');
 const User = mongoose.model('User');
 const Transaction = mongoose.model('Transaction');
 
+exports.transactionValidators = [
+  body('date').isISO8601(),
+  body('amount').isNumeric(),
+  body('price').isNumeric(),
+  body('type').custom(value => value === 'BUY' || value === 'SELL'),
+  body('tags').isArray(),
+  body('tags.*').isString(),
+];
+
 exports.createTransactionValidators = [
+  ...exports.transactionValidators,
+  body('symbol')
+    .isString()
+    .custom(async value => cryptocompare.price(value, 'USD')),
   body('portfolio')
     .isString()
     .not()
     .isEmpty()
     .trim(),
-  body('symbol')
-    .isString()
-    .custom(async value => cryptocompare.price(value, 'USD')),
-  body('date').isISO8601(),
-  body('amount').isNumeric(),
-  body('price').isNumeric(),
-  body('type').custom(value => value === 'BUY' || value === 'SELL'),
-  body('exchange')
-    .optional()
-    .isString(),
-  body('tags').isArray(),
-  body('tags.*').isString(),
 ];
 
 exports.updateTransactionsValidators = [
+  ...exports.transactionValidators,
   param('id')
     .isMongoId()
     .custom(async (id, { req }) => {
@@ -39,17 +41,6 @@ exports.updateTransactionsValidators = [
   body('symbol')
     .not()
     .exists(),
-  body('date').isISO8601(),
-  body('amount').isNumeric(),
-  body('price').isNumeric(),
-  body('type')
-    .not()
-    .exists(),
-  body('exchange')
-    .optional()
-    .isString(),
-  body('tags').isArray(),
-  body('tags.*').isString(),
 ];
 
 exports.deleteTransactionValidators = [

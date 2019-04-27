@@ -121,7 +121,6 @@ function TransactionForm({
                   label="Type"
                   margin="normal"
                   variant="outlined"
-                  disabled={initialValues !== undefined}
                 >
                   <MenuItem value="BUY">Buy</MenuItem>
                   <MenuItem value="SELL">Sell</MenuItem>

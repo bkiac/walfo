@@ -36,9 +36,6 @@ const schema = new Schema({
     enum: ['BUY', 'SELL'],
     required: true,
   },
-  exchange: {
-    type: String,
-  },
   tags: {
     type: Schema.ObjectId,
     ref: 'Tags',
