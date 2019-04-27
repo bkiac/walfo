@@ -116,7 +116,13 @@ const pipelines = {
         symbol: '$_id',
         tags: '$tags',
         holdings: '$holdings',
-        cost: { $multiply: ['$holdings', { $divide: ['$totalCost', '$numOfBoughtCoins'] }] },
+        cost: {
+          $cond: {
+            if: { $eq: ['$numOfBoughtCoins', 0] },
+            then: 0,
+            else: { $multiply: ['$holdings', { $divide: ['$totalCost', '$numOfBoughtCoins'] }] },
+          },
+        },
         transactions: '$transactions',
       },
     },

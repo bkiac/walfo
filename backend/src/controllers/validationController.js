@@ -16,16 +16,7 @@ exports.createTransactionValidators = [
     .isString()
     .custom(async value => cryptocompare.price(value, 'USD')),
   body('date').isISO8601(),
-  body('amount')
-    .isNumeric()
-    .custom(async (amount, { req: { user, body: { type, portfolio, symbol } } }) => {
-      if (type === 'SELL') {
-        const txs = await Transaction.find({ user, portfolio, symbol });
-        const holdingsForPosition = txs.reduce((h, t) => h + t.amount, 0);
-        return amount <= holdingsForPosition;
-      }
-      return true;
-    }),
+  body('amount').isNumeric(),
   body('price').isNumeric(),
   body('type').custom(value => value === 'BUY' || value === 'SELL'),
   body('exchange')
@@ -49,24 +40,7 @@ exports.updateTransactionsValidators = [
     .not()
     .exists(),
   body('date').isISO8601(),
-  body('amount')
-    .isNumeric()
-    .custom(async (amount, { req: { user, body: { type, portfolio, symbol } } }) => {
-      if (type === 'SELL') {
-        const txs = await Transaction.find({ user, portfolio, symbol });
-        const holdingsForPosition = txs.reduce((h, t) => h + t.amount, 0);
-        return amount <= holdingsForPosition;
-      }
-      return true;
-    })
-    .custom(async (amount, { req: { user, body: { type, portfolio, symbol } } }) => {
-      if (type === 'BUY') {
-        const txs = await Transaction.find({ user, portfolio, symbol, type });
-        const soldHoldings = txs.reduce((h, t) => h + t.amount, 0);
-        return amount >= soldHoldings;
-      }
-      return true;
-    }),
+  body('amount').isNumeric(),
   body('price').isNumeric(),
   body('type')
     .not()

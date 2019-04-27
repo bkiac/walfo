@@ -20,8 +20,6 @@ function TransactionForm({
   shouldCreateNewPortfolio,
   portfolioName,
   getTagsForPosition,
-  getHoldingsForPosition,
-  getSoldHoldingsForPosition,
   portfolios,
 }) {
   const { coins } = useContext(CoinsContext);
@@ -73,29 +71,8 @@ function TransactionForm({
           .required(),
 
         amount: Yup.number()
-          .when('type', (type, schema) => {
-            if (!shouldCreateNewPortfolio && type === 'SELL') {
-              return schema
-                .min(0)
-                .test('max', "You can't sell more than you have!", function max(amount) {
-                  return amount <= getHoldingsForPosition(this.parent.symbol);
-                });
-            }
-
-            if (initialValues && type === 'BUY') {
-              return schema
-                .max(Number.MAX_SAFE_INTEGER)
-                .test(
-                  'min',
-                  'The value is too low! There are "Sell" transactions depending on this transaction!',
-                  function min(amount) {
-                    return amount >= getSoldHoldingsForPosition(this.parent.symbol);
-                  },
-                );
-            }
-
-            return schema.min(0).max(Number.MAX_SAFE_INTEGER);
-          })
+          .min(0)
+          .max(Number.MAX_SAFE_INTEGER)
           .required(),
 
         price: Yup.number()
@@ -147,7 +124,7 @@ function TransactionForm({
                   disabled={initialValues !== undefined}
                 >
                   <MenuItem value="BUY">Buy</MenuItem>
-                  {shouldCreateNewPortfolio ? null : <MenuItem value="SELL">Sell</MenuItem>}
+                  <MenuItem value="SELL">Sell</MenuItem>
                 </FormikTextField>
 
                 <FormikTextField
