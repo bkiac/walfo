@@ -18,3 +18,4 @@ export { default as CoinTopList } from './CoinTopList';
 export { default as AuthNav } from './AuthNav';
 export { default as HistoricalCoinPriceGraph } from './HistoricalCoinPriceGraph';
 export { default as HistoricalCoinVolumeGraph } from './HistoricalCoinVolumeGraph';
+export { default as Credit } from './Credit';
