@@ -44,6 +44,15 @@ describe('Tags', () => {
       expect([...tagsDoc.array].sort()).toEqual([...tags, 'overlapping'].sort());
     });
 
+    it('should not have the same elements', async () => {
+      const tags = ['these', 'are', 'the', 'same', 'same', 'same'];
+      const tagsDoc = await Tags.create({ array: tags });
+
+      const expectedTags = ['these', 'are', 'the', 'same'];
+
+      expect([...tagsDoc.array].sort()).toEqual(expectedTags.sort());
+    });
+
     it('should not add any elements', async () => {
       const tags = ['brand', 'new', 'tags'];
       let tagsDoc = await Tags.create({ array: tags });
