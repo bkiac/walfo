@@ -56,7 +56,7 @@ function Graphs({ symbol, startDate, endDate }) {
 
       <Grid item xs={12} md={4}>
         <Typography variant="h6" style={{ marginBottom: '8px' }}>
-          Volume
+          USD Trading Pair Volume
         </Typography>
         <HistoricalCoinVolumeGraph historicalVolumes={historicalData} />
       </Grid>
